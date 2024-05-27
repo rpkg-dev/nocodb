@@ -1,0 +1,59 @@
+code:
+  width: 160
+development:
+  mode: auto
+template:
+  bootstrap: 5
+  bslib:
+    link-color: '#246abf'
+    link-decoration: none
+    link-hover-decoration: underline
+  includes:
+    in_header: |
+      <script src="https://rpkg.dev/counter-dev.min.js" data-id="4c4963fe-9fcf-4d81-95bb-2135e114b85b" data-utcoffset="1"></script>
+  opengraph:
+    twitter:
+      card: summary
+      creator: '@2BSalim'
+url: https://nocodb.rpkg.dev
+reference:
+- title: Common
+  desc: Common functions that are of generic use.
+- contents: api
+- title: Meta
+  desc: Functions to work with NocoDB's RESTful [meta APIs](https://meta-apis-v2.nocodb.com/).
+- subtitle: Bases
+  desc: Functions to manage NocoDB [bases](https://docs.nocodb.com/category/bases)
+    (aka "projects").
+- contents:
+  - bases
+  - base_id
+  - base
+  - create_base
+  - update_base
+- subtitle: Tables
+  desc: Functions to manage NocoDB [tables](https://docs.nocodb.com/category/tables).
+- contents:
+  - tbls
+  - tbl_id
+  - tbl
+  - update_tbl
+  - reorder_tbl
+- subtitle: Table columns
+  desc: Functions to manage NocoDB table [columns](https://docs.nocodb.com/category/fields)
+    (aka "fields").
+- contents:
+  - tbl_cols
+  - tbl_col_id
+  - tbl_col
+  - update_tbl_col
+  - set_display_val
+  - set_display_vals
+- subtitle: Users
+  desc: Functions to manage NocoDB [users](https://docs.nocodb.com/collaboration/oss-specific-details/#user-management).
+- contents:
+  - users
+  - create_user
+- subtitle: Attachments
+  desc: Functions to manage NocoDB [attachments](https://docs.nocodb.com/fields/field-types/custom-types/attachment/).
+- contents: upload_attachments
