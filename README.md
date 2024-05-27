@@ -6,7 +6,7 @@ nocodb allows to work with NocoDB’s RESTful APIs from R. NocoDB is a web appli
 
 ## Documentation
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/FIX-ME/deploy-status)](https://app.netlify.com/sites/FIX-ME-rpkg-dev/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/8780ea6d-ea71-4ddc-a8fe-be53e095a727/deploy-status)](https://app.netlify.com/sites/nocodb-rpkg-dev/deploys)
 
 The documentation of this package is found [here](https://nocodb.rpkg.dev).
 

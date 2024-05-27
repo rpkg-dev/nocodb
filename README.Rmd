@@ -35,8 +35,8 @@ pal::cat_lines(paste0("[![CRAN Status](https://r-pkg.org/badges/version/", pal::
 
 pkgsnip::md_snip(id = "pkgdown_notice") %>%
   paste0("## Documentation\n\n",
-         "[![Netlify Status](https://api.netlify.com/api/v1/badges/FIX-ME/deploy-status)]",
-         "(https://app.netlify.com/sites/FIX-ME-rpkg-dev/deploys)\n\n",
+         "[![Netlify Status](https://api.netlify.com/api/v1/badges/8780ea6d-ea71-4ddc-a8fe-be53e095a727/deploy-status)]",
+         "(https://app.netlify.com/sites/nocodb-rpkg-dev/deploys)\n\n",
          .) |>
   pal::cat_lines()
 ```
