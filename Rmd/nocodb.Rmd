@@ -61,7 +61,9 @@ utils::globalVariables(names = c(".",
 #' @keywords internal
 #'
 #' @examples
-#' nocodb:::assemble_url("api/v2/meta/bases/")
+#' try(
+#'   nocodb:::assemble_url("api/v2/meta/bases/")
+#' )
 assemble_url <- function(...,
                          .scheme = "https",
                          .hostname = pal::pkg_config_val(key = "hostname",
