@@ -11,6 +11,7 @@ template:
   includes:
     in_header: |
       <script src="https://rpkg.dev/counter-dev.min.js" data-id="4c4963fe-9fcf-4d81-95bb-2135e114b85b" data-utcoffset="1"></script>
+  light-switch: true
   opengraph:
     twitter:
       card: summary
