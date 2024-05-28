@@ -1,20 +1,6 @@
-/* set main font family as it was before bslib v0.6.0 */
-:root {
-  --bs-body-font-family: var(--bs-font-sans-serif);
-}
-
-/* style headings as they were before bslib v0.6.0 */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 500;
-}
-
-h1 {
-  font-size: 2.5rem;
-}
-
 main {
   /*
-     add more spacing above headers
+     add more spacing above h2–h6
      
      Bootstrap only exposes a `$headings-margin-bottom` and [no `*-top` equivalent](https://github.com/twbs/bootstrap/blob/main/scss/_reboot.scss#L83-L91),
      thus we manually style it
@@ -38,6 +24,11 @@ main {
     h1 {
       margin-top: 1em;
     }
+  }
+  
+  /* add some margin to the right of the search field */
+  .navbar-nav > .nav-item > .form-inline {
+    margin-right: 0.5rem;
   }
   
   /* harmonize page header height */
