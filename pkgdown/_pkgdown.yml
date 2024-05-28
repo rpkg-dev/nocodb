@@ -8,14 +8,17 @@ template:
     link-color: '#246abf'
     link-decoration: none
     link-hover-decoration: underline
+    navbar-nav-link-padding-x: .75rem
   includes:
     in_header: |
       <script src="https://rpkg.dev/counter-dev.min.js" data-id="4c4963fe-9fcf-4d81-95bb-2135e114b85b" data-utcoffset="1"></script>
-  light-switch: true
+  light-switch: yes
   opengraph:
     twitter:
       card: summary
       creator: '@2BSalim'
+  theme: atom-one-light
+  theme-dark: atom-one-dark
 url: https://nocodb.rpkg.dev
 reference:
 - title: Common
