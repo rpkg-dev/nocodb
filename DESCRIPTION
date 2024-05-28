@@ -9,7 +9,7 @@ Description: nocodb allows to work with NocoDB's RESTful APIs from R.
     spreadsheet-like front-end for relational databases, see
     https://nocodb.com.
 License: AGPL (>= 3)
-URL: https://gitlab.com/rpkg.dev/nocodb
+URL: https://nocodb.rpkg.dev, https://gitlab.com/rpkg.dev/nocodb
 BugReports: https://gitlab.com/rpkg.dev/nocodb/issues
 Depends: 
     R (>= 4.4)
