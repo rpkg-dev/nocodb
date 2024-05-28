@@ -936,14 +936,10 @@ set_display_vals <- function(data,
   
   checkmate::assert_data_frame(data,
                                min.cols = 2L)
+  checkmate::assert_names(data,
+                          must.include = c("name", "display_col"),
+                          what = "colnames")
   checkmate::assert_flag(quiet)
-  
-  cols <- c("name", "display_col")
-  has_cols <- cols %in% colnames(data)
-  
-  if (!all(has_cols)) {
-    cli::cli_abort("Required column{?s} {.var {cols[!has_cols]}} {?is/are} missing from {.arg data}.")
-  }
   
   data |>
     dplyr::filter(!is.na(display_col)) %$%
