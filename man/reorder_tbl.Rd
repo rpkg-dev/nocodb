@@ -32,6 +32,7 @@ Lower numbers place the table higher up in the UI and vice versa. The current or
 }
 \seealso{
 Other functions to manage NocoDB tables:
+\code{\link{set_tbl_metadata}()},
 \code{\link{tbl}},
 \code{\link{tbl_id}()},
 \code{\link{tbls}()},

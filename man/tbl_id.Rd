@@ -29,6 +29,7 @@ Returns the identifier of the table with the specified name in the specified bas
 \seealso{
 Other functions to manage NocoDB tables:
 \code{\link{reorder_tbl}()},
+\code{\link{set_tbl_metadata}()},
 \code{\link{tbl}},
 \code{\link{tbls}()},
 \code{\link{update_tbl}()}

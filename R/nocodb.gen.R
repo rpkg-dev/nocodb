@@ -500,6 +500,73 @@ reorder_tbl <- function(tbl_id = tbl_id(),
   invisible(tbl_id)
 }
 
+#' Set metadata for NocoDB tables
+#'
+#' @description
+#' Sets the provided table metadata on a NocoDB server. Currently, this includes:
+#' 
+#' - Setting the order of the tables in the base using [reorder_tbl()] according to the row order of `data`.
+#' - Setting the [table icons](https://docs.nocodb.com/tables/actions-on-table/#change-table-icon) (emojis) using [update_tbl()] according to `data$meta.icon`.
+#'
+#' @inheritParams tbls
+#' @param data Dataframe with the columns `name`, `meta.icon` that defines the table-name-and-metadata-value mapping to be applied. Additional columns are
+#'   ignored.
+#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#'
+#' @return `NULL`, invisibly.
+#' @family tbls
+#' @export
+set_tbl_metadata <- function(data,
+                             base_id = base_id(),
+                             hostname = pal::pkg_config_val(key = "hostname",
+                                                            pkg = this_pkg),
+                             auth_token = pal::pkg_config_val(key = "api_token",
+                                                              pkg = this_pkg),
+                             quiet = FALSE) {
+  
+  checkmate::assert_data_frame(data,
+                               min.cols = 3L)
+  checkmate::assert_names(data,
+                          must.include = c("name", "meta.icon"),
+                          what = "colnames")
+  checkmate::assert_flag(quiet)
+  
+  nrow(data) |>
+    pal::safe_seq_len() |>
+    purrr::walk(\(i) {
+      
+      name <- data$name[i]
+      icon <- data$meta.icon[i]
+      id <- tbl_id(base_id = base_id,
+                   tbl_name = name,
+                   hostname = hostname,
+                   auth_token = auth_token)
+      
+      if (!quiet) {
+        pal::cli_progress_step_quick(msg = "Setting order for NocoDB table {.field {name}} to {.val {i}}")
+      }
+      
+      reorder_tbl(tbl_id = id,
+                  order = i,
+                  hostname = hostname,
+                  auth_token = auth_token)
+      
+      if (!quiet) {
+        pal::cli_progress_step_quick(msg = "Setting icon for NocoDB table {.field {name}} to {.val {icon}}")
+      }
+      
+      if (!is.na(icon)) {
+        update_tbl(tbl_id = id,
+                   body_json = list(meta = list(icon = icon)),
+                   hostname = hostname,
+                   auth_token = auth_token,
+                   quiet = TRUE)
+      }
+    })
+  
+  invisible(NULL)
+}
+
 #' Get NocoDB table columns metadata
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the columns of the specified table on a NocoDB server from its

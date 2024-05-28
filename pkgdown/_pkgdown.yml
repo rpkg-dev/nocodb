@@ -39,6 +39,7 @@ reference:
   - tbl
   - update_tbl
   - reorder_tbl
+  - set_tbl_metadata
 - subtitle: Table columns
   desc: Functions to manage NocoDB table [columns](https://docs.nocodb.com/category/fields)
     (aka "fields").

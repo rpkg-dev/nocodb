@@ -27,6 +27,7 @@ Returns a \link[tibble:tbl_df-class]{tibble} with metadata about tables in the s
 \seealso{
 Other functions to manage NocoDB tables:
 \code{\link{reorder_tbl}()},
+\code{\link{set_tbl_metadata}()},
 \code{\link{tbl}},
 \code{\link{tbl_id}()},
 \code{\link{update_tbl}()}

@@ -36,6 +36,7 @@ Updates the metadata of the specified table on a NocoDB server via its
 \seealso{
 Other functions to manage NocoDB tables:
 \code{\link{reorder_tbl}()},
+\code{\link{set_tbl_metadata}()},
 \code{\link{tbl}},
 \code{\link{tbl_id}()},
 \code{\link{tbls}()}
