@@ -734,7 +734,8 @@ set_display_val <- function(col_id,
 #' several of the other functions found in this package.
 #'
 #' @inheritParams tbls
-#' @param data Dataframe with the two columns `name` and `display_col` to source the . Other columns are ignored.
+#' @param data Dataframe with the two columns `name` and `display_col` that defines the table-name-and-display-value-column mapping to be applied. Additional
+#'   columns are ignored.
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
 #' @return `NULL`, invisibly.

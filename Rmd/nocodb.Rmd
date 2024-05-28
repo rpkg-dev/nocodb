@@ -24,10 +24,6 @@ editor_options:
 
     A closer examination of these solutions has yet to be carried out.
 
--   Several `GET` endpoints of the meta API just return an empty body instead of properly erroring when an invalid path component (e.g. an invalid base ID) is
-    specified in the URL. Since it's tedious (and inefficient) to ensure paths are always valid and/or handle all the cases where the API might return an empty
-    response, we just return a generic error in such case. Hopefully, NocoDB's meta API might improve over time.
-
 # INTERNAL
 
 ## Avoid `R CMD check` NOTES about undefined global objects
@@ -131,6 +127,12 @@ this_pkg <- utils::packageName()
 Common functions that are of generic use.
 
 ### `api`
+
+NOTES:
+
+-   Several `GET` endpoints of the (meta) API just return an empty body instead of properly erroring when an invalid path component (e.g. an invalid base ID) is
+    specified in the URL. Since it's tedious (and inefficient) to ensure paths are always valid and/or handle all the cases where the API might return an empty
+    response, we just return a generic error in such case. Hopefully, NocoDB's meta API might improve over time.
 
 ```{r}
 #' Call NocoDB API
@@ -917,7 +919,8 @@ set_display_val <- function(col_id,
 #' several of the other functions found in this package.
 #'
 #' @inheritParams tbls
-#' @param data Dataframe with the two columns `name` and `display_col` to source the . Other columns are ignored.
+#' @param data Dataframe with the two columns `name` and `display_col` that defines the table-name-and-display-value-column mapping to be applied. Additional
+#'   columns are ignored.
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
 #' @return `NULL`, invisibly.

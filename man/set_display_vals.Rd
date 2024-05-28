@@ -13,7 +13,8 @@ set_display_vals(
 )
 }
 \arguments{
-\item{data}{Dataframe with the two columns \code{name} and \code{display_col} to source the . Other columns are ignored.}
+\item{data}{Dataframe with the two columns \code{name} and \code{display_col} that defines the table-name-and-display-value-column mapping to be applied. Additional
+columns are ignored.}
 
 \item{base_id}{NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}. A character scalar.}
 
