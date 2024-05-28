@@ -11,6 +11,7 @@ nocodb allows to work with NocoDB's RESTful APIs from R. NocoDB is a web applica
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://nocodb.rpkg.dev}
   \item \url{https://gitlab.com/rpkg.dev/nocodb}
   \item Report bugs at \url{https://gitlab.com/rpkg.dev/nocodb/issues}
 }
