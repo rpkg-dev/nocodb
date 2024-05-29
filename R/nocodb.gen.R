@@ -780,31 +780,6 @@ set_display_vals <- function(data,
   invisible(NULL)
 }
 
-#' Get NocoDB users metadata
-#'
-#' Returns a [tibble][tibble::tbl_df] with metadata about the users in the specified base on a NocoDB server from its
-#' [`GET /api/v2/meta/bases/{base_id}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-list) API endpoint.
-#'
-#' @inheritParams tbls
-#'
-#' @return `r pkgsnip::return_lbl("tibble")`
-#' @family users
-#' @export
-users <- function(base_id = base_id(),
-                  hostname = pal::pkg_config_val(key = "hostname",
-                                                 pkg = this_pkg),
-                  auth_token = pal::pkg_config_val(key = "api_token",
-                                                   pkg = this_pkg)) {
-  checkmate::assert_string(base_id)
-  
-  api(path = glue::glue("api/v2/meta/bases/{base_id}/users"),
-      method = "GET",
-      hostname = hostname,
-      auth_token = auth_token) |>
-    _$users$list |>
-    tibble::as_tibble()
-}
-
 #' Create NocoDB user
 #'
 #' Adds a new user account to the specified base on a NocoDB server via its
@@ -905,4 +880,29 @@ upload_attachments <- function(paths,
     httr2::resp_body_json() |>
     purrr::map(tibble::as_tibble) |>
     purrr::list_rbind()
+}
+
+#' Get NocoDB users metadata
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about the users in the specified base on a NocoDB server from its
+#' [`GET /api/v2/meta/bases/{base_id}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-list) API endpoint.
+#'
+#' @inheritParams tbls
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family users
+#' @export
+users <- function(base_id = base_id(),
+                  hostname = pal::pkg_config_val(key = "hostname",
+                                                 pkg = this_pkg),
+                  auth_token = pal::pkg_config_val(key = "api_token",
+                                                   pkg = this_pkg)) {
+  checkmate::assert_string(base_id)
+  
+  api(path = glue::glue("api/v2/meta/bases/{base_id}/users"),
+      method = "GET",
+      hostname = hostname,
+      auth_token = auth_token) |>
+    _$users$list |>
+    tibble::as_tibble()
 }

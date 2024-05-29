@@ -54,11 +54,10 @@ reference:
   - update_tbl_col
   - set_display_val
   - set_display_vals
-- subtitle: Users
-  desc: Functions to manage NocoDB [users](https://docs.nocodb.com/collaboration/oss-specific-details/#user-management).
-- contents:
-  - users
   - create_user
 - subtitle: Attachments
   desc: Functions to manage NocoDB [attachments](https://docs.nocodb.com/fields/field-types/custom-types/attachment/).
 - contents: upload_attachments
+- subtitle: Users
+  desc: Functions to manage NocoDB [users](https://docs.nocodb.com/collaboration/oss-specific-details/#user-management).
+- contents: users
