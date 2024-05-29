@@ -18,6 +18,12 @@ main {
   }
 }
 
+/* underline top-level reference topics ("titles") to better distinguish them from second-level ones ("subtitles") */
+.template-reference-index main h2 {
+  text-decoration-line: underline;
+  text-underline-offset: 0.33em;
+}
+
 @media (min-width: 576px) {
   main {
     /*  add more spacing above h1 */
