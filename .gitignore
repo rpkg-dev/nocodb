@@ -14,3 +14,4 @@ Thumbs.db
 
 # API credentials/tokens
 .httr-oauth
+.set_config.R
