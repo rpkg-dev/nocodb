@@ -5,36 +5,44 @@
 \title{Create NocoDB user}
 \usage{
 create_user(
-  email,
+  email_new,
   role = c("no-access", "commenter", "editor", "guest", "owner", "viewer", "creator"),
-  base_id = base_id(),
+  id_base = base_id(),
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
-  auth_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg),
+  email = pal::pkg_config_val(key = "email", pkg = this_pkg, required = FALSE),
+  password = pal::pkg_config_val(key = "password", pkg = this_pkg, required = FALSE),
+  api_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg, required = FALSE),
   quiet = FALSE
 )
 }
 \arguments{
-\item{email}{E-mail address of the new user. A character scalar.}
+\item{email_new}{E-mail address of the new user. A character scalar.}
 
 \item{role}{Base role to assign to the new user. One of \code{"no-access"}, \code{"commenter"}, \code{"editor"}, \code{"guest"}, \code{"owner"}, \code{"viewer"} or \code{"creator"}.}
 
-\item{base_id}{NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}. A character scalar.}
+\item{id_base}{NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}. A character scalar.}
 
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
 
-\item{auth_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API authentication token}. A character scalar.}
+\item{email}{E-mail address of the NocoDB user to authenticate with.}
+
+\item{password}{Password of the NocoDB user to authenticate with.}
+
+\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
+provided.}
 
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }
 \value{
-\code{email}, invisibly.
+\code{email_new}, invisibly.
 }
 \description{
 Adds a new user account to the specified base on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-add}{\code{POST /api/v2/meta/bases/{base_id}/users}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-add}{\code{POST /api/v2/meta/bases/{id_base}/users}} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB users:
-\code{\link{users}()}
+\code{\link{base_users}()},
+\code{\link{user}()}
 }
 \concept{users}

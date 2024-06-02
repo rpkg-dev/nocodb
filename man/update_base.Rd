@@ -9,9 +9,11 @@ update_base(
   description = NULL,
   color = NULL,
   show_null_and_empty_in_filter = NULL,
-  base_id = base_id(),
+  id_base = base_id(),
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
-  auth_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg)
+  email = pal::pkg_config_val(key = "email", pkg = this_pkg, required = FALSE),
+  password = pal::pkg_config_val(key = "password", pkg = this_pkg, required = FALSE),
+  api_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg, required = FALSE)
 )
 }
 \arguments{
@@ -24,24 +26,31 @@ update_base(
 \item{show_null_and_empty_in_filter}{Whether or not to distinguish \code{NULL}s from empty values in column filters. If \code{FALSE}, \code{NULL} and empty fields are
 treated alike.}
 
-\item{base_id}{NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}. A character scalar.}
+\item{id_base}{NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}. A character scalar.}
 
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
 
-\item{auth_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API authentication token}. A character scalar.}
+\item{email}{E-mail address of the NocoDB user to authenticate with.}
+
+\item{password}{Password of the NocoDB user to authenticate with.}
+
+\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
+provided.}
 }
 \value{
-\code{base_id}, invisibly.
+\code{id_base}, invisibly.
 }
 \description{
 Updates the specified base on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update}{\code{PATCH /api/v2/meta/bases/{base_id}}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update}{\code{PATCH /api/v2/meta/bases/{id_base}}} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB bases:
 \code{\link{base}()},
 \code{\link{base_id}()},
+\code{\link{base_users}()},
 \code{\link{bases}()},
-\code{\link{create_base}()}
+\code{\link{create_base}()},
+\code{\link{delete_base}()}
 }
 \concept{bases}

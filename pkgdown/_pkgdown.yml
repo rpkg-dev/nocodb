@@ -1,29 +1,15 @@
-code:
-  width: 160
-development:
-  mode: auto
 template:
-  bootstrap: 5
-  bslib:
-    link-color: '#246abf'
-    link-decoration: none
-    link-hover-decoration: underline
-    navbar-nav-link-padding-x: .75rem
-  includes:
-    in_header: |
-      <script src="https://rpkg.dev/counter-dev.min.js" data-id="4c4963fe-9fcf-4d81-95bb-2135e114b85b" data-utcoffset="1"></script>
-  light-switch: yes
-  opengraph:
-    twitter:
-      card: summary
-      creator: '@2BSalim'
-  theme: atom-one-light
-  theme-dark: atom-one-dark
+  package: pkgdown.tpl
 url: https://nocodb.rpkg.dev
 reference:
 - title: Common
   desc: Common functions that are of generic use.
 - contents: api
+- subtitle: Authentication
+  desc: Functions to manage authentication against a NocoDB server.
+- contents:
+  - sign_in
+  - sign_out
 - title: Meta
   desc: Functions to work with NocoDB's RESTful [meta APIs](https://meta-apis-v2.nocodb.com/).
 - subtitle: Bases
@@ -35,6 +21,7 @@ reference:
   - base
   - create_base
   - update_base
+  - delete_base
 - subtitle: Tables
   desc: Functions to manage NocoDB [tables](https://docs.nocodb.com/category/tables).
 - contents:
@@ -54,10 +41,15 @@ reference:
   - update_tbl_col
   - set_display_val
   - set_display_vals
-  - create_user
 - subtitle: Attachments
   desc: Functions to manage NocoDB [attachments](https://docs.nocodb.com/fields/field-types/custom-types/attachment/).
 - contents: upload_attachments
 - subtitle: Users
   desc: Functions to manage NocoDB [users](https://docs.nocodb.com/collaboration/oss-specific-details/#user-management).
-- contents: users
+- contents:
+  - user
+  - base_users
+  - create_user
+- subtitle: App settings
+  desc: Functions to manage NocoDB's [application settings](https://docs.nocodb.com/account-settings/oss-specific-details).
+- contents: update_app_settings

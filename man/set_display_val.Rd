@@ -5,24 +5,31 @@
 \title{Set column as NocoDB display value}
 \usage{
 set_display_val(
-  col_id,
+  id_col,
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
-  auth_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg)
+  email = pal::pkg_config_val(key = "email", pkg = this_pkg, required = FALSE),
+  password = pal::pkg_config_val(key = "password", pkg = this_pkg, required = FALSE),
+  api_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg, required = FALSE)
 )
 }
 \arguments{
-\item{col_id}{NocoDB column identifier as returned by \code{\link[=tbl_col_id]{tbl_col_id()}}. A character scalar.}
+\item{id_col}{NocoDB column identifier as returned by \code{\link[=tbl_col_id]{tbl_col_id()}}. A character scalar.}
 
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
 
-\item{auth_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API authentication token}. A character scalar.}
+\item{email}{E-mail address of the NocoDB user to authenticate with.}
+
+\item{password}{Password of the NocoDB user to authenticate with.}
+
+\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
+provided.}
 }
 \value{
 \code{TRUE}, invisibly.
 }
 \description{
 Sets a column as the corresponding table's \href{https://docs.nocodb.com/fields/display-value/}{display value} on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-primary-column-set}{\code{POST /api/v2/meta/columns/{col_id}/primary}} API
+\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-primary-column-set}{\code{POST /api/v2/meta/columns/{id_col}/primary}} API
 endpoint.
 }
 \seealso{

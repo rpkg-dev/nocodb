@@ -8,21 +8,33 @@ api(
   path,
   method = c("GET", "CONNECT", "DELETE", "HEAD", "OPTIONS", "PATCH", "POST", "PUT",
     "TRACE"),
+  hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
+  email = pal::pkg_config_val(key = "email", pkg = this_pkg, required = FALSE),
+  password = pal::pkg_config_val(key = "password", pkg = this_pkg, required = FALSE),
+  api_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg, required = FALSE),
   body_json = NULL,
   auto_unbox = TRUE,
   simplify = TRUE,
   flatten = TRUE,
-  hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
-  auth_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg),
   max_tries = 3L,
   verbosity = NULL
 )
 }
 \arguments{
-\item{path}{NocoDB API endpoint path. A character scalar.}
+\item{path}{Optionally, path to save body of the response. This is useful
+for large responses since it avoids storing the response in memory.}
 
 \item{method}{\href{https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods}{HTTP request method}. One of
 \code{"GET"}, \code{"CONNECT"}, \code{"DELETE"}, \code{"HEAD"}, \code{"OPTIONS"}, \code{"PATCH"}, \code{"POST"}, \code{"PUT"} or \code{"TRACE"}.}
+
+\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+
+\item{email}{E-mail address of the NocoDB user to authenticate with.}
+
+\item{password}{Password of the NocoDB user to authenticate with.}
+
+\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
+provided.}
 
 \item{body_json}{Data to include as JSON in the HTTP request body. Set to \code{NULL} for an empty body.}
 
@@ -32,10 +44,6 @@ api(
 \code{\link[jsonlite:fromJSON]{jsonlite::fromJSON()}}.}
 
 \item{flatten}{Whether or not to automatically \link[jsonlite:flatten]{flatten} nested data frames in the returned JSON into a single non-nested data frame.}
-
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
-
-\item{auth_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API authentication token}. A character scalar.}
 
 \item{max_tries}{Maximum number of attempts to retry in case of an HTTP error. An integerish scalar.}
 
@@ -52,9 +60,20 @@ Use \code{\link[httr2:with_verbosity]{with_verbosity()}} to control the verbosit
 you can't affect directly.}
 }
 \value{
-A list.
+A list if the response body is of type JSON, otherwise a character scalar.
 }
 \description{
-Returns the response from an API call to a NocoDB server as a list.
+Performs an API call to a NocoDB server and returns the response as a list if it is of type JSON, otherwise as a character scalar.
+}
+\details{
+See \code{\link[=req_auth]{req_auth()}} for details about the authentication logic.
+}
+\seealso{
+Other common functions:
+\code{\link{refresh_access_token}()},
+\code{\link{req_auth}()},
+\code{\link{req_basic}()},
+\code{\link{sign_in}()},
+\code{\link{sign_out}()}
 }
 \concept{common}

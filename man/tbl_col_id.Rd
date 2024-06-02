@@ -5,15 +5,17 @@
 \title{Get NocoDB column ID}
 \usage{
 tbl_col_id(
-  tbl_id,
+  id_tbl,
   col_name = NULL,
   col_title = NULL,
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
-  auth_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg)
+  email = pal::pkg_config_val(key = "email", pkg = this_pkg, required = FALSE),
+  password = pal::pkg_config_val(key = "password", pkg = this_pkg, required = FALSE),
+  api_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg, required = FALSE)
 )
 }
 \arguments{
-\item{tbl_id}{NocoDB table identifier as returned by \code{\link[=tbl_id]{tbl_id()}}. A character scalar.}
+\item{id_tbl}{NocoDB table identifier as returned by \code{\link[=tbl_id]{tbl_id()}}. A character scalar.}
 
 \item{col_name}{NocoDB column name. A character scalar.}
 
@@ -21,13 +23,18 @@ tbl_col_id(
 
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
 
-\item{auth_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API authentication token}. A character scalar.}
+\item{email}{E-mail address of the NocoDB user to authenticate with.}
+
+\item{password}{Password of the NocoDB user to authenticate with.}
+
+\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
+provided.}
 }
 \value{
 A character scalar.
 }
 \description{
-Returns the identifier of the column with the specified \code{col_name} or \code{col_title} in the table with the specified \code{tbl_id} on a NocoDB server.
+Returns the identifier of the column with the specified \code{col_name} or \code{col_title} in the table with the specified \code{id_tbl} on a NocoDB server.
 }
 \seealso{
 Other functions to manage NocoDB table columns:

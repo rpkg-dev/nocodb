@@ -37,11 +37,16 @@ pkg_config <-
                  description = character()) |>
   tibble::add_row(key = "hostname",
                   description = paste0("[Hostname](https://en.wikipedia.org/wiki/Hostname) of the NocoDB server to work with.")) |>
-  tibble::add_row(key = "api_token",
-                  description = paste0("[API authentication token](https://docs.nocodb.com/account-settings/api-tokens/) of the NocoDB server to work with. A ",
-                                       "valid API token is required for almost all functions in this package.")) |>
   tibble::add_row(key = "base_title",
-                  description = paste0("Title (name) of the default NocoDB [base](https://docs.nocodb.com/category/bases) to work with."))
+                  description = paste0("Title (name) of the NocoDB [base](https://docs.nocodb.com/category/bases) to work with.")) |>
+  tibble::add_row(key = "email",
+                  description = paste0("E-mail address of the NocoDB user to authenticate with.")) |>
+  tibble::add_row(key = "password",
+                  description = paste0("Password of the NocoDB user to authenticate with.")) |>
+  tibble::add_row(key = "api_token",
+                  description = paste0("[API token](https://docs.nocodb.com/account-settings/api-tokens/) belonging to the NocoDB user to work with. An ",
+                                       "alternative to `email` and `password`. Note that not all of NocoDB's API endpoints support authentication via API ",
+                                       "tokens."))
 ```
 
 # Write data

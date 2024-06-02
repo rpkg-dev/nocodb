@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="nocodb allows to work with NocoDB's RESTful APIs from R. NocoDB is a web application that provides an intuitive spreadsheet-like front-end for relational databases, see https://nocodb.com.">
 <title>Use NocoDB's RESTful APIs • nocodb</title>
 <script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><script src="deps/MathJax-2.7.5/MathJax.js"></script><script src="deps/MathJax-2.7.5/TeX-AMS-MML_HTMLorMML.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Use NocoDB's RESTful APIs">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Use NocoDB's RESTful APIs">
+<meta name="description" content="nocodb allows to work with NocoDB's RESTful APIs from R. NocoDB is a web application that provides an intuitive spreadsheet-like front-end for relational databases, see https://nocodb.com.">
 <meta property="og:description" content="nocodb allows to work with NocoDB's RESTful APIs from R. NocoDB is a web application that provides an intuitive spreadsheet-like front-end for relational databases, see https://nocodb.com.">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:creator" content="@2BSalim">
@@ -92,16 +92,28 @@
 <td align="left"></td>
 </tr>
 <tr class="even">
-<td align="left">
-<a href="https://docs.nocodb.com/account-settings/api-tokens/" class="external-link">API authentication token</a> of the NocoDB server to work with. A valid API token is required for almost all functions in this package.</td>
-<td align="left"><code>nocodb.api_token</code></td>
-<td align="left"><code>R_NOCODB_API_TOKEN</code></td>
+<td align="left">Title (name) of the NocoDB <a href="https://docs.nocodb.com/category/bases" class="external-link">base</a> to work with.</td>
+<td align="left"><code>nocodb.base_title</code></td>
+<td align="left"><code>R_NOCODB_BASE_TITLE</code></td>
 <td align="left"></td>
 </tr>
 <tr class="odd">
-<td align="left">Title (name) of the default NocoDB <a href="https://docs.nocodb.com/category/bases" class="external-link">base</a> to work with.</td>
-<td align="left"><code>nocodb.base_title</code></td>
-<td align="left"><code>R_NOCODB_BASE_TITLE</code></td>
+<td align="left">E-mail address of the NocoDB user to authenticate with.</td>
+<td align="left"><code>nocodb.email</code></td>
+<td align="left"><code>R_NOCODB_EMAIL</code></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Password of the NocoDB user to authenticate with.</td>
+<td align="left"><code>nocodb.password</code></td>
+<td align="left"><code>R_NOCODB_PASSWORD</code></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">
+<a href="https://docs.nocodb.com/account-settings/api-tokens/" class="external-link">API token</a> belonging to the NocoDB user to work with. An alternative to <code>email</code> and <code>password</code>. Note that not all of NocoDB’s API endpoints support authentication via API tokens.</td>
+<td align="left"><code>nocodb.api_token</code></td>
+<td align="left"><code>R_NOCODB_API_TOKEN</code></td>
 <td align="left"></td>
 </tr>
 </tbody>

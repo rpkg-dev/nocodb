@@ -39,15 +39,45 @@ assemble_url <- function(...,
                          .scheme = "https",
                          .hostname = pal::pkg_config_val(key = "hostname",
                                                          pkg = this_pkg)) {
-  checkmate::assert_string(.scheme)
-  checkmate::assert_string(.hostname)
-  
   httr2::url_build(url = list(scheme = .scheme,
                               hostname = .hostname,
                               path = fs::path(...)))
 }
 
-tidy_base_metadata <- function(x) {
+#' Decode access token (JWT)
+#'
+#' Decodes an access token that adheres to the [JSON Web Token (JWT)](https://de.wikipedia.org/wiki/JSON_Web_Token) standard and returns it as a
+#' [tibble][tibble::tbl_df]. Only the payload is returned.
+#'
+#' @param x The access token to be decoded.
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @keywords internal
+decode_access_token <- function(x) {
+  
+  rlang::check_installed("base64enc",
+                         reason = pal::reason_pkg_required())
+  
+  stringr::str_split_1(pattern = stringr::fixed(".")) |>
+    _[2L] |>
+    base64enc::base64decode() |>
+    rawToChar() |>
+    jsonlite::fromJSON() |>
+    purrr::modify_if(.p = \(x) length(x) > 1L,
+                     .f = \(x) list(x)) |>
+    tibble::as_tibble_row()
+}
+
+path_cookie <- function(hostname,
+                        email) {
+  
+  tools::R_user_dir(package = this_pkg,
+                    which = "cache") |>
+    fs::path(hostname, email,
+             ext = "txt")
+}
+
+tidy_resp_data <- function(x) {
   
   # flatten `meta` if non-scalar
   if (purrr::pluck_depth(x$meta) > 1L) {
@@ -80,54 +110,58 @@ tidy_date_time_cols <- function(data) {
 
 this_pkg <- utils::packageName()
 
+stateful <- new.env(parent = emptyenv())
+stateful$access_token <- list()
+
 #' Call NocoDB API
 #'
-#' Returns the response from an API call to a NocoDB server as a list.
+#' Performs an API call to a NocoDB server and returns the response as a list if it is of type JSON, otherwise as a character scalar.
 #'
-#' @inheritParams pal::req_cached
+#' See [req_auth()] for details about the authentication logic.
+#'
 #' @inheritParams httr2::req_perform
 #' @inheritParams httr2::req_body_json
-#' @param path NocoDB API endpoint path. A character scalar.
-#' @param method [HTTP request method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods). One of
-#'   `r pal::enum_fn_param_defaults(param = "method", fn = "api")`.
+#' @inheritParams req_basic
+#' @inheritParams req_auth
 #' @param body_json Data to include as JSON in the HTTP request body. Set to `NULL` for an empty body.
 #' @param auto_unbox Whether or not to automatically "unbox" length-1 vectors in `body_json` to JSON scalars.
 #' @param simplify Whether or not to automatically simplify JSON structures in the returned JSON. Enables/disables all `simplify*` arguments of
 #'   [jsonlite::fromJSON()].
 #' @param flatten Whether or not to automatically [flatten][jsonlite::flatten] nested data frames in the returned JSON into a single non-nested data frame.
-#' @param auth_token NocoDB [API authentication token](https://docs.nocodb.com/account-settings/api-tokens/). A character scalar.
-#' @param hostname NocoDB server [hostname](https://en.wikipedia.org/wiki/Hostname). A character scalar.
 #'
-#' @return A list.
+#' @return A list if the response body is of type JSON, otherwise a character scalar.
 #' @family common
 #' @export
 api <- function(path,
                 method = c("GET", "CONNECT", "DELETE", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE"),
+                hostname = pal::pkg_config_val(key = "hostname",
+                                               pkg = this_pkg),
+                email = pal::pkg_config_val(key = "email",
+                                            pkg = this_pkg,
+                                            required = FALSE),
+                password = pal::pkg_config_val(key = "password",
+                                               pkg = this_pkg,
+                                               required = FALSE),
+                api_token = pal::pkg_config_val(key = "api_token",
+                                                pkg = this_pkg,
+                                                required = FALSE),
                 body_json = NULL,
                 auto_unbox = TRUE,
                 simplify = TRUE,
                 flatten = TRUE,
-                hostname = pal::pkg_config_val(key = "hostname",
-                                               pkg = this_pkg),
-                auth_token = pal::pkg_config_val(key = "api_token",
-                                                 pkg = this_pkg),
                 max_tries = 3L,
                 verbosity = NULL) {
   
-  checkmate::assert_string(path)
-  method <- rlang::arg_match(method)
   checkmate::assert_flag(auto_unbox)
-  checkmate::assert_string(auth_token)
   
   req <-
-    httr2::request(base_url = assemble_url(path,
-                                           .hostname = hostname)) |>
-    httr2::req_method(method = method) |>
-    httr2::req_headers(`xc-token` = auth_token,
-                       .redact = "xc-token") |>
-    httr2::req_user_agent(string = "nocodb R package (https://nocodb.rpkg.dev)") |>
-    httr2::req_retry(max_tries = max_tries) |>
-    httr2::req_error(body = \(resp) httr2::resp_body_json(resp)$msg)
+    req_basic(path = path,
+              method = method,
+              hostname = hostname,
+              max_tries = max_tries) |>
+    req_auth(email = email,
+             password = password,
+             api_token = api_token)
   
   if (!is.null(body_json)) {
     req %<>% httr2::req_body_json(data = body_json,
@@ -155,7 +189,296 @@ api <- function(path,
   result
 }
 
-#' Get NocoDB bases metadata
+#' Create basic NocoDB API request
+#'
+#' Assembles the HTTP request structure that is common to *all* NocoDB API requests performed by this package.
+#'
+#' @inheritParams pal::req_cached
+#' @param path NocoDB API endpoint path. A character scalar.
+#' @param method [HTTP request method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods). One of
+#'   `r pal::enum_fn_param_defaults(param = "method", fn = "api")`.
+#' @param hostname NocoDB server [hostname](https://en.wikipedia.org/wiki/Hostname). A character scalar.
+#'
+#' @inherit httr2::req_method return
+#' @family common
+#' @keywords internal
+req_basic <- function(path,
+                      method = c("GET", "CONNECT", "DELETE", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE"),
+                      hostname = pal::pkg_config_val(key = "hostname",
+                                                     pkg = this_pkg),
+                      max_tries = 3L) {
+  
+  checkmate::assert_string(path)
+  method <- rlang::arg_match(method)
+  checkmate::assert_string(hostname)
+  checkmate::assert_int(max_tries)
+  
+  httr2::request(base_url = assemble_url(path,
+                                         .hostname = hostname)) |>
+    httr2::req_method(method = method) |>
+    httr2::req_user_agent(string = "nocodb R package (https://nocodb.rpkg.dev)") |>
+    httr2::req_retry(max_tries = max_tries) |>
+    httr2::req_error(body = \(resp) httr2::resp_body_json(resp)$msg)
+}
+
+#' Authenticate NocoDB HTTP request
+#'
+#' @description
+#' Adds an authentication header to an HTTP request intended to call a NocoDB API endpoint. The following credential sources are consulted in descending order
+#' and the first one applicable is used:
+#' 
+#' 1. If `api_token` is provided, it is directly added to the request as `xc-token` header.
+#' 2. If `email` is provided and [sign_in()] was called with that `email` before in the *current* R session, the generated access token is re-used.
+#' 3. If `email` is provided and [sign_in()] was called with that `email` before in a *past* R session and hence there's a cached refresh token available, it's
+#'    used to generate a fresh access token.
+#' 4. If `email` and `password` are provided, they are used to newly [sign_in()].
+#'
+#' Access tokens (sources 2–4 above) are added to the request as `xc-auth` header. Other than the `api_token`, they expire after a certain amount of time,
+#' configured by the NocoDB server via [`NC_JWT_EXPIRES_IN`](https://docs.nocodb.com/getting-started/self-hosted/environment-variables/) (defaults to 10 hours).
+#'
+#' # Invalid token errors
+#'
+#' - If you *did* provide an `api_token` and encounter an **`Invalid token`** error, it simply means the `api_token` is invalid (e.g. because it was revoked).
+#' 
+#' - If you *didn't* provide an `api_token` and encounter an **`Invalid token`** error, it means the access token generated by the last call to [sign_in()] in
+#'   the *current* R session has expired meanwhile.
+#' 
+#' - If you encounter an **`Invalid refresh token`** error, it means the refresh token cached to disk by the last call to [sign_in()] in a *past* R session has
+#'   expired meanwhile.
+#' 
+#' The latter two errors should resolve by manually invoking [sign_in()] (until the access/refresh token expiration time limit is reached again).
+#'
+#' If you would like to avoid token expiration errors, consider using an [API token](https://docs.nocodb.com/account-settings/api-tokens/)
+#' (`api_token`) instead of `email` and `password`.
+#'
+#' @inheritParams httr2::req_method
+#' @param email E-mail address of the NocoDB user to authenticate with.
+#' @param password Password of the NocoDB user to authenticate with.
+#' @param api_token NocoDB [API token](https://docs.nocodb.com/account-settings/api-tokens/). Takes precedence over `email` and `password` if
+#'   provided.
+#'
+#' @inherit httr2::req_method return
+#' @family common
+#' @family auth
+#' @keywords internal
+req_auth <- function(req,
+                     email = pal::pkg_config_val(key = "email",
+                                                 pkg = this_pkg,
+                                                 required = FALSE),
+                     password = pal::pkg_config_val(key = "password",
+                                                    pkg = this_pkg,
+                                                    required = FALSE),
+                     api_token = pal::pkg_config_val(key = "api_token",
+                                                     pkg = this_pkg,
+                                                     required = FALSE)) {
+  
+  checkmate::assert_string(email,
+                           null.ok = TRUE)
+  checkmate::assert_string(password,
+                           null.ok = TRUE)
+  checkmate::assert_string(api_token,
+                           null.ok = TRUE)
+  
+  # 1. priority: API token
+  if (!is.null(api_token)) {
+    req %<>% httr2::req_headers(`xc-token` = api_token,
+                                .redact = "xc-token")
+    return(req)
+  }
+  
+  # 2. priority: last access token
+  if (!is.null(email) && !is.null(stateful$access_token[[email]])) {
+    req %<>% httr2::req_headers(`xc-auth` = stateful$access_token[[email]],
+                                .redact = "xc-auth")
+    return(req)
+  }
+  
+  # 3. priority: get new access token via refresh token
+  hostname <-
+    req |>
+    _$url |>
+    httr2::url_parse() |>
+    _$hostname
+
+  if (!is.null(email) && fs::file_exists(path = path_cookie(hostname = hostname,
+                                                            email = email))) {
+    req %<>% httr2::req_headers(`xc-auth` = refresh_access_token(email = email,
+                                                                 hostname = hostname),
+                                .redact = "xc-auth")
+    return(req)
+  }
+  
+  # 4. priority: sign in to get new access token
+  if (!is.null(email) && !is.null(password)) {
+    req %<>% httr2::req_headers(`xc-auth` = sign_in(email = email,
+                                                    password = password,
+                                                    hostname = hostname),
+                                .redact = "xc-auth")
+    return(req)
+  }
+  
+  cli::cli_abort("Either {.arg email} and {.arg password} or {.arg api_token} must be provided for authentication.")
+}
+
+#' Sign in NocoDB user
+#'
+#' Authenticates a NocoDB user by `email` and `password` via the
+#' [`POST /api/v1/auth/user/signin`](https://data-apis-v1.nocodb.com/#tag/Auth/operation/auth-signin) API endpoint. An access token
+#' ([JWT](https://de.wikipedia.org/wiki/JSON_Web_Token)) is generated in the process and stored in the package environment to be used in subsequent API calls.
+#' 
+#' The generated access token expires after a certain amount of time, configured by the NocoDB server via
+#' [`NC_JWT_EXPIRES_IN`](https://docs.nocodb.com/getting-started/self-hosted/environment-variables/) (defaults to 10 hours). To allow for a frictionless user
+#' experience, a separate refresh token is cached to disk in a cookie file (unless `cache_refresh_token = FALSE`). [refresh_access_token()] can then be used to
+#' generate a new access token if necessary. Taken together, this allows for a user to remain authenticated across R session restarts (unless the refresh token 
+#' has expired or been invalidated by [sign_out()] in the meantime).
+#'
+#' @inheritParams api
+#' @param cache_refresh_token Whether or not to write the refresh token included in the API response to disk (in the OS user cache directory). This allows to
+#'   refresh an expired access token using [refresh_access_token()].
+#'
+#' @return The generated access token as a character scalar, invisibly.
+#' @family common
+#' @family auth
+#' @export
+sign_in <- function(hostname = pal::pkg_config_val(key = "hostname",
+                                                   pkg = this_pkg),
+                    email = pal::pkg_config_val(key = "email",
+                                                pkg = this_pkg),
+                    password = pal::pkg_config_val(key = "password",
+                                                   pkg = this_pkg),
+                    cache_refresh_token = TRUE) {
+  
+  checkmate::assert_string(email)
+  checkmate::assert_string(password)
+  checkmate::assert_flag(cache_refresh_token)
+  
+  req <-
+    req_basic(path = "api/v1/auth/user/signin",
+              method = "POST",
+              hostname = hostname) |>
+    httr2::req_body_json(data = list(email = email,
+                                     password = password))
+  if (cache_refresh_token) {
+    path_cookie <- path_cookie(hostname = hostname,
+                               email = email)
+    fs::dir_create(path = fs::path_dir(path_cookie))
+    req %<>% httr2::req_cookie_preserve(path = path_cookie)
+  }
+  
+  stateful$access_token[[email]] <-
+    httr2::req_perform(req = req) |>
+    httr2::resp_body_json() |>
+    purrr::list_c(ptype = character())
+  
+  invisible(stateful$access_token[[email]])
+}
+
+#' Sign out NocoDB user
+#'
+#' Invalidates a cached refresh token via the [`POST /api/v1/auth/user/signout`](https://data-apis-v1.nocodb.com/#tag/Auth/operation/auth-signout) API endpoint
+#' and clears the associated cache on disk.
+#'
+#' Note that the `email` address to sign out and the `api_token` to authenticate do not necessarily need to belong to the same user.
+#'
+#' @inheritParams req_basic
+#' @inheritParams req_auth
+#' @param email E-mail address of the NocoDB user to sign out. A character scalar.
+#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#'
+#' @return `email`, invisibly.
+#' @family common
+#' @family auth
+#' @export
+sign_out <- function(email = pal::pkg_config_val(key = "email",
+                                                 pkg = this_pkg),
+                     hostname = pal::pkg_config_val(key = "hostname",
+                                                    pkg = this_pkg),
+                     password = pal::pkg_config_val(key = "password",
+                                                    pkg = this_pkg,
+                                                    required = FALSE),
+                     api_token = pal::pkg_config_val(key = "api_token",
+                                                     pkg = this_pkg,
+                                                     required = FALSE),
+                     quiet = FALSE) {
+  
+  checkmate::assert_string(email)
+  checkmate::assert_string(hostname)
+  checkmate::assert_flag(quiet)
+  
+  path_cookie <- path_cookie(hostname = hostname,
+                             email = email)
+  
+  # invalidate refresh token
+  result <-
+    req_basic(path = "api/v1/auth/user/signout",
+              method = "POST",
+              hostname = hostname) |>
+    req_auth(email = email,
+             password = password,
+             api_token = api_token) |>
+    httr2::req_cookie_preserve(path = path_cookie) |>
+    httr2::req_perform() |>
+    httr2::resp_body_json() |>
+    _$msg
+  
+  if (!quiet) {
+    if (stringr::str_detect(result, "successfully")) {
+      cli::cli_alert_success(result)
+    } else {
+      cli::cli_alert_info(result)
+    }
+  }
+  
+  # clear cache
+  fs::file_delete(path = path_cookie)
+  ## remove subdir if empty
+  if (fs::path_dir(path = path_cookie) |>
+      fs::dir_ls(all = TRUE,
+                 recurse = TRUE) |>
+      length() |>
+      magrittr::equals(0L)) {
+    
+    fs::dir_delete(path = fs::path_dir(path = path_cookie))
+  }
+  
+  # clear pkg state
+  stateful$access_token[[email]] <- NULL
+  
+  invisible(email)
+}
+
+#' Refresh NocoDB access token
+#'
+#' Requests a fresh NocoDB access token via the [`POST /api/v1/auth/token/refresh`](https://data-apis-v1.nocodb.com/#tag/Auth/operation/auth-token-refresh) API
+#' endpoint. Requires a valid refresh token cached to disk by [`sign_in(cache_refresh_token = TRUE)`][sign_in].
+#'
+#' Besides generating a fresh access token, also a new refresh token is cached to disk.
+#'
+#' @inheritParams req_basic
+#' @param email E-mail address of the NocoDB user whose access token is to be refreshed. A character scalar.
+#'
+#' @return The freshly generated access token as a character scalar, invisibly.
+#' @family common
+#' @family auth
+#' @keywords internal
+refresh_access_token <- function(email = pal::pkg_config_val(key = "email",
+                                                             pkg = this_pkg),
+                                 hostname = pal::pkg_config_val(key = "hostname",
+                                                                pkg = this_pkg)) {
+  stateful$access_token[[email]] <-
+    req_basic(path = "api/v1/auth/token/refresh",
+              method = "POST",
+              hostname = hostname) |>
+    httr2::req_cookie_preserve(path = path_cookie(hostname = hostname,
+                                                  email = email)) |>
+    httr2::req_perform() |>
+    httr2::resp_body_json() |>
+    purrr::list_c(ptype = character())
+  
+  invisible(stateful$access_token[[email]])
+}
+
+#' List NocoDB bases metadata
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about all bases on a NocoDB server from its
 #' [`GET /api/v2/meta/bases`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-list) API endpoint.
@@ -167,12 +490,21 @@ api <- function(path,
 #' @export
 bases <- function(hostname = pal::pkg_config_val(key = "hostname",
                                                  pkg = this_pkg),
-                  auth_token = pal::pkg_config_val(key = "api_token",
-                                                   pkg = this_pkg)) {
+                  email = pal::pkg_config_val(key = "email",
+                                              pkg = this_pkg,
+                                              required = FALSE),
+                  password = pal::pkg_config_val(key = "password",
+                                                 pkg = this_pkg,
+                                                 required = FALSE),
+                  api_token = pal::pkg_config_val(key = "api_token",
+                                                  pkg = this_pkg,
+                                                  required = FALSE)) {
   api(path = "api/v2/meta/bases",
       method = "GET",
       hostname = hostname,
-      auth_token = auth_token) |>
+      email = email,
+      password = password,
+      api_token = api_token) |>
     _$list |>
     tibble::as_tibble() |>
     tidy_date_time_cols()
@@ -185,20 +517,29 @@ bases <- function(hostname = pal::pkg_config_val(key = "hostname",
 #' @inheritParams api
 #' @param title NocoDB base title. A character scalar.
 #'
-#' @return A character scalar if a base titled `title` exists, otherwise a zero-length character vector.
+#' @return Base identifier as a character scalar.
 #' @family bases
 #' @export
 base_id <- function(title = pal::pkg_config_val(key = "base_title",
                                                 pkg = this_pkg),
                     hostname = pal::pkg_config_val(key = "hostname",
                                                    pkg = this_pkg),
-                    auth_token = pal::pkg_config_val(key = "api_token",
-                                                     pkg = this_pkg)) {
+                    email = pal::pkg_config_val(key = "email",
+                                                pkg = this_pkg,
+                                                required = FALSE),
+                    password = pal::pkg_config_val(key = "password",
+                                                   pkg = this_pkg,
+                                                   required = FALSE),
+                    api_token = pal::pkg_config_val(key = "api_token",
+                                                    pkg = this_pkg,
+                                                    required = FALSE)) {
   checkmate::assert_string(title)
   
   result <-
     bases(hostname = hostname,
-          auth_token = auth_token) |>
+          email = email,
+          password = password,
+          api_token = api_token) |>
     dplyr::filter(title == !!title) |>
     dplyr::pull(id)
   
@@ -207,33 +548,45 @@ base_id <- function(title = pal::pkg_config_val(key = "base_title",
   if (n_result > 1L) {
     result <- result[1L]
     cli::cli_warn("{.val {n_result}} bases with title {.val {title}} present. The identifier of the first one listed in the API response is returned.")
+  } else if (n_result == 0L) {
+    cli::cli_abort("No base found with title {.val {title}} on the {.field {hostname}} NocoDB server.")
   }
   
   result
 }
 
-#' Get NocoDB bases metadata
+#' Get NocoDB base metadata
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the specified base on a NocoDB server from its
-#' [`GET /api/v2/meta/bases/{base_id}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-read) API endpoint.
+#' [`GET /api/v2/meta/bases/{id_base}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-read) API endpoint.
 #'
-#' @inheritParams tbls
+#' @inheritParams api
+#' @param id_base NocoDB base identifier as returned by [base_id()]. A character scalar.
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family bases
 #' @export
-base <- function(base_id = base_id(),
+base <- function(id_base = base_id(),
                  hostname = pal::pkg_config_val(key = "hostname",
                                                 pkg = this_pkg),
-                 auth_token = pal::pkg_config_val(key = "api_token",
-                                                  pkg = this_pkg)) {
-  checkmate::assert_string(base_id)
+                 email = pal::pkg_config_val(key = "email",
+                                             pkg = this_pkg,
+                                             required = FALSE),
+                 password = pal::pkg_config_val(key = "password",
+                                                pkg = this_pkg,
+                                                required = FALSE),
+                 api_token = pal::pkg_config_val(key = "api_token",
+                                                 pkg = this_pkg,
+                                                 required = FALSE)) {
+  checkmate::assert_string(id_base)
   
-  api(path = glue::glue("api/v2/meta/bases/{base_id}"),
+  api(path = glue::glue("api/v2/meta/bases/{id_base}"),
       method = "GET",
       hostname = hostname,
-      auth_token = auth_token) |>
-    tidy_base_metadata()
+      email = email,
+      password = password,
+      api_token = api_token) |>
+    tidy_resp_data()
 }
 
 #' Create NocoDB base
@@ -258,8 +611,15 @@ create_base <- function(title = pal::pkg_config_val(key = "base_title",
                         show_null_and_empty_in_filter = TRUE,
                         hostname = pal::pkg_config_val(key = "hostname",
                                                        pkg = this_pkg),
-                        auth_token = pal::pkg_config_val(key = "api_token",
-                                                         pkg = this_pkg)) {
+                        email = pal::pkg_config_val(key = "email",
+                                                    pkg = this_pkg,
+                                                    required = FALSE),
+                        password = pal::pkg_config_val(key = "password",
+                                                       pkg = this_pkg,
+                                                       required = FALSE),
+                        api_token = pal::pkg_config_val(key = "api_token",
+                                                        pkg = this_pkg,
+                                                        required = FALSE)) {
   checkmate::assert_string(title)
   checkmate::assert_string(description,
                            null.ok = TRUE)
@@ -276,31 +636,40 @@ create_base <- function(title = pal::pkg_config_val(key = "base_title",
                                       meta = list(iconColor = paste0(color, "ff"),
                                                   showNullAndEmptyInFilter = show_null_and_empty_in_filter))),
       hostname = hostname,
-      auth_token = auth_token) |>
-    tidy_base_metadata() |> 
+      email = email,
+      password = password,
+      api_token = api_token) |>
+    tidy_resp_data() |> 
     invisible()
 }
 
 #' Update NocoDB base metadata
 #'
 #' Updates the specified base on a NocoDB server via its
-#' [`PATCH /api/v2/meta/bases/{base_id}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update) API endpoint.
+#' [`PATCH /api/v2/meta/bases/{id_base}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update) API endpoint.
 #'
 #' @inheritParams create_base
 #' @inheritParams tbls
 #'
-#' @return `base_id`, invisibly.
+#' @return `id_base`, invisibly.
 #' @family bases
 #' @export
 update_base <- function(title = NULL,
                         description = NULL,
                         color = NULL,
                         show_null_and_empty_in_filter = NULL,
-                        base_id = base_id(),
+                        id_base = base_id(),
                         hostname = pal::pkg_config_val(key = "hostname",
                                                        pkg = this_pkg),
-                        auth_token = pal::pkg_config_val(key = "api_token",
-                                                         pkg = this_pkg)) {
+                        email = pal::pkg_config_val(key = "email",
+                                                    pkg = this_pkg,
+                                                    required = FALSE),
+                        password = pal::pkg_config_val(key = "password",
+                                                       pkg = this_pkg,
+                                                       required = FALSE),
+                        api_token = pal::pkg_config_val(key = "api_token",
+                                                        pkg = this_pkg,
+                                                        required = FALSE)) {
   checkmate::assert_string(title,
                            null.ok = TRUE)
   checkmate::assert_string(description,
@@ -311,16 +680,16 @@ update_base <- function(title = NULL,
                            null.ok = TRUE)
   checkmate::assert_flag(show_null_and_empty_in_filter,
                          null.ok = TRUE)
-  checkmate::assert_string(base_id)
+  checkmate::assert_string(id_base)
   
   if (length(c(title, description, color, show_null_and_empty_in_filter)) > 0L) {
     
     # NOTE: if `iconColor` isn't included in `meta`, the NocoDB server fails to parse it; hence we just add the current color if none was provided
     if (is.null(color)) {
-      color <- base(base_id = base_id)$color
+      color <- base(id_base = id_base)$color
     }
     
-    api(path = glue::glue("api/v2/meta/bases/{base_id}"),
+    api(path = glue::glue("api/v2/meta/bases/{id_base}"),
         method = "PATCH",
         body_json = purrr::compact(list(title = title,
                                         description = description,
@@ -330,34 +699,76 @@ update_base <- function(title = NULL,
                                                                                     showNullAndEmptyInFilter = show_null_and_empty_in_filter)),
                                                                 auto_unbox = TRUE))),
         hostname = hostname,
-        auth_token = auth_token)
+        email = email,
+        password = password,
+        api_token = api_token)
   }
   
-  invisible(base_id)
+  invisible(id_base)
 }
 
-#' Get NocoDB tables metadata
+#' Delete NocoDB base
+#'
+#' @inheritParams base
+#'
+#' @return `id_base`, invisibly.
+#' @family bases
+#' @export
+delete_base <- function(id_base,
+                        hostname = pal::pkg_config_val(key = "hostname",
+                                                       pkg = this_pkg),
+                        email = pal::pkg_config_val(key = "email",
+                                                    pkg = this_pkg,
+                                                    required = FALSE),
+                        password = pal::pkg_config_val(key = "password",
+                                                       pkg = this_pkg,
+                                                       required = FALSE),
+                        api_token = pal::pkg_config_val(key = "api_token",
+                                                        pkg = this_pkg,
+                                                        required = FALSE)) {
+  checkmate::assert_string(id_base)
+  
+  api(path = glue::glue("api/v2/meta/bases/{id_base}"),
+      method = "DELETE",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token)
+  
+  invisible(id_base)
+}
+
+#' List NocoDB tables metadata
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about tables in the specified base on a NocoDB server from its
-#' [`GET /api/v2/meta/bases/{base_id}/tables`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-list) API endpoint.
+#' [`GET /api/v2/meta/bases/{id_base}/tables`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-list) API endpoint.
 #'
 #' @inheritParams api
-#' @param base_id NocoDB base identifier as returned by [base_id()]. A character scalar.
+#' @inheritParams base
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family tbls
 #' @export
-tbls <- function(base_id = base_id(),
+tbls <- function(id_base = base_id(),
                  hostname = pal::pkg_config_val(key = "hostname",
                                                 pkg = this_pkg),
-                 auth_token = pal::pkg_config_val(key = "api_token",
-                                                  pkg = this_pkg)) {
-  checkmate::assert_string(base_id)
+                 email = pal::pkg_config_val(key = "email",
+                                             pkg = this_pkg,
+                                             required = FALSE),
+                 password = pal::pkg_config_val(key = "password",
+                                                pkg = this_pkg,
+                                                required = FALSE),
+                 api_token = pal::pkg_config_val(key = "api_token",
+                                                 pkg = this_pkg,
+                                                 required = FALSE)) {
+  checkmate::assert_string(id_base)
   
-  api(path = glue::glue("api/v2/meta/bases/{base_id}/tables"),
+  api(path = glue::glue("api/v2/meta/bases/{id_base}/tables"),
       method = "GET",
       hostname = hostname,
-      auth_token = auth_token) |>
+      email = email,
+      password = password,
+      api_token = api_token) |>
     _$list |>
     tibble::as_tibble() |>
     tidy_date_time_cols()
@@ -374,17 +785,26 @@ tbls <- function(base_id = base_id(),
 #' @family tbls
 #' @export
 tbl_id <- function(tbl_name,
-                   base_id = base_id(),
+                   id_base = base_id(),
                    hostname = pal::pkg_config_val(key = "hostname",
                                                   pkg = this_pkg),
-                   auth_token = pal::pkg_config_val(key = "api_token",
-                                                    pkg = this_pkg)) {
+                   email = pal::pkg_config_val(key = "email",
+                                               pkg = this_pkg,
+                                               required = FALSE),
+                   password = pal::pkg_config_val(key = "password",
+                                                  pkg = this_pkg,
+                                                  required = FALSE),
+                   api_token = pal::pkg_config_val(key = "api_token",
+                                                   pkg = this_pkg,
+                                                   required = FALSE)) {
   tbl_name <- checkmate::assert_string(tbl_name)
   
   result <-
-    tbls(base_id = base_id,
+    tbls(id_base = id_base,
          hostname = hostname,
-         auth_token = auth_token) |>
+         email = email,
+         password = password,
+         api_token = api_token) |>
     dplyr::filter(table_name == !!tbl_name) |>
     dplyr::pull(id)
   
@@ -403,25 +823,34 @@ tbl_id <- function(tbl_name,
 #' Get NocoDB table metadata
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the specified table on a NocoDB server from its
-#' [`GET /api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
+#' [`GET /api/v2/meta/tables/{id_tbl}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
 #'
 #' @inheritParams api
-#' @param tbl_id NocoDB table identifier as returned by [tbl_id()]. A character scalar.
+#' @param id_tbl NocoDB table identifier as returned by [tbl_id()]. A character scalar.
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family tbls
 #' @export
-tbl <- function(tbl_id = tbl_id(),
+tbl <- function(id_tbl,
                 hostname = pal::pkg_config_val(key = "hostname",
                                                pkg = this_pkg),
-                auth_token = pal::pkg_config_val(key = "api_token",
-                                                 pkg = this_pkg)) {
-  checkmate::assert_string(tbl_id)
+                email = pal::pkg_config_val(key = "email",
+                                            pkg = this_pkg,
+                                            required = FALSE),
+                password = pal::pkg_config_val(key = "password",
+                                               pkg = this_pkg,
+                                               required = FALSE),
+                api_token = pal::pkg_config_val(key = "api_token",
+                                                pkg = this_pkg,
+                                                required = FALSE)) {
+  checkmate::assert_string(id_tbl)
   
-  api(path = glue::glue("api/v2/meta/tables/{tbl_id}"),
+  api(path = glue::glue("api/v2/meta/tables/{id_tbl}"),
       method = "GET",
       hostname = hostname,
-      auth_token = auth_token) |>
+      email = email,
+      password = password,
+      api_token = api_token) |>
     purrr::discard_at(at = c("columns", "columnsById")) |>
     purrr::compact() |>
     tibble::as_tibble() |>
@@ -431,33 +860,42 @@ tbl <- function(tbl_id = tbl_id(),
 #' Update NocoDB table metadata
 #'
 #' Updates the metadata of the specified table on a NocoDB server via its
-#' [`PATCH /api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-update) API endpoint.
+#' [`PATCH /api/v2/meta/tables/{id_tbl}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-update) API endpoint.
 #'
 #' @inheritParams tbl
 #' @inheritParams api
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
-#' @return `tbl_id`, invisibly.
+#' @return `id_tbl`, invisibly.
 #' @family tbls
 #' @export
-update_tbl <- function(tbl_id,
+update_tbl <- function(id_tbl,
                        body_json,
                        auto_unbox = TRUE,
                        hostname = pal::pkg_config_val(key = "hostname",
                                                       pkg = this_pkg),
-                       auth_token = pal::pkg_config_val(key = "api_token",
-                                                        pkg = this_pkg),
+                       email = pal::pkg_config_val(key = "email",
+                                                   pkg = this_pkg,
+                                                   required = FALSE),
+                       password = pal::pkg_config_val(key = "password",
+                                                      pkg = this_pkg,
+                                                      required = FALSE),
+                       api_token = pal::pkg_config_val(key = "api_token",
+                                                       pkg = this_pkg,
+                                                       required = FALSE),
                        quiet = FALSE) {
   
-  checkmate::assert_string(tbl_id)
+  checkmate::assert_string(id_tbl)
   checkmate::assert_flag(quiet)
   
-  result <- api(path = glue::glue("api/v2/meta/tables/{tbl_id}"),
+  result <- api(path = glue::glue("api/v2/meta/tables/{id_tbl}"),
                 method = "PATCH",
                 body_json = body_json,
                 auto_unbox = auto_unbox,
                 hostname = hostname,
-                auth_token = auth_token)
+                email = email,
+                password = password,
+                api_token = api_token)
   if (!quiet) {
     if (stringr::str_detect(result$msg, "updated successfully")) {
       cli::cli_alert_success(result$msg)
@@ -466,38 +904,47 @@ update_tbl <- function(tbl_id,
     }
   }
   
-  invisible(tbl_id)
+  invisible(id_tbl)
 }
 
 #' Re-order NocoDB table
 #'
 #' Sets the numeric order of the specified table on a NocoDB server via its
-#' [`POST /api/v2/meta/tables/{tbl_id}/reorder`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-reorder) API endpoint.
+#' [`POST /api/v2/meta/tables/{id_tbl}/reorder`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-reorder) API endpoint.
 #'
 #' Lower numbers place the table higher up in the UI and vice versa. The current order of all the tables in a base can be determined via [tbls()].
 #'
 #' @inheritParams tbl
 #' @param order A number to assign as the table's order "weight".
 #'
-#' @return `tbl_id`, invisibly.
+#' @return `id_tbl`, invisibly.
 #' @family tbls
 #' @export
-reorder_tbl <- function(tbl_id = tbl_id(),
+reorder_tbl <- function(id_tbl,
                         order = 1L,
                         hostname = pal::pkg_config_val(key = "hostname",
                                                        pkg = this_pkg),
-                        auth_token = pal::pkg_config_val(key = "api_token",
-                                                         pkg = this_pkg)) {
-  checkmate::assert_string(tbl_id)
+                        email = pal::pkg_config_val(key = "email",
+                                                    pkg = this_pkg,
+                                                    required = FALSE),
+                        password = pal::pkg_config_val(key = "password",
+                                                       pkg = this_pkg,
+                                                       required = FALSE),
+                        api_token = pal::pkg_config_val(key = "api_token",
+                                                        pkg = this_pkg,
+                                                        required = FALSE)) {
+  checkmate::assert_string(id_tbl)
   checkmate::assert_number(order)
   
-  api(path = glue::glue("api/v2/meta/tables/{tbl_id}/reorder"),
+  api(path = glue::glue("api/v2/meta/tables/{id_tbl}/reorder"),
       method = "POST",
       body_json = list(order = order),
       hostname = hostname,
-      auth_token = auth_token)
+      email = email,
+      password = password,
+      api_token = api_token)
   
-  invisible(tbl_id)
+  invisible(id_tbl)
 }
 
 #' Set metadata for NocoDB tables
@@ -517,11 +964,18 @@ reorder_tbl <- function(tbl_id = tbl_id(),
 #' @family tbls
 #' @export
 set_tbl_metadata <- function(data,
-                             base_id = base_id(),
+                             id_base = base_id(),
                              hostname = pal::pkg_config_val(key = "hostname",
                                                             pkg = this_pkg),
-                             auth_token = pal::pkg_config_val(key = "api_token",
-                                                              pkg = this_pkg),
+                             email = pal::pkg_config_val(key = "email",
+                                                         pkg = this_pkg,
+                                                         required = FALSE),
+                             password = pal::pkg_config_val(key = "password",
+                                                            pkg = this_pkg,
+                                                            required = FALSE),
+                             api_token = pal::pkg_config_val(key = "api_token",
+                                                             pkg = this_pkg,
+                                                             required = FALSE),
                              quiet = FALSE) {
   
   checkmate::assert_data_frame(data,
@@ -537,29 +991,35 @@ set_tbl_metadata <- function(data,
       
       name <- data$name[i]
       icon <- data$meta.icon[i]
-      id <- tbl_id(base_id = base_id,
+      id <- tbl_id(id_base = id_base,
                    tbl_name = name,
                    hostname = hostname,
-                   auth_token = auth_token)
+                   email = email,
+                   password = password,
+                   api_token = api_token)
       
       if (!quiet) {
         pal::cli_progress_step_quick(msg = "Setting order for NocoDB table {.field {name}} to {.val {i}}")
       }
       
-      reorder_tbl(tbl_id = id,
+      reorder_tbl(id_tbl = id,
                   order = i,
                   hostname = hostname,
-                  auth_token = auth_token)
+                  email = email,
+                  password = password,
+                  api_token = api_token)
       
       if (!quiet) {
         pal::cli_progress_step_quick(msg = "Setting icon for NocoDB table {.field {name}} to {.val {icon}}")
       }
       
       if (!is.na(icon)) {
-        update_tbl(tbl_id = id,
+        update_tbl(id_tbl = id,
                    body_json = list(meta = list(icon = icon)),
                    hostname = hostname,
-                   auth_token = auth_token,
+                   email = email,
+                   password = password,
+                   api_token = api_token,
                    quiet = TRUE)
       }
     })
@@ -567,27 +1027,36 @@ set_tbl_metadata <- function(data,
   invisible(NULL)
 }
 
-#' Get NocoDB table columns metadata
+#' List NocoDB table columns metadata
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the columns of the specified table on a NocoDB server from its
-#' [`GET /api/v2/meta/tables/{tbl_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
+#' [`GET /api/v2/meta/tables/{id_tbl}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
 #'
 #' @inheritParams tbl
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family cols
 #' @export
-tbl_cols <- function(tbl_id = tbl_id(),
+tbl_cols <- function(id_tbl,
                      hostname = pal::pkg_config_val(key = "hostname",
                                                     pkg = this_pkg),
-                     auth_token = pal::pkg_config_val(key = "api_token",
-                                                      pkg = this_pkg)) {
-  checkmate::assert_string(tbl_id)
+                     email = pal::pkg_config_val(key = "email",
+                                                 pkg = this_pkg,
+                                                 required = FALSE),
+                     password = pal::pkg_config_val(key = "password",
+                                                    pkg = this_pkg,
+                                                    required = FALSE),
+                     api_token = pal::pkg_config_val(key = "api_token",
+                                                     pkg = this_pkg,
+                                                     required = FALSE)) {
+  checkmate::assert_string(id_tbl)
   
-  api(path = glue::glue("api/v2/meta/tables/{tbl_id}"),
+  api(path = glue::glue("api/v2/meta/tables/{id_tbl}"),
       method = "GET",
       hostname = hostname,
-      auth_token = auth_token) |>
+      email = email,
+      password = password,
+      api_token = api_token) |>
     _$columns |>
     tibble::as_tibble() |>
     tidy_date_time_cols()
@@ -595,7 +1064,7 @@ tbl_cols <- function(tbl_id = tbl_id(),
 
 #' Get NocoDB column ID
 #'
-#' Returns the identifier of the column with the specified `col_name` or `col_title` in the table with the specified `tbl_id` on a NocoDB server.
+#' Returns the identifier of the column with the specified `col_name` or `col_title` in the table with the specified `id_tbl` on a NocoDB server.
 #'
 #' @inheritParams tbl_cols
 #' @param col_name NocoDB column name. A character scalar.
@@ -604,13 +1073,20 @@ tbl_cols <- function(tbl_id = tbl_id(),
 #' @return A character scalar.
 #' @family cols
 #' @export
-tbl_col_id <- function(tbl_id,
+tbl_col_id <- function(id_tbl,
                        col_name = NULL,
                        col_title = NULL,
                        hostname = pal::pkg_config_val(key = "hostname",
                                                       pkg = this_pkg),
-                       auth_token = pal::pkg_config_val(key = "api_token",
-                                                        pkg = this_pkg)) {
+                       email = pal::pkg_config_val(key = "email",
+                                                   pkg = this_pkg,
+                                                   required = FALSE),
+                       password = pal::pkg_config_val(key = "password",
+                                                      pkg = this_pkg,
+                                                      required = FALSE),
+                       api_token = pal::pkg_config_val(key = "api_token",
+                                                       pkg = this_pkg,
+                                                       required = FALSE)) {
   checkmate::assert_string(col_name,
                            null.ok = TRUE)
   checkmate::assert_string(col_title,
@@ -620,9 +1096,11 @@ tbl_col_id <- function(tbl_id,
   }
   
   result <-
-    tbl_cols(tbl_id = tbl_id,
+    tbl_cols(id_tbl = id_tbl,
              hostname = hostname,
-             auth_token = auth_token) |>
+             email = email,
+             password = password,
+             api_token = api_token) |>
     pal::when(is.null(col_name) ~ .,
               ~ dplyr::filter(., column_name == !!col_name)) |>
     pal::when(is.null(col_title) ~ .,
@@ -633,11 +1111,11 @@ tbl_col_id <- function(tbl_id,
   
   if (n_result > 1L) {
     result <- result[1L]
-    cli::cli_warn(paste0("{.val {n_result}} columns with name {.val {col_name}} present in table with identifier {.val {tbl_id}}. The identifier of the ",
+    cli::cli_warn(paste0("{.val {n_result}} columns with name {.val {col_name}} present in table with identifier {.val {id_tbl}}. The identifier of the ",
                          "first column listed in the API response is returned."))
     
   } else if (n_result == 0L) {
-    cli::cli_abort("No column with name {.val {col_name}} present in table with identifier {.val {tbl_id}}.")
+    cli::cli_abort("No column with name {.val {col_name}} present in table with identifier {.val {id_tbl}}.")
   }
   
   result
@@ -646,25 +1124,34 @@ tbl_col_id <- function(tbl_id,
 #' Get NocoDB table column metadata
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the specified column on a NocoDB server from its
-#' [`GET /api/v2/meta/columns/{col_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-get) API endpoint.
+#' [`GET /api/v2/meta/columns/{id_col}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-get) API endpoint.
 #'
 #' @inheritParams api
-#' @param col_id NocoDB column identifier as returned by [tbl_col_id()]. A character scalar.
+#' @param id_col NocoDB column identifier as returned by [tbl_col_id()]. A character scalar.
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family cols
 #' @export
-tbl_col <- function(col_id,
+tbl_col <- function(id_col,
                     hostname = pal::pkg_config_val(key = "hostname",
                                                    pkg = this_pkg),
-                    auth_token = pal::pkg_config_val(key = "api_token",
-                                                     pkg = this_pkg)) {
-  checkmate::assert_string(col_id)
+                    email = pal::pkg_config_val(key = "email",
+                                                pkg = this_pkg,
+                                                required = FALSE),
+                    password = pal::pkg_config_val(key = "password",
+                                                   pkg = this_pkg,
+                                                   required = FALSE),
+                    api_token = pal::pkg_config_val(key = "api_token",
+                                                    pkg = this_pkg,
+                                                    required = FALSE)) {
+  checkmate::assert_string(id_col)
   
-  api(path = glue::glue("api/v2/meta/columns/{col_id}"),
+  api(path = glue::glue("api/v2/meta/columns/{id_col}"),
       method = "GET",
       hostname = hostname,
-      auth_token = auth_token) |>
+      email = email,
+      password = password,
+      api_token = api_token) |>
     purrr::compact() |>
     tibble::as_tibble() |>
     tidy_date_time_cols()
@@ -676,7 +1163,7 @@ tbl_col <- function(col_id,
 #' `r lifecycle::badge("experimental")`
 #'
 #' Updates the metadata of the specified table column on a NocoDB server via its
-#' [`PATCH /api/v2/meta/columns/{col_id}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-update) API endpoint.
+#' [`PATCH /api/v2/meta/columns/{id_col}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-update) API endpoint.
 #'
 #' @inheritParams tbl_col
 #' @inheritParams api
@@ -684,28 +1171,37 @@ tbl_col <- function(col_id,
 #' @return TODO
 #' @family cols
 #' @export
-update_tbl_col <- function(col_id,
+update_tbl_col <- function(id_col,
                            body_json,
                            auto_unbox = TRUE,
                            hostname = pal::pkg_config_val(key = "hostname",
                                                           pkg = this_pkg),
-                           auth_token = pal::pkg_config_val(key = "api_token",
-                                                            pkg = this_pkg)) {
-  checkmate::assert_string(col_id)
+                           email = pal::pkg_config_val(key = "email",
+                                                       pkg = this_pkg,
+                                                       required = FALSE),
+                           password = pal::pkg_config_val(key = "password",
+                                                          pkg = this_pkg,
+                                                          required = FALSE),
+                           api_token = pal::pkg_config_val(key = "api_token",
+                                                           pkg = this_pkg,
+                                                           required = FALSE)) {
+  checkmate::assert_string(id_col)
   
-  api(path = glue::glue("api/v2/meta/columns/{col_id}"),
+  api(path = glue::glue("api/v2/meta/columns/{id_col}"),
       method = "PATCH",
       body_json = body_json,
       auto_unbox = auto_unbox,
       hostname = hostname,
-      auth_token = auth_token) |>
+      email = email,
+      password = password,
+      api_token = api_token) |>
     invisible()
 }
 
 #' Set column as NocoDB display value
 #'
 #' Sets a column as the corresponding table's [display value](https://docs.nocodb.com/fields/display-value/) on a NocoDB server via its
-#' [`POST /api/v2/meta/columns/{col_id}/primary`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-primary-column-set) API
+#' [`POST /api/v2/meta/columns/{id_col}/primary`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-primary-column-set) API
 #' endpoint.
 #'
 #' @inheritParams tbl_col
@@ -713,17 +1209,26 @@ update_tbl_col <- function(col_id,
 #' @return `TRUE`, invisibly.
 #' @family cols
 #' @export
-set_display_val <- function(col_id,
+set_display_val <- function(id_col,
                             hostname = pal::pkg_config_val(key = "hostname",
                                                            pkg = this_pkg),
-                            auth_token = pal::pkg_config_val(key = "api_token",
-                                                             pkg = this_pkg)) {
-  checkmate::assert_string(col_id)
+                            email = pal::pkg_config_val(key = "email",
+                                                        pkg = this_pkg,
+                                                        required = FALSE),
+                            password = pal::pkg_config_val(key = "password",
+                                                           pkg = this_pkg,
+                                                           required = FALSE),
+                            api_token = pal::pkg_config_val(key = "api_token",
+                                                            pkg = this_pkg,
+                                                            required = FALSE)) {
+  checkmate::assert_string(id_col)
   
-  api(path = glue::glue("api/v2/meta/columns/{col_id}/primary"),
+  api(path = glue::glue("api/v2/meta/columns/{id_col}/primary"),
       method = "POST",
       hostname = hostname,
-      auth_token = auth_token) |>
+      email = email,
+      password = password,
+      api_token = api_token) |>
     as.logical() |>
     invisible()
 }
@@ -742,11 +1247,18 @@ set_display_val <- function(col_id,
 #' @family cols
 #' @export
 set_display_vals <- function(data,
-                             base_id = base_id(),
+                             id_base = base_id(),
                              hostname = pal::pkg_config_val(key = "hostname",
                                                             pkg = this_pkg),
-                             auth_token = pal::pkg_config_val(key = "api_token",
-                                                              pkg = this_pkg),
+                             email = pal::pkg_config_val(key = "email",
+                                                         pkg = this_pkg,
+                                                         required = FALSE),
+                             password = pal::pkg_config_val(key = "password",
+                                                            pkg = this_pkg,
+                                                            required = FALSE),
+                             api_token = pal::pkg_config_val(key = "api_token",
+                                                             pkg = this_pkg,
+                                                             required = FALSE),
                              quiet = FALSE) {
   
   checkmate::assert_data_frame(data,
@@ -766,61 +1278,24 @@ set_display_vals <- function(data,
                      pal::cli_progress_step_quick(msg = "Setting NocoDB display column for table {.field {tbl_name}} to {.val {col_name}}")
                    }
                    
-                   tbl_id(base_id = base_id,
+                   tbl_id(id_base = id_base,
                           tbl_name = tbl_name,
                           hostname = hostname,
-                          auth_token = auth_token) |>
+                          email = email,
+                          password = password,
+                          api_token = api_token) |>
                      tbl_col_id(col_name = col_name,
                                 hostname = hostname,
-                                auth_token = auth_token) |>
+                                email = email,
+                                password = password,
+                                api_token = api_token) |>
                      set_display_val(hostname = hostname,
-                                     auth_token = auth_token)
+                                     email = email,
+                                     password = password,
+                                     api_token = api_token)
                  })
   
   invisible(NULL)
-}
-
-#' Create NocoDB user
-#'
-#' Adds a new user account to the specified base on a NocoDB server via its
-#' [`POST /api/v2/meta/bases/{base_id}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-add) API endpoint.
-#'
-#' @param email E-mail address of the new user. A character scalar.
-#' @param role Base role to assign to the new user. One of `r pal::enum_fn_param_defaults(param = "role", fn = "create_user")`.
-#' @param quiet `r pkgsnip::param_lbl("quiet")`
-#' @inheritParams tbls
-#'
-#' @return `email`, invisibly.
-#' @family users
-#' @export
-create_user <- function(email,
-                        role = c("no-access", "commenter", "editor", "guest", "owner", "viewer", "creator"),
-                        base_id = base_id(),
-                        hostname = pal::pkg_config_val(key = "hostname",
-                                                       pkg = this_pkg),
-                        auth_token = pal::pkg_config_val(key = "api_token",
-                                                         pkg = this_pkg),
-                        quiet = FALSE) {
-  
-  checkmate::assert_string(email)
-  role <- rlang::arg_match(role)
-  checkmate::assert_string(base_id)
-  
-  result <- api(path = glue::glue("api/v2/meta/bases/{base_id}/users"),
-                method = "POST",
-                body_json = list(email = email,
-                                 roles = role),
-                hostname = hostname,
-                auth_token = auth_token)
-  if (!quiet) {
-    if (stringr::str_detect(result$msg, "invited successfully")) {
-      cli::cli_alert_success(result$msg)
-    } else {
-      cli::cli_alert_info(result$msg)
-    }
-  }
-  
-  invisible(email)
 }
 
 #' Upload NocoDB attachments
@@ -843,8 +1318,15 @@ upload_attachments <- function(paths,
                                types = mime::guess_type(paths),
                                hostname = pal::pkg_config_val(key = "hostname",
                                                               pkg = this_pkg),
-                               auth_token = pal::pkg_config_val(key = "api_token",
-                                                                pkg = this_pkg),
+                               email = pal::pkg_config_val(key = "email",
+                                                           pkg = this_pkg,
+                                                           required = FALSE),
+                               password = pal::pkg_config_val(key = "password",
+                                                              pkg = this_pkg,
+                                                              required = FALSE),
+                               api_token = pal::pkg_config_val(key = "api_token",
+                                                               pkg = this_pkg,
+                                                               required = FALSE),
                                max_tries = 5L,
                                verbosity = NULL) {
   purrr::walk(paths,
@@ -868,41 +1350,186 @@ upload_attachments <- function(paths,
   # NOTE: the object names don't matter; we just chose `file#` for clarity
   names(files) <- paste0("file", seq_along(paths))
   
-  httr2::request(base_url = assemble_url("api/v2/storage/upload",
-                                         .hostname = hostname)) |>
-    httr2::req_method(method = "POST") |>
-    httr2::req_headers(`xc-token` = auth_token,
-                       .redact = "xc-token") |>
+  req_basic(path = "api/v2/storage/upload",
+            method = "POST",
+            hostname = hostname,
+            max_tries = max_tries) |>
+    req_auth(email = email,
+             password = password,
+             api_token = api_token) |>
     httr2::req_body_multipart(!!!files) |>
-    httr2::req_retry(max_tries = max_tries) |>
-    httr2::req_error(body = \(resp) httr2::resp_body_json(resp)$msg) |>
     httr2::req_perform(verbosity = verbosity) |>
     httr2::resp_body_json() |>
     purrr::map(tibble::as_tibble) |>
     purrr::list_rbind()
 }
 
-#' Get NocoDB users metadata
+#' Get NocoDB user metadata
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about a NocoDB user via the
+#' [`GET /api/v1/auth/user/me`](https://data-apis-v1.nocodb.com/#tag/Auth/operation/auth-me) API endpoint.
+#'
+#' The user is determined based on `api_token` or `email` and `password` (the former takes precedence). The returned columns differ between the two modes of
+#' authentication.
+#'
+#' @inheritParams api
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family users
+#' @export
+user <- function(hostname = pal::pkg_config_val(key = "hostname",
+                                                pkg = this_pkg),
+                 email = pal::pkg_config_val(key = "email",
+                                             pkg = this_pkg,
+                                             required = FALSE),
+                 password = pal::pkg_config_val(key = "password",
+                                                pkg = this_pkg,
+                                                required = FALSE),
+                 api_token = pal::pkg_config_val(key = "api_token",
+                                                 pkg = this_pkg,
+                                                 required = FALSE)) {
+  api(path = "api/v1/auth/user/me",
+      method = "GET",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token) |>
+    tidy_resp_data()
+}
+
+#' List NocoDB base users metadata
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the users in the specified base on a NocoDB server from its
-#' [`GET /api/v2/meta/bases/{base_id}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-list) API endpoint.
+#' [`GET /api/v2/meta/bases/{id_base}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-list) API endpoint.
 #'
 #' @inheritParams tbls
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family users
+#' @family bases
 #' @export
-users <- function(base_id = base_id(),
-                  hostname = pal::pkg_config_val(key = "hostname",
-                                                 pkg = this_pkg),
-                  auth_token = pal::pkg_config_val(key = "api_token",
-                                                   pkg = this_pkg)) {
-  checkmate::assert_string(base_id)
+base_users <- function(id_base = base_id(),
+                       hostname = pal::pkg_config_val(key = "hostname",
+                                                      pkg = this_pkg),
+                       email = pal::pkg_config_val(key = "email",
+                                                   pkg = this_pkg,
+                                                   required = FALSE),
+                       password = pal::pkg_config_val(key = "password",
+                                                      pkg = this_pkg,
+                                                      required = FALSE),
+                       api_token = pal::pkg_config_val(key = "api_token",
+                                                       pkg = this_pkg,
+                                                       required = FALSE)) {
+  checkmate::assert_string(id_base)
   
-  api(path = glue::glue("api/v2/meta/bases/{base_id}/users"),
+  api(path = glue::glue("api/v2/meta/bases/{id_base}/users"),
       method = "GET",
       hostname = hostname,
-      auth_token = auth_token) |>
+      email = email,
+      password = password,
+      api_token = api_token) |>
     _$users$list |>
     tibble::as_tibble()
+}
+
+#' Create NocoDB user
+#'
+#' Adds a new user account to the specified base on a NocoDB server via its
+#' [`POST /api/v2/meta/bases/{id_base}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-add) API endpoint.
+#'
+#' @param email_new E-mail address of the new user. A character scalar.
+#' @param role Base role to assign to the new user. One of `r pal::enum_fn_param_defaults(param = "role", fn = "create_user")`.
+#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#' @inheritParams tbls
+#'
+#' @return `email_new`, invisibly.
+#' @family users
+#' @export
+create_user <- function(email_new,
+                        role = c("no-access", "commenter", "editor", "guest", "owner", "viewer", "creator"),
+                        id_base = base_id(),
+                        hostname = pal::pkg_config_val(key = "hostname",
+                                                       pkg = this_pkg),
+                        email = pal::pkg_config_val(key = "email",
+                                                    pkg = this_pkg,
+                                                    required = FALSE),
+                        password = pal::pkg_config_val(key = "password",
+                                                       pkg = this_pkg,
+                                                       required = FALSE),
+                        api_token = pal::pkg_config_val(key = "api_token",
+                                                        pkg = this_pkg,
+                                                        required = FALSE),
+                        quiet = FALSE) {
+  
+  checkmate::assert_string(email_new)
+  role <- rlang::arg_match(role)
+  checkmate::assert_string(id_base)
+  checkmate::assert_flag(quiet)
+  
+  result <- api(path = glue::glue("api/v2/meta/bases/{id_base}/users"),
+                method = "POST",
+                body_json = list(email = email_new,
+                                 roles = role),
+                hostname = hostname,
+                email = email,
+                password = password,
+                api_token = api_token)
+  if (!quiet) {
+    if (stringr::str_detect(result$msg, "invited successfully")) {
+      cli::cli_alert_success(result$msg)
+    } else {
+      cli::cli_alert_info(result$msg)
+    }
+  }
+  
+  invisible(email_new)
+}
+
+#' Update NocoDB app settings
+#'
+#' Updates the application settings of a NocoDB server via its
+#' [`POST /api/v1/app-settings`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis) API endpoint.
+#'
+#' @inheritParams api
+#' @param invite_only_signup Whether or not to [restrict sign-up of new NocoDB users to
+#'   invitees only](https://docs.nocodb.com/account-settings/oss-specific-details/#enable--disable-signup).
+#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#'
+#' @return `NULL`, invisibly.
+#' @family app_settings
+#' @export
+update_app_settings <- function(invite_only_signup = NULL,
+                                hostname = pal::pkg_config_val(key = "hostname",
+                                                               pkg = this_pkg),
+                                email = pal::pkg_config_val(key = "email",
+                                                            pkg = this_pkg,
+                                                            required = FALSE),
+                                password = pal::pkg_config_val(key = "password",
+                                                               pkg = this_pkg,
+                                                               required = FALSE),
+                                api_token = pal::pkg_config_val(key = "api_token",
+                                                                pkg = this_pkg,
+                                                                required = FALSE),
+                                quiet = FALSE) {
+  
+  checkmate::assert_flag(invite_only_signup,
+                         null.ok = TRUE)
+  checkmate::assert_flag(quiet)
+  
+  if (!is.null(invite_only_signup)) {
+    
+    result <- api(path = "api/v1/app-settings",
+                  method = "POST",
+                  body_json = list(invite_only_signup = invite_only_signup),
+                  hostname = hostname,
+                  email = email,
+                  password = password,
+                  api_token = NULL)
+    
+    if (!quiet) {
+      cli::cli_alert_info(result$msg)
+    }
+  }
+  
+  invisible(NULL)
 }

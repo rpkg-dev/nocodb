@@ -1,87 +1,39 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/index.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/api.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/assemble_url.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/base.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/base_id.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/bases.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/create_base.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/create_user.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/nocodb-package.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/nocodb.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/reorder_tbl.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/set_display_val.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/set_display_vals.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/set_tbl_metadata.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/tbl.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/tbl_col.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/tbl_col_id.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/tbl_cols.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/tbl_id.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/tbls.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/update_base.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/update_tbl.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/update_tbl_col.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/upload_attachments.html</loc>
-  </url>
-  <url>
-    <loc>https://nocodb.rpkg.dev/dev/reference/users.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://nocodb.rpkg.dev/dev/LICENSE.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/authors.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/index.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/api.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/assemble_url.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/base.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/base_id.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/base_users.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/bases.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/create_base.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/create_user.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/decode_access_token.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/delete_base.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/index.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/nocodb-package.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/refresh_access_token.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/reorder_tbl.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/req_auth.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/req_basic.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/set_display_val.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/set_display_vals.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/set_tbl_metadata.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/sign_in.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/sign_out.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/tbl.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/tbl_col.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/tbl_col_id.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/tbl_cols.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/tbl_id.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/tbls.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/update_app_settings.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/update_base.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/update_tbl.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/update_tbl_col.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/upload_attachments.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/user.html</loc></url>
 </urlset>
+

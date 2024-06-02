@@ -5,24 +5,31 @@
 \title{Get NocoDB table column metadata}
 \usage{
 tbl_col(
-  col_id,
+  id_col,
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
-  auth_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg)
+  email = pal::pkg_config_val(key = "email", pkg = this_pkg, required = FALSE),
+  password = pal::pkg_config_val(key = "password", pkg = this_pkg, required = FALSE),
+  api_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg, required = FALSE)
 )
 }
 \arguments{
-\item{col_id}{NocoDB column identifier as returned by \code{\link[=tbl_col_id]{tbl_col_id()}}. A character scalar.}
+\item{id_col}{NocoDB column identifier as returned by \code{\link[=tbl_col_id]{tbl_col_id()}}. A character scalar.}
 
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
 
-\item{auth_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API authentication token}. A character scalar.}
+\item{email}{E-mail address of the NocoDB user to authenticate with.}
+
+\item{password}{Password of the NocoDB user to authenticate with.}
+
+\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
+provided.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
 Returns a \link[tibble:tbl_df-class]{tibble} with metadata about the specified column on a NocoDB server from its
-\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-get}{\code{GET /api/v2/meta/columns/{col_id}}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-get}{\code{GET /api/v2/meta/columns/{id_col}}} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB table columns:

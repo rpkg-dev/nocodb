@@ -5,15 +5,17 @@
 \title{Update NocoDB table column metadata}
 \usage{
 update_tbl_col(
-  col_id,
+  id_col,
   body_json,
   auto_unbox = TRUE,
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
-  auth_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg)
+  email = pal::pkg_config_val(key = "email", pkg = this_pkg, required = FALSE),
+  password = pal::pkg_config_val(key = "password", pkg = this_pkg, required = FALSE),
+  api_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg, required = FALSE)
 )
 }
 \arguments{
-\item{col_id}{NocoDB column identifier as returned by \code{\link[=tbl_col_id]{tbl_col_id()}}. A character scalar.}
+\item{id_col}{NocoDB column identifier as returned by \code{\link[=tbl_col_id]{tbl_col_id()}}. A character scalar.}
 
 \item{body_json}{Data to include as JSON in the HTTP request body. Set to \code{NULL} for an empty body.}
 
@@ -21,7 +23,12 @@ update_tbl_col(
 
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
 
-\item{auth_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API authentication token}. A character scalar.}
+\item{email}{E-mail address of the NocoDB user to authenticate with.}
+
+\item{password}{Password of the NocoDB user to authenticate with.}
+
+\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
+provided.}
 }
 \value{
 TODO
@@ -30,7 +37,7 @@ TODO
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
 Updates the metadata of the specified table column on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-update}{\code{PATCH /api/v2/meta/columns/{col_id}}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-update}{\code{PATCH /api/v2/meta/columns/{id_col}}} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB table columns:
