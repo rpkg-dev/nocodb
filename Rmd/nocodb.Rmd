@@ -397,8 +397,8 @@ Functions to manage authentication against a NocoDB server.
 #' 1. If `api_token` is provided, it is directly added to the request as `xc-token` header.
 #' 2. If `email` is provided, the corresponding user has [signed in][sign_in] before in the *current* \R session and the generated access token is not yet 
 #'    expired, it is re-used.
-#' 3. If `email` is provided, the corresponding user has [signed in][sign_in] before in a *past* \R session and hence there's a cached refresh token available,
-#'    it's used to generate a fresh access token.
+#' 3. If `email` is provided, the corresponding user has [signed in][sign_in] before in a *past* \R session and hence there's a cached refresh token available
+#'    which is not yet expired, it's used to generate a fresh access token.
 #' 4. If `email` and `password` are provided, they are used to newly [sign_in()] the corresponding user.
 #'
 #' Access tokens (sources 2–4 above) are added to the request as `xc-auth` header. Other than the `api_token`, they expire after a certain amount of time,
@@ -412,9 +412,9 @@ Functions to manage authentication against a NocoDB server.
 #'   the *current* \R session has expired meanwhile. This should only happen in rare edge cases since expired access tokens aren't re-used by `req_auth()`.
 #' 
 #' - If you encounter an **`Invalid refresh token`** error, it means the refresh token cached to disk by the last call to [sign_in()] in a *past* \R session has
-#'   expired meanwhile.
+#'   expired meanwhile. This should only happen in rare edge cases since expired refresh tokens aren't re-used by `req_auth()`.
 #' 
-#' The latter two errors should resolve by manually invoking [sign_in()] (until the access/refresh token expiration time limit is reached again).
+#' The latter two errors should resolve by manually invoking [sign_in()].
 #'
 #' If you would like to avoid token expiration errors altogether, consider using an [API token](https://docs.nocodb.com/account-settings/api-tokens/)
 #' (`api_token`) instead of `email` and `password`.
@@ -439,7 +439,6 @@ req_auth <- function(req,
                      api_token = pal::pkg_config_val(key = "api_token",
                                                      pkg = this_pkg,
                                                      required = FALSE)) {
-  
   checkmate::assert_string(email,
                            null.ok = TRUE)
   checkmate::assert_string(password,
