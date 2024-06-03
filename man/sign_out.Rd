@@ -35,17 +35,10 @@ and clears the associated cache on disk.
 Note that the \code{email} address to sign out and the \code{api_token} to authenticate do not necessarily need to belong to the same user.
 }
 \seealso{
-Other common functions:
-\code{\link{api}()},
-\code{\link{refresh_access_token}()},
-\code{\link{req_auth}()},
-\code{\link{req_basic}()},
-\code{\link{sign_in}()}
-
 Other functions to manage NocoDB authentication:
-\code{\link{refresh_access_token}()},
+\code{\link{is_signed_in}()},
+\code{\link{refresh_sign_in}()},
 \code{\link{req_auth}()},
 \code{\link{sign_in}()}
 }
 \concept{auth}
-\concept{common}

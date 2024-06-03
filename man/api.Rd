@@ -70,10 +70,7 @@ See \code{\link[=req_auth]{req_auth()}} for details about the authentication log
 }
 \seealso{
 Other common functions:
-\code{\link{refresh_access_token}()},
 \code{\link{req_auth}()},
-\code{\link{req_basic}()},
-\code{\link{sign_in}()},
-\code{\link{sign_out}()}
+\code{\link{req_basic}()}
 }
 \concept{common}

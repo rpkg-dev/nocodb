@@ -31,10 +31,7 @@ Assembles the HTTP request structure that is common to \emph{all} NocoDB API req
 \seealso{
 Other common functions:
 \code{\link{api}()},
-\code{\link{refresh_access_token}()},
-\code{\link{req_auth}()},
-\code{\link{sign_in}()},
-\code{\link{sign_out}()}
+\code{\link{req_auth}()}
 }
 \concept{common}
 \keyword{internal}

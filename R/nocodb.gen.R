@@ -14,6 +14,7 @@
 
 utils::globalVariables(names = c(".",
                                  # tidyselect fns
+                                 "any_of",
                                  "ends_with",
                                  # other
                                  "display_col",
@@ -42,28 +43,6 @@ assemble_url <- function(...,
   httr2::url_build(url = list(scheme = .scheme,
                               hostname = .hostname,
                               path = fs::path(...)))
-}
-
-#' Decode access token (JWT)
-#'
-#' Decodes an access token that adheres to the [JSON Web Token (JWT)](https://de.wikipedia.org/wiki/JSON_Web_Token) standard and returns it as a
-#' [tibble][tibble::tbl_df]. Only the payload is returned.
-#'
-#' @param x The access token to be decoded.
-#'
-#' @return `r pkgsnip::return_lbl("tibble")`
-#' @keywords internal
-decode_access_token <- function(x) {
-  
-  rlang::check_installed("base64enc",
-                         reason = pal::reason_pkg_required())
-  x |>
-    stringr::str_split_1(pattern = stringr::fixed(".")) |>
-    _[2L] |>
-    base64enc::base64decode() |>
-    rawToChar() |>
-    jsonlite::fromJSON() |>
-    tidy_resp_data()
 }
 
 path_cookie <- function(hostname,
@@ -104,6 +83,90 @@ tidy_date_time_cols <- function(data) {
                                       .fns = \(x) clock::date_time_parse_RFC_3339(x = x,
                                                                                   separator = " ",
                                                                                   offset = "%Ez")))
+}
+
+#' Get user's current access token
+#'
+#' Retrieves the access token belonging to the user with the specified `email` from the corresponding package environment. An access token is only available if
+#' the user has [signed in][sign_in] or [refreshed their access token][refresh_sign_in] during the current \R session.
+#'
+#' @inheritParams sign_in
+#'
+#' @return Access token as a character scalar.
+#' @family access_token
+#' @keywords internal
+#'
+#' @examples
+#' try(
+#'   nocodb:::access_token() |> nocodb:::decode_access_token()
+#' )
+access_token <- function(hostname = pal::pkg_config_val(key = "hostname",
+                                                        pkg = this_pkg),
+                         email = pal::pkg_config_val(key = "email",
+                                                     pkg = this_pkg)) {
+  stateful$access_token[[hostname]][[email]]
+}
+
+#' Store NocoDB access token
+#'
+#' Stores a NocoDB user's access token in the `stateful` package environment.
+#'
+#' @inheritParams sign_in
+#' @param x Access token to be stored.
+#'
+#' @return `x`, invisibly.
+#' @family access_token
+#' @keywords internal
+store_access_token <- function(x,
+                               hostname = pal::pkg_config_val(key = "hostname",
+                                                              pkg = this_pkg),
+                               email = pal::pkg_config_val(key = "email",
+                                                           pkg = this_pkg)) {
+  stateful$access_token[[hostname]][[email]] <- x
+  
+  invisible(x)
+}
+
+#' Decode access token (JWT)
+#'
+#' Decodes an access token that adheres to the [JSON Web Token (JWT)](https://de.wikipedia.org/wiki/JSON_Web_Token) standard and returns it as a
+#' [tibble][tibble::tbl_df]. Only the payload is returned.
+#'
+#' @param x Access token to be decoded.
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family access_token
+#' @keywords internal
+decode_access_token <- function(x) {
+
+  checkmate::assert_string(x)
+  
+  x |>
+    stringr::str_split_1(pattern = stringr::fixed(".")) |>
+    _[2L] |>
+    base64enc::base64decode() |>
+    rawToChar() |>
+    jsonlite::fromJSON() |>
+    tidy_resp_data() |>
+    dplyr::mutate(dplyr::across(.cols = any_of(c("iat", "exp")),
+                                .fns = \(x) as.POSIXct(x = x,
+                                                       tz = "UTC")))
+}
+
+#' Test if access token is expired
+#'
+#' Tests whether an [access token][access_token] is still valid or not.
+#'
+#' @param x Access token to be tested for expiration.
+#'
+#' @return A logical scalar.
+#' @family access_token
+#' @keywords internal
+is_access_token_expired <- function(x) {
+  
+  decode_access_token(x) |>
+    dplyr::pull(exp) |>
+    magrittr::is_less_than(clock::date_now(zone = "UTC"))
 }
 
 this_pkg <- utils::packageName()
@@ -226,10 +289,11 @@ req_basic <- function(path,
 #' and the first one applicable is used:
 #' 
 #' 1. If `api_token` is provided, it is directly added to the request as `xc-token` header.
-#' 2. If `email` is provided and [sign_in()] was called with that `email` before in the *current* R session, the generated access token is re-used.
-#' 3. If `email` is provided and [sign_in()] was called with that `email` before in a *past* R session and hence there's a cached refresh token available, it's
-#'    used to generate a fresh access token.
-#' 4. If `email` and `password` are provided, they are used to newly [sign_in()].
+#' 2. If `email` is provided, the corresponding user has [signed in][sign_in] before in the *current* \R session and the generated access token is not yet 
+#'    expired, it is re-used.
+#' 3. If `email` is provided, the corresponding user has [signed in][sign_in] before in a *past* \R session and hence there's a cached refresh token available,
+#'    it's used to generate a fresh access token.
+#' 4. If `email` and `password` are provided, they are used to newly [sign_in()] the corresponding user.
 #'
 #' Access tokens (sources 2–4 above) are added to the request as `xc-auth` header. Other than the `api_token`, they expire after a certain amount of time,
 #' configured by the NocoDB server via [`NC_JWT_EXPIRES_IN`](https://docs.nocodb.com/getting-started/self-hosted/environment-variables/) (defaults to 10 hours).
@@ -239,14 +303,14 @@ req_basic <- function(path,
 #' - If you *did* provide an `api_token` and encounter an **`Invalid token`** error, it simply means the `api_token` is invalid (e.g. because it was revoked).
 #' 
 #' - If you *didn't* provide an `api_token` and encounter an **`Invalid token`** error, it means the access token generated by the last call to [sign_in()] in
-#'   the *current* R session has expired meanwhile.
+#'   the *current* \R session has expired meanwhile. This should only happen in rare edge cases since expired access tokens aren't re-used by `req_auth()`.
 #' 
-#' - If you encounter an **`Invalid refresh token`** error, it means the refresh token cached to disk by the last call to [sign_in()] in a *past* R session has
+#' - If you encounter an **`Invalid refresh token`** error, it means the refresh token cached to disk by the last call to [sign_in()] in a *past* \R session has
 #'   expired meanwhile.
 #' 
 #' The latter two errors should resolve by manually invoking [sign_in()] (until the access/refresh token expiration time limit is reached again).
 #'
-#' If you would like to avoid token expiration errors, consider using an [API token](https://docs.nocodb.com/account-settings/api-tokens/)
+#' If you would like to avoid token expiration errors altogether, consider using an [API token](https://docs.nocodb.com/account-settings/api-tokens/)
 #' (`api_token`) instead of `email` and `password`.
 #'
 #' @inheritParams httr2::req_method
@@ -284,24 +348,30 @@ req_auth <- function(req,
     return(req)
   }
   
-  # 2. priority: last access token
-  if (!is.null(email) && !is.null(stateful$access_token[[email]])) {
-    req %<>% httr2::req_headers(`xc-auth` = stateful$access_token[[email]],
-                                .redact = "xc-auth")
-    return(req)
-  }
-  
-  # 3. priority: get new access token via refresh token
+  # 2. priority: re-use last access token
   hostname <-
     req |>
     _$url |>
     httr2::url_parse() |>
     _$hostname
-
+  
+  if (!is.null(email) && is_signed_in(hostname = hostname,
+                                      email = email)) {
+    token <- access_token(hostname = hostname,
+                          email = email)
+    
+    if (!is_access_token_expired(token)) {
+      req %<>% httr2::req_headers(`xc-auth` = token,
+                                  .redact = "xc-auth")
+      return(req)
+    }
+  }
+  
+  # 3. priority: get new access token via refresh token
   if (!is.null(email) && fs::file_exists(path = path_cookie(hostname = hostname,
                                                             email = email))) {
-    req %<>% httr2::req_headers(`xc-auth` = refresh_access_token(email = email,
-                                                                 hostname = hostname),
+    req %<>% httr2::req_headers(`xc-auth` = refresh_sign_in(hostname = hostname,
+                                                            email = email),
                                 .redact = "xc-auth")
     return(req)
   }
@@ -326,16 +396,15 @@ req_auth <- function(req,
 #' 
 #' The generated access token expires after a certain amount of time, configured by the NocoDB server via
 #' [`NC_JWT_EXPIRES_IN`](https://docs.nocodb.com/getting-started/self-hosted/environment-variables/) (defaults to 10 hours). To allow for a frictionless user
-#' experience, a separate refresh token is cached to disk in a cookie file (unless `cache_refresh_token = FALSE`). [refresh_access_token()] can then be used to
-#' generate a new access token if necessary. Taken together, this allows for a user to remain authenticated across R session restarts (unless the refresh token 
+#' experience, a separate refresh token is cached to disk in a cookie file (unless `cache_refresh_token = FALSE`). [refresh_sign_in()] can then be used to
+#' generate a new access token if necessary. Taken together, this allows for a user to remain authenticated across \R session restarts (unless the refresh token
 #' has expired or been invalidated by [sign_out()] in the meantime).
 #'
 #' @inheritParams api
 #' @param cache_refresh_token Whether or not to write the refresh token included in the API response to disk (in the OS user cache directory). This allows to
-#'   refresh an expired access token using [refresh_access_token()].
+#'   refresh an expired access token using [refresh_sign_in()].
 #'
 #' @return The generated access token as a character scalar, invisibly.
-#' @family common
 #' @family auth
 #' @export
 sign_in <- function(hostname = pal::pkg_config_val(key = "hostname",
@@ -363,12 +432,11 @@ sign_in <- function(hostname = pal::pkg_config_val(key = "hostname",
     req %<>% httr2::req_cookie_preserve(path = path_cookie)
   }
   
-  stateful$access_token[[email]] <-
-    httr2::req_perform(req = req) |>
+  httr2::req_perform(req = req) |>
     httr2::resp_body_json() |>
-    purrr::list_c(ptype = character())
-  
-  invisible(stateful$access_token[[email]])
+    purrr::list_c(ptype = character()) |>
+    store_access_token(hostname = hostname,
+                       email = email)
 }
 
 #' Sign out NocoDB user
@@ -384,7 +452,6 @@ sign_in <- function(hostname = pal::pkg_config_val(key = "hostname",
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
 #' @return `email`, invisibly.
-#' @family common
 #' @family auth
 #' @export
 sign_out <- function(email = pal::pkg_config_val(key = "email",
@@ -440,9 +507,27 @@ sign_out <- function(email = pal::pkg_config_val(key = "email",
   }
   
   # clear pkg state
-  stateful$access_token[[email]] <- NULL
-  
+  store_access_token(x = NULL,
+                     hostname = hostname,
+                     email = email)
   invisible(email)
+}
+
+#' Test if user is signed in
+#'
+#' Tests whether the user with the specified `email` has signed in during the current \R session. See [sign_in()] for details.
+#'
+#' @inheritParams sign_in
+#'
+#' @return A logical scalar.
+#' @family auth
+#' @keywords internal
+is_signed_in <- function(hostname = pal::pkg_config_val(key = "hostname",
+                                                        pkg = this_pkg),
+                         email = pal::pkg_config_val(key = "email",
+                                                     pkg = this_pkg)) {
+  !is.null(access_token(hostname = hostname,
+                        email = email))
 }
 
 #' Refresh NocoDB access token
@@ -456,24 +541,22 @@ sign_out <- function(email = pal::pkg_config_val(key = "email",
 #' @param email E-mail address of the NocoDB user whose access token is to be refreshed. A character scalar.
 #'
 #' @return The freshly generated access token as a character scalar, invisibly.
-#' @family common
 #' @family auth
 #' @keywords internal
-refresh_access_token <- function(email = pal::pkg_config_val(key = "email",
-                                                             pkg = this_pkg),
-                                 hostname = pal::pkg_config_val(key = "hostname",
-                                                                pkg = this_pkg)) {
-  stateful$access_token[[email]] <-
-    req_basic(path = "api/v1/auth/token/refresh",
-              method = "POST",
-              hostname = hostname) |>
+refresh_sign_in <- function(hostname = pal::pkg_config_val(key = "hostname",
+                                                           pkg = this_pkg),
+                            email = pal::pkg_config_val(key = "email",
+                                                        pkg = this_pkg)) {
+  req_basic(path = "api/v1/auth/token/refresh",
+            method = "POST",
+            hostname = hostname) |>
     httr2::req_cookie_preserve(path = path_cookie(hostname = hostname,
                                                   email = email)) |>
     httr2::req_perform() |>
     httr2::resp_body_json() |>
-    purrr::list_c(ptype = character())
-  
-  invisible(stateful$access_token[[email]])
+    purrr::list_c(ptype = character()) |>
+    store_access_token(hostname = hostname,
+                       email = email)
 }
 
 #' List NocoDB bases metadata

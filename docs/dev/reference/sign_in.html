@@ -55,7 +55,7 @@ POST /api/v1/auth/user/signin API endpoint. An access token
 <dd><p>Password of the NocoDB user to authenticate with.</p></dd>
 <dt id="arg-cache-refresh-token">cache_refresh_token<a class="anchor" aria-label="anchor" href="#arg-cache-refresh-token"></a></dt>
 <dd><p>Whether or not to write the refresh token included in the API response to disk (in the OS user cache directory). This allows to
-refresh an expired access token using <code><a href="refresh_access_token.html">refresh_access_token()</a></code>.</p></dd>
+refresh an expired access token using <code><a href="refresh_sign_in.html">refresh_sign_in()</a></code>.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -65,20 +65,15 @@ refresh an expired access token using <code><a href="refresh_access_token.html">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The generated access token expires after a certain amount of time, configured by the NocoDB server via
 <a href="https://docs.nocodb.com/getting-started/self-hosted/environment-variables/" class="external-link"><code>NC_JWT_EXPIRES_IN</code></a> (defaults to 10 hours). To allow for a frictionless user
-experience, a separate refresh token is cached to disk in a cookie file (unless <code>cache_refresh_token = FALSE</code>). <code><a href="refresh_access_token.html">refresh_access_token()</a></code> can then be used to
-generate a new access token if necessary. Taken together, this allows for a user to remain authenticated across R session restarts (unless the refresh token
+experience, a separate refresh token is cached to disk in a cookie file (unless <code>cache_refresh_token = FALSE</code>). <code><a href="refresh_sign_in.html">refresh_sign_in()</a></code> can then be used to
+generate a new access token if necessary. Taken together, this allows for a user to remain authenticated across <span style="R">R</span> session restarts (unless the refresh token
 has expired or been invalidated by <code><a href="sign_out.html">sign_out()</a></code> in the meantime).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p>Other common functions:
-<code><a href="api.html">api</a>()</code>,
-<code><a href="refresh_access_token.html">refresh_access_token</a>()</code>,
-<code><a href="req_auth.html">req_auth</a>()</code>,
-<code><a href="req_basic.html">req_basic</a>()</code>,
-<code><a href="sign_out.html">sign_out</a>()</code></p>
-<p>Other functions to manage NocoDB authentication:
-<code><a href="refresh_access_token.html">refresh_access_token</a>()</code>,
+    <div class="dont-index"><p>Other functions to manage NocoDB authentication:
+<code><a href="is_signed_in.html">is_signed_in</a>()</code>,
+<code><a href="refresh_sign_in.html">refresh_sign_in</a>()</code>,
 <code><a href="req_auth.html">req_auth</a>()</code>,
 <code><a href="sign_out.html">sign_out</a>()</code></p></div>
     </div>

@@ -7,7 +7,7 @@
 decode_access_token(x)
 }
 \arguments{
-\item{x}{The access token to be decoded.}
+\item{x}{Access token to be decoded.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.
@@ -16,4 +16,11 @@ A \link[tibble:tbl_df-class]{tibble}.
 Decodes an access token that adheres to the \href{https://de.wikipedia.org/wiki/JSON_Web_Token}{JSON Web Token (JWT)} standard and returns it as a
 \link[tibble:tbl_df-class]{tibble}. Only the payload is returned.
 }
+\seealso{
+Other access_token: 
+\code{\link{access_token}()},
+\code{\link{is_access_token_expired}()},
+\code{\link{store_access_token}()}
+}
+\concept{access_token}
 \keyword{internal}

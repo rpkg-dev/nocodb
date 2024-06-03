@@ -19,7 +19,7 @@ sign_in(
 \item{password}{Password of the NocoDB user to authenticate with.}
 
 \item{cache_refresh_token}{Whether or not to write the refresh token included in the API response to disk (in the OS user cache directory). This allows to
-refresh an expired access token using \code{\link[=refresh_access_token]{refresh_access_token()}}.}
+refresh an expired access token using \code{\link[=refresh_sign_in]{refresh_sign_in()}}.}
 }
 \value{
 The generated access token as a character scalar, invisibly.
@@ -32,22 +32,15 @@ Authenticates a NocoDB user by \code{email} and \code{password} via the
 \details{
 The generated access token expires after a certain amount of time, configured by the NocoDB server via
 \href{https://docs.nocodb.com/getting-started/self-hosted/environment-variables/}{\code{NC_JWT_EXPIRES_IN}} (defaults to 10 hours). To allow for a frictionless user
-experience, a separate refresh token is cached to disk in a cookie file (unless \code{cache_refresh_token = FALSE}). \code{\link[=refresh_access_token]{refresh_access_token()}} can then be used to
-generate a new access token if necessary. Taken together, this allows for a user to remain authenticated across R session restarts (unless the refresh token
+experience, a separate refresh token is cached to disk in a cookie file (unless \code{cache_refresh_token = FALSE}). \code{\link[=refresh_sign_in]{refresh_sign_in()}} can then be used to
+generate a new access token if necessary. Taken together, this allows for a user to remain authenticated across \R session restarts (unless the refresh token
 has expired or been invalidated by \code{\link[=sign_out]{sign_out()}} in the meantime).
 }
 \seealso{
-Other common functions:
-\code{\link{api}()},
-\code{\link{refresh_access_token}()},
-\code{\link{req_auth}()},
-\code{\link{req_basic}()},
-\code{\link{sign_out}()}
-
 Other functions to manage NocoDB authentication:
-\code{\link{refresh_access_token}()},
+\code{\link{is_signed_in}()},
+\code{\link{refresh_sign_in}()},
 \code{\link{req_auth}()},
 \code{\link{sign_out}()}
 }
 \concept{auth}
-\concept{common}
