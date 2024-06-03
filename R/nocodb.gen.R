@@ -370,10 +370,22 @@ req_auth <- function(req,
   # 3. priority: get new access token via refresh token
   if (!is.null(email) && fs::file_exists(path = path_cookie(hostname = hostname,
                                                             email = email))) {
-    req %<>% httr2::req_headers(`xc-auth` = refresh_sign_in(hostname = hostname,
-                                                            email = email),
-                                .redact = "xc-auth")
-    return(req)
+    token <- tryCatch(expr = refresh_sign_in(hostname = hostname,
+                                             email = email),
+                      httr2_http_400 = \(cnd) {
+                        # properly handle expired token which is simply reported as "invalid"
+                        if (stringr::str_detect(string = cnd$message,
+                                                pattern = "(?i)invalid refresh token")) {
+                          return(NULL)
+                        }
+                        rlang::cnd_signal(cnd = cnd)
+                      })
+    
+    if (!is.null(token)) {
+      req %<>% httr2::req_headers(`xc-auth` = ,
+                                  .redact = "xc-auth")
+      return(req)
+    }
   }
   
   # 4. priority: sign in to get new access token
