@@ -57,15 +57,13 @@ decode_access_token <- function(x) {
   
   rlang::check_installed("base64enc",
                          reason = pal::reason_pkg_required())
-  
-  stringr::str_split_1(pattern = stringr::fixed(".")) |>
+  x |>
+    stringr::str_split_1(pattern = stringr::fixed(".")) |>
     _[2L] |>
     base64enc::base64decode() |>
     rawToChar() |>
     jsonlite::fromJSON() |>
-    purrr::modify_if(.p = \(x) length(x) > 1L,
-                     .f = \(x) list(x)) |>
-    tibble::as_tibble_row()
+    tidy_resp_data()
 }
 
 path_cookie <- function(hostname,
@@ -630,15 +628,15 @@ create_base <- function(title = pal::pkg_config_val(key = "base_title",
   
   api(path = "api/v2/meta/bases",
       method = "POST",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token,
       body_json = purrr::compact(list(title = title,
                                       description = description,
                                       color = color,
                                       meta = list(iconColor = paste0(color, "ff"),
-                                                  showNullAndEmptyInFilter = show_null_and_empty_in_filter))),
-      hostname = hostname,
-      email = email,
-      password = password,
-      api_token = api_token) |>
+                                                  showNullAndEmptyInFilter = show_null_and_empty_in_filter)))) |>
     tidy_resp_data() |> 
     invisible()
 }
@@ -691,23 +689,26 @@ update_base <- function(title = NULL,
     
     api(path = glue::glue("api/v2/meta/bases/{id_base}"),
         method = "PATCH",
+        hostname = hostname,
+        email = email,
+        password = password,
+        api_token = api_token,
         body_json = purrr::compact(list(title = title,
                                         description = description,
                                         color = color,
                                         # NOTE: we must send `meta` as a *string* of JSON, see TODO above
                                         meta = jsonlite::toJSON(purrr::compact(list(iconColor = color,
                                                                                     showNullAndEmptyInFilter = show_null_and_empty_in_filter)),
-                                                                auto_unbox = TRUE))),
-        hostname = hostname,
-        email = email,
-        password = password,
-        api_token = api_token)
+                                                                auto_unbox = TRUE))))
   }
   
   invisible(id_base)
 }
 
 #' Delete NocoDB base
+#'
+#' Deletes the specified base on a NocoDB server via its
+#' [`DELETE /api/v2/meta/bases/{id_base}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-delete) API endpoint.
 #'
 #' @inheritParams base
 #'
@@ -736,6 +737,220 @@ delete_base <- function(id_base,
       api_token = api_token)
   
   invisible(id_base)
+}
+
+#' List data sources metadata
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about all data sources of the specified base on a NocoDB server from its
+#' [`GET /api/v2/meta/bases/{id_base}/sources`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-list) API endpoint.
+#'
+#' @inheritParams base
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family data_src
+#' @export
+data_srcs <- function(id_base = base_id(),
+                      hostname = pal::pkg_config_val(key = "hostname",
+                                                     pkg = this_pkg),
+                      email = pal::pkg_config_val(key = "email",
+                                                  pkg = this_pkg,
+                                                  required = FALSE),
+                      password = pal::pkg_config_val(key = "password",
+                                                     pkg = this_pkg,
+                                                     required = FALSE),
+                      api_token = pal::pkg_config_val(key = "api_token",
+                                                      pkg = this_pkg,
+                                                      required = FALSE)) {
+  checkmate::assert_string(id_base)
+  
+  api(path = glue::glue("api/v2/meta/bases/{id_base}/sources"),
+      method = "GET",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token) |>
+    _$list |>
+    tibble::as_tibble() |>
+    tidy_date_time_cols()
+}
+
+#' Get NocoDB data source ID
+#'
+#' Returns the identifier of the data source with the specified alias in the specified base on a NocoDB server.
+#'
+#' @inheritParams base
+#' @param alias Alias of the data source. A character scalar.
+#'
+#' @return Data source identifier as a character scalar.
+#' @family data_src
+#' @export
+data_src_id <- function(alias,
+                        id_base = base_id(),
+                        hostname = pal::pkg_config_val(key = "hostname",
+                                                       pkg = this_pkg),
+                        email = pal::pkg_config_val(key = "email",
+                                                    pkg = this_pkg,
+                                                    required = FALSE),
+                        password = pal::pkg_config_val(key = "password",
+                                                       pkg = this_pkg,
+                                                       required = FALSE),
+                        api_token = pal::pkg_config_val(key = "api_token",
+                                                        pkg = this_pkg,
+                                                        required = FALSE)) {
+  checkmate::assert_string(alias)
+  
+  result <-
+    data_srcs(id_base = id_base,
+              hostname = hostname,
+              email = email,
+              password = password,
+              api_token = api_token) |>
+    dplyr::filter(alias == !!alias) |>
+    dplyr::pull(id)
+  
+  n_result <- length(result)
+  
+  if (n_result > 1L) {
+    result <- result[1L]
+    cli::cli_warn("{.val {n_result}} data sources with alias {.val {alias}} present. The identifier of the first one listed in the API response is returned.")
+  } else if (n_result == 0L) {
+    cli::cli_abort("No data source found with alias {.val {alias}} in the {.val {id_base}} base on the {.field {hostname}} NocoDB server.")
+  }
+  
+  result
+}
+
+#' Get NocoDB data source metadata
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about the specified data source in the specified base on a NocoDB server from its
+#' [`GET /api/v2/meta/bases/{id_base}/sources/{id_source}`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-read) API endpoint.
+#'
+#' @inheritParams base
+#' @param id_source NocoDB data source identifier as returned by [data_src_id()]. A character scalar.
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family data_src
+#' @export
+data_src <- function(id_source,
+                     id_base = base_id(),
+                     hostname = pal::pkg_config_val(key = "hostname",
+                                                    pkg = this_pkg),
+                     email = pal::pkg_config_val(key = "email",
+                                                 pkg = this_pkg,
+                                                 required = FALSE),
+                     password = pal::pkg_config_val(key = "password",
+                                                    pkg = this_pkg,
+                                                    required = FALSE),
+                     api_token = pal::pkg_config_val(key = "api_token",
+                                                     pkg = this_pkg,
+                                                     required = FALSE)) {
+  checkmate::assert_string(id_source)
+  checkmate::assert_string(id_base)
+  
+  api(path = glue::glue("api/v2/meta/bases/{id_base}/sources/{id_source}"),
+      method = "GET",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token) |>
+    tidy_resp_data()
+}
+
+#' Create NocoDB data source
+#'
+#' Adds a data source to the specified base on a NocoDB server via its
+#' [`POST /api/v2/meta/bases/{id_base}/sources`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-create) API endpoint.
+#'
+#' @inheritParams data_src_id
+#' @param type Type of the data source to add. One of `r pal::enum_fn_param_defaults(param = "type", fn = "create_data_src")`.
+#' @param config Type-specific configuration for the data source to add. A list.
+#' @param inflection_column Type of inflection to apply for column names in the data source to add. One of
+#'   `r pal::enum_fn_param_defaults(param = "inflection_column", fn = "create_data_src")`.
+#' @param inflection_table Type of inflection to apply for table names in the data source to add. One of
+#'   `r pal::enum_fn_param_defaults(param = "inflection_column", fn = "create_data_src")`.
+#' @param enabled Whether the added data source is enabled or disabled.
+#'
+#' @return `alias`, invisibly.
+#' @family data_src
+#' @export
+create_data_src <- function(alias = NULL,
+                            type = c("mssql", "mysql", "pg", "sqlite3"),
+                            config = NULL,
+                            inflection_column = c("none", "camelize"),
+                            inflection_table = c("none", "camelize"),
+                            enabled = TRUE,
+                            id_base = base_id(),
+                            hostname = pal::pkg_config_val(key = "hostname",
+                                                           pkg = this_pkg),
+                            email = pal::pkg_config_val(key = "email",
+                                                        pkg = this_pkg,
+                                                        required = FALSE),
+                            password = pal::pkg_config_val(key = "password",
+                                                           pkg = this_pkg,
+                                                           required = FALSE),
+                            api_token = pal::pkg_config_val(key = "api_token",
+                                                            pkg = this_pkg,
+                                                            required = FALSE)) {
+  checkmate::assert_string(alias,
+                           null.ok = TRUE)
+  type <- rlang::arg_match(type)
+  checkmate::assert_list(config,
+                         null.ok = TRUE,
+                         any.missing = FALSE)
+  inflection_column <- rlang::arg_match(inflection_column)
+  inflection_table <- rlang::arg_match(inflection_table)
+  checkmate::assert_flag(enabled)
+  checkmate::assert_string(id_base)
+  
+  api(path = glue::glue("api/v2/meta/bases/{id_base}/sources"),
+      method = "POST",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token,
+      body_json = purrr::compact(list(alias = alias,
+                                      type = type,
+                                      config = config,
+                                      inflection_column = inflection_column,
+                                      inflection_table = inflection_table,
+                                      enabled = enabled)))
+  invisible(alias)
+}
+
+#' Delete NocoDB data source
+#'
+#' Deletes the specified data source from the specified base on a NocoDB server via its
+#' [`DELETE /api/v2/meta/bases/{id_base}/sources/{id_source}`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-delete) API endpoint.
+#'
+#' @inheritParams data_src
+#'
+#' @return `id_source`, invisibly.
+#' @family data_src
+#' @export
+delete_data_src <- function(id_source,
+                            id_base = base_id(),
+                            hostname = pal::pkg_config_val(key = "hostname",
+                                                           pkg = this_pkg),
+                            email = pal::pkg_config_val(key = "email",
+                                                        pkg = this_pkg,
+                                                        required = FALSE),
+                            password = pal::pkg_config_val(key = "password",
+                                                           pkg = this_pkg,
+                                                           required = FALSE),
+                            api_token = pal::pkg_config_val(key = "api_token",
+                                                            pkg = this_pkg,
+                                                            required = FALSE)) {
+  checkmate::assert_string(id_source)
+  checkmate::assert_string(id_base)
+  
+  api(path = glue::glue("api/v2/meta/bases/{id_base}/sources/{id_source}"),
+      method = "DELETE",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token)
+  
+  invisible(id_source)
 }
 
 #' List NocoDB tables metadata
@@ -797,7 +1012,7 @@ tbl_id <- function(tbl_name,
                    api_token = pal::pkg_config_val(key = "api_token",
                                                    pkg = this_pkg,
                                                    required = FALSE)) {
-  tbl_name <- checkmate::assert_string(tbl_name)
+  checkmate::assert_string(tbl_name)
   
   result <-
     tbls(id_base = id_base,
@@ -890,12 +1105,12 @@ update_tbl <- function(id_tbl,
   
   result <- api(path = glue::glue("api/v2/meta/tables/{id_tbl}"),
                 method = "PATCH",
-                body_json = body_json,
                 auto_unbox = auto_unbox,
                 hostname = hostname,
                 email = email,
                 password = password,
-                api_token = api_token)
+                api_token = api_token,
+                body_json = body_json)
   if (!quiet) {
     if (stringr::str_detect(result$msg, "updated successfully")) {
       cli::cli_alert_success(result$msg)
@@ -938,11 +1153,11 @@ reorder_tbl <- function(id_tbl,
   
   api(path = glue::glue("api/v2/meta/tables/{id_tbl}/reorder"),
       method = "POST",
-      body_json = list(order = order),
       hostname = hostname,
       email = email,
       password = password,
-      api_token = api_token)
+      api_token = api_token,
+      body_json = list(order = order))
   
   invisible(id_tbl)
 }
@@ -1062,7 +1277,7 @@ tbl_cols <- function(id_tbl,
     tidy_date_time_cols()
 }
 
-#' Get NocoDB column ID
+#' Get NocoDB table column ID
 #'
 #' Returns the identifier of the column with the specified `col_name` or `col_title` in the table with the specified `id_tbl` on a NocoDB server.
 #'
@@ -1189,12 +1404,12 @@ update_tbl_col <- function(id_col,
   
   api(path = glue::glue("api/v2/meta/columns/{id_col}"),
       method = "PATCH",
-      body_json = body_json,
       auto_unbox = auto_unbox,
       hostname = hostname,
       email = email,
       password = password,
-      api_token = api_token) |>
+      api_token = api_token,
+      body_json = body_json) |>
     invisible()
 }
 
@@ -1468,12 +1683,12 @@ create_user <- function(email_new,
   
   result <- api(path = glue::glue("api/v2/meta/bases/{id_base}/users"),
                 method = "POST",
-                body_json = list(email = email_new,
-                                 roles = role),
                 hostname = hostname,
                 email = email,
                 password = password,
-                api_token = api_token)
+                api_token = api_token,
+                body_json = list(email = email_new,
+                                 roles = role))
   if (!quiet) {
     if (stringr::str_detect(result$msg, "invited successfully")) {
       cli::cli_alert_success(result$msg)
@@ -1483,6 +1698,36 @@ create_user <- function(email_new,
   }
   
   invisible(email_new)
+}
+
+#' List NocoDB app settings
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about the application settings of a NocoDB server via its
+#' [`GET /api/v2/meta/nocodb/info`](https://meta-apis-v2.nocodb.com/#tag/Utils/operation/utils-app-info) API endpoint.
+#'
+#' @inheritParams api
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family app_settings
+#' @export
+app_settings <- function(hostname = pal::pkg_config_val(key = "hostname",
+                                                        pkg = this_pkg),
+                         email = pal::pkg_config_val(key = "email",
+                                                     pkg = this_pkg,
+                                                     required = FALSE),
+                         password = pal::pkg_config_val(key = "password",
+                                                        pkg = this_pkg,
+                                                        required = FALSE),
+                         api_token = pal::pkg_config_val(key = "api_token",
+                                                         pkg = this_pkg,
+                                                         required = FALSE)) {
+  api(path = "api/v2/meta/nocodb/info",
+      method = "GET",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token) |>
+    tidy_resp_data()
 }
 
 #' Update NocoDB app settings
@@ -1520,11 +1765,11 @@ update_app_settings <- function(invite_only_signup = NULL,
     
     result <- api(path = "api/v1/app-settings",
                   method = "POST",
-                  body_json = list(invite_only_signup = invite_only_signup),
                   hostname = hostname,
                   email = email,
                   password = password,
-                  api_token = NULL)
+                  api_token = NULL,
+                  body_json = list(invite_only_signup = invite_only_signup))
     
     if (!quiet) {
       cli::cli_alert_info(result$msg)

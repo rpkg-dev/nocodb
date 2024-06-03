@@ -2,7 +2,7 @@
 % Please edit documentation in R/nocodb.gen.R
 \name{tbl_col_id}
 \alias{tbl_col_id}
-\title{Get NocoDB column ID}
+\title{Get NocoDB table column ID}
 \usage{
 tbl_col_id(
   id_tbl,

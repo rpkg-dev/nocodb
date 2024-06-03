@@ -22,6 +22,14 @@ reference:
   - create_base
   - update_base
   - delete_base
+- subtitle: Data sources
+  desc: Functions to manage NocoDB [data sources](https://docs.nocodb.com/category/data-sources).
+- contents:
+  - data_srcs
+  - data_src_id
+  - data_src
+  - create_data_src
+  - delete_data_src
 - subtitle: Tables
   desc: Functions to manage NocoDB [tables](https://docs.nocodb.com/category/tables).
 - contents:
@@ -52,4 +60,6 @@ reference:
   - create_user
 - subtitle: App settings
   desc: Functions to manage NocoDB's [application settings](https://docs.nocodb.com/account-settings/oss-specific-details).
-- contents: update_app_settings
+- contents:
+  - app_settings
+  - update_app_settings

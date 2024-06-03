@@ -34,4 +34,8 @@ provided.}
 Updates the application settings of a NocoDB server via its
 \href{https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis}{\code{POST /api/v1/app-settings}} API endpoint.
 }
+\seealso{
+Other functions to manage NocoDB's application settings:
+\code{\link{app_settings}()}
+}
 \concept{app_settings}
