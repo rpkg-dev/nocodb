@@ -382,7 +382,7 @@ req_auth <- function(req,
                       })
     
     if (!is.null(token)) {
-      req %<>% httr2::req_headers(`xc-auth` = ,
+      req %<>% httr2::req_headers(`xc-auth` = token,
                                   .redact = "xc-auth")
       return(req)
     }
