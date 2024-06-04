@@ -8,7 +8,7 @@ sign_up_user(
   email_new,
   password_new,
   invite_token = NULL,
-  subscribe_to_newsletter = TRUE,
+  subscribe_to_newsletter = FALSE,
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
   email = pal::pkg_config_val(key = "email", pkg = this_pkg, required = FALSE),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg, required = FALSE),
