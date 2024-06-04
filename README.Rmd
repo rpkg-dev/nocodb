@@ -24,7 +24,8 @@ library(magrittr,
 pal::cat_lines(paste0("[![CRAN Status](https://r-pkg.org/badges/version/", pal::desc_value(key = "Package"), ")](https://cran.r-project.org/package=",
                       pal::desc_value(key = "Package"), "){.pkgdown-release}"),
                "",
-               pal::desc_value("Description"))
+               pal::desc_value("Description") |> stringr::str_replace_all(pattern = "(\\w+) \\((https?://.+?)\\)",
+                                                                          replacement = "[\\1](\\2)"))
 ```
 
 ```{r}

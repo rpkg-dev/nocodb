@@ -2,7 +2,7 @@
 
 [![CRAN Status](https://r-pkg.org/badges/version/nocodb)](https://cran.r-project.org/package=nocodb){.pkgdown-release}
 
-nocodb allows to work with NocoDB's RESTful APIs from R. NocoDB is a web application that provides an intuitive spreadsheet-like front-end for relational databases, see https://nocodb.com.
+nocodb allows to work with NocoDB's RESTful APIs from R. [NocoDB](https://nocodb.com) is a web application that provides an intuitive spreadsheet-like front-end for relational databases.
 
 ## Installation
 

@@ -5,9 +5,8 @@ Authors@R:
     person("Salim", "Brüggemann", , "salim-b@pm.me", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-5329-5987"))
 Description: nocodb allows to work with NocoDB's RESTful APIs from R.
-    NocoDB is a web application that provides an intuitive
-    spreadsheet-like front-end for relational databases, see
-    https://nocodb.com.
+    NocoDB (https://nocodb.com) is a web application that provides an
+    intuitive spreadsheet-like front-end for relational databases.
 License: AGPL (>= 3)
 URL: https://nocodb.rpkg.dev, https://gitlab.com/rpkg.dev/nocodb
 BugReports: https://gitlab.com/rpkg.dev/nocodb/issues
