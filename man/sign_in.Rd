@@ -41,6 +41,7 @@ Other functions to manage NocoDB authentication:
 \code{\link{is_signed_in}()},
 \code{\link{refresh_sign_in}()},
 \code{\link{req_auth}()},
-\code{\link{sign_out}()}
+\code{\link{sign_out}()},
+\code{\link{sign_up_user}()}
 }
 \concept{auth}

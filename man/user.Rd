@@ -35,6 +35,9 @@ authentication.
 \seealso{
 Other functions to manage NocoDB users:
 \code{\link{base_users}()},
-\code{\link{create_user}()}
+\code{\link{invite_user}()},
+\code{\link{sign_up_user}()},
+\code{\link{update_base_user}()},
+\code{\link{user_id}()}
 }
 \concept{users}

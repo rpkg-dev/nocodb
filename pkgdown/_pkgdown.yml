@@ -56,8 +56,11 @@ reference:
   desc: Functions to manage NocoDB [users](https://docs.nocodb.com/collaboration/oss-specific-details/#user-management).
 - contents:
   - user
+  - user_id
   - base_users
-  - create_user
+  - update_base_user
+  - invite_user
+  - sign_up_user
 - subtitle: App settings
   desc: Functions to manage NocoDB's [application settings](https://docs.nocodb.com/account-settings/oss-specific-details).
 - contents:

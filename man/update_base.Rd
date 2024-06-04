@@ -17,9 +17,9 @@ update_base(
 )
 }
 \arguments{
-\item{title}{Title of the new base. A character scalar.}
+\item{title}{New base title. A character scalar.}
 
-\item{description}{Description of the new base. A character scalar.}
+\item{description}{Base description. A character scalar.}
 
 \item{color}{Color to use for the base icon. A hexadecimal color code like "#36BFFF".}
 
