@@ -5,7 +5,7 @@
 \title{Get NocoDB data source}
 \usage{
 data_src(
-  id_source,
+  id_data_src,
   id_base = base_id(),
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
   email = pal::pkg_config_val(key = "email", pkg = this_pkg, required = FALSE),
@@ -14,7 +14,7 @@ data_src(
 )
 }
 \arguments{
-\item{id_source}{NocoDB data source identifier as returned by \code{\link[=data_src_id]{data_src_id()}}. A character scalar.}
+\item{id_data_src}{NocoDB data source identifier as returned by \code{\link[=data_src_id]{data_src_id()}}. A character scalar.}
 
 \item{id_base}{NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}. A character scalar.}
 
@@ -32,7 +32,7 @@ A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
 Returns a \link[tibble:tbl_df-class]{tibble} with metadata about the specified data source in the specified base on a NocoDB server from its
-\href{https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-read}{\code{GET /api/v2/meta/bases/{id_base}/sources/{id_source}}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-read}{\code{GET /api/v2/meta/bases/{id_base}/sources/{id_data_src}}} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB base data sources:
