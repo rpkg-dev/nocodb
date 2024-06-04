@@ -2511,6 +2511,8 @@ NOTES:
 #' Updates the application settings of a NocoDB server via its
 #' [`POST /api/v1/app-settings`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis) API endpoint.
 #'
+#' This API endpoint does not support authentication via [API tokens](https://docs.nocodb.com/account-settings/api-tokens/).
+#'
 #' @inheritParams api
 #' @param invite_only_signup Whether or not to [restrict sign-up of new NocoDB users to
 #'   invitees only](https://docs.nocodb.com/account-settings/oss-specific-details/#enable--disable-signup).
@@ -2528,13 +2530,11 @@ update_app_settings <- function(invite_only_signup = NULL,
                                 password = pal::pkg_config_val(key = "password",
                                                                pkg = this_pkg,
                                                                required = FALSE),
-                                api_token = pal::pkg_config_val(key = "api_token",
-                                                                pkg = this_pkg,
-                                                                required = FALSE),
                                 quiet = FALSE) {
-  
   checkmate::assert_flag(invite_only_signup,
                          null.ok = TRUE)
+  checkmate::assert_string(email)
+  checkmate::assert_string(password)
   checkmate::assert_flag(quiet)
   
   if (!is.null(invite_only_signup)) {

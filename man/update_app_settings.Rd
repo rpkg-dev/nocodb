@@ -9,7 +9,6 @@ update_app_settings(
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
   email = pal::pkg_config_val(key = "email", pkg = this_pkg, required = FALSE),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg, required = FALSE),
-  api_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg, required = FALSE),
   quiet = FALSE
 )
 }
@@ -22,9 +21,6 @@ update_app_settings(
 
 \item{password}{Password of the NocoDB user to authenticate with.}
 
-\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
-provided.}
-
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }
 \value{
@@ -33,6 +29,9 @@ provided.}
 \description{
 Updates the application settings of a NocoDB server via its
 \href{https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis}{\code{POST /api/v1/app-settings}} API endpoint.
+}
+\details{
+This API endpoint does not support authentication via \href{https://docs.nocodb.com/account-settings/api-tokens/}{API tokens}.
 }
 \seealso{
 Other functions to manage NocoDB's application settings:
