@@ -570,7 +570,7 @@ refresh_sign_in <- function(hostname = pal::pkg_config_val(key = "hostname",
                        email = email)
 }
 
-#' List NocoDB bases metadata
+#' List NocoDB bases
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about all bases on a NocoDB server from its
 #' [`GET /api/v2/meta/bases`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-list) API endpoint.
@@ -647,7 +647,7 @@ base_id <- function(title = pal::pkg_config_val(key = "base_title",
   result
 }
 
-#' Get NocoDB base metadata
+#' Get NocoDB base
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the specified base on a NocoDB server from its
 #' [`GET /api/v2/meta/bases/{id_base}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-read) API endpoint.
@@ -735,7 +735,7 @@ create_base <- function(title = pal::pkg_config_val(key = "base_title",
     invisible()
 }
 
-#' Update NocoDB base metadata
+#' Update NocoDB base
 #'
 #' Updates the specified base on a NocoDB server via its
 #' [`PATCH /api/v2/meta/bases/{id_base}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update) API endpoint.
@@ -834,7 +834,7 @@ delete_base <- function(id_base,
   invisible(id_base)
 }
 
-#' List data sources metadata
+#' List NocoDB data sources
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about all data sources of the specified base on a NocoDB server from its
 #' [`GET /api/v2/meta/bases/{id_base}/sources`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-list) API endpoint.
@@ -915,7 +915,7 @@ data_src_id <- function(alias,
   result
 }
 
-#' Get NocoDB data source metadata
+#' Get NocoDB data source
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the specified data source in the specified base on a NocoDB server from its
 #' [`GET /api/v2/meta/bases/{id_base}/sources/{id_source}`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-read) API endpoint.
@@ -1048,7 +1048,7 @@ delete_data_src <- function(id_source,
   invisible(id_source)
 }
 
-#' List NocoDB tables metadata
+#' List NocoDB tables
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about tables in the specified base on a NocoDB server from its
 #' [`GET /api/v2/meta/bases/{id_base}/tables`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-list) API endpoint.
@@ -1129,7 +1129,7 @@ tbl_id <- function(tbl_name,
   result
 }
 
-#' Get NocoDB table metadata
+#' Get NocoDB table
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the specified table on a NocoDB server from its
 #' [`GET /api/v2/meta/tables/{id_tbl}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
@@ -1166,7 +1166,7 @@ tbl <- function(id_tbl,
     tidy_date_time_cols()
 }
 
-#' Update NocoDB table metadata
+#' Update NocoDB table
 #'
 #' Updates the metadata of the specified table on a NocoDB server via its
 #' [`PATCH /api/v2/meta/tables/{id_tbl}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-update) API endpoint.
@@ -1336,7 +1336,7 @@ set_tbl_metadata <- function(data,
   invisible(NULL)
 }
 
-#' List NocoDB table columns metadata
+#' List NocoDB table columns
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the columns of the specified table on a NocoDB server from its
 #' [`GET /api/v2/meta/tables/{id_tbl}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
@@ -1430,7 +1430,7 @@ tbl_col_id <- function(id_tbl,
   result
 }
 
-#' Get NocoDB table column metadata
+#' Get NocoDB table column
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the specified column on a NocoDB server from its
 #' [`GET /api/v2/meta/columns/{id_col}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-get) API endpoint.
@@ -1466,7 +1466,7 @@ tbl_col <- function(id_col,
     tidy_date_time_cols()
 }
 
-#' Update NocoDB table column metadata
+#' Update NocoDB table column
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
@@ -1507,9 +1507,9 @@ update_tbl_col <- function(id_col,
     invisible()
 }
 
-#' Set column as NocoDB display value
+#' Set display value column for NocoDB table
 #'
-#' Sets a column as the corresponding table's [display value](https://docs.nocodb.com/fields/display-value/) on a NocoDB server via its
+#' Sets the specified column as the corresponding table's [display value](https://docs.nocodb.com/fields/display-value/) on a NocoDB server via its
 #' [`POST /api/v2/meta/columns/{id_col}/primary`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-primary-column-set) API
 #' endpoint.
 #'
@@ -1542,10 +1542,10 @@ set_display_val <- function(id_col,
     invisible()
 }
 
-#' Set all NocoDB display value columns
+#' Set display value columns for multiple NocoDB tables
 #'
-#' Sets the proper column as the [display value](https://docs.nocodb.com/fields/display-value/) for all tables in `data`. A convenience function that combines
-#' several of the other functions found in this package.
+#' Sets the respective column as the [display value](https://docs.nocodb.com/fields/display-value/) for all tables in `data`. A convenience function that
+#' combines several of the other functions found in this package.
 #'
 #' @inheritParams set_tbl_metadata
 #' @param data Dataframe with the two columns `name` and `display_col` that defines the table-name-and-display-value-column mapping to be applied. Additional
@@ -1672,7 +1672,7 @@ upload_attachments <- function(paths,
     purrr::list_rbind()
 }
 
-#' Get NocoDB user metadata
+#' Get NocoDB user
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about a NocoDB user via the
 #' [`GET /api/v1/auth/user/me`](https://data-apis-v1.nocodb.com/#tag/Auth/operation/auth-me) API endpoint.
@@ -1751,95 +1751,39 @@ user_id <- function(user_email,
   result
 }
 
-#' List NocoDB base users metadata
+#' Update NocoDB user
 #'
-#' Returns a [tibble][tibble::tbl_df] with metadata about the users in the specified base on a NocoDB server from its
-#' [`GET /api/v2/meta/bases/{id_base}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-list) API endpoint.
+#' Updates the metadata of the specified user on a NocoDB server via its
+#' `PATCH /api/v2/meta/tables/{id_tbl}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-update) API endpoint.
 #'
-#' @inheritParams base
+#' @inheritParams api
+#' @param display_name Name to be displayed for the user in NocoDB.
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family users
-#' @family bases
 #' @export
-base_users <- function(id_base = base_id(),
-                       hostname = pal::pkg_config_val(key = "hostname",
-                                                      pkg = this_pkg),
-                       email = pal::pkg_config_val(key = "email",
-                                                   pkg = this_pkg,
-                                                   required = FALSE),
-                       password = pal::pkg_config_val(key = "password",
-                                                      pkg = this_pkg,
-                                                      required = FALSE),
-                       api_token = pal::pkg_config_val(key = "api_token",
+update_user <- function(display_name,
+                        hostname = pal::pkg_config_val(key = "hostname",
+                                                       pkg = this_pkg),
+                        email = pal::pkg_config_val(key = "email",
+                                                    pkg = this_pkg,
+                                                    required = FALSE),
+                        password = pal::pkg_config_val(key = "password",
                                                        pkg = this_pkg,
-                                                       required = FALSE)) {
-  checkmate::assert_string(id_base)
+                                                       required = FALSE),
+                        api_token = pal::pkg_config_val(key = "api_token",
+                                                        pkg = this_pkg,
+                                                        required = FALSE)) {
+  checkmate::assert_string(display_name)
   
-  api(path = glue::glue("api/v2/meta/bases/{id_base}/users"),
-      method = "GET",
+  api(path = glue::glue("api/v1/user/profile"),
+      method = "PATCH",
       hostname = hostname,
       email = email,
       password = password,
-      api_token = api_token) |>
-    _$users$list |>
-    tibble::as_tibble()
-}
-
-#' Update NocoDB base user
-#'
-#' Updates the specified user regarding to the specified base on a NocoDB server via its
-#' [`PATCH /api/v2/meta/bases/{id_base}/users/{id_user}`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-update) API endpoint.
-#'
-#' Note that only the super admin user is allowed to update base users, i.e. the provided credentials must belong to them.
-#'
-#' @inheritParams user_id
-#' @inheritParams set_tbl_metadata
-#' @param role Base role to assign to the user. One of `r pal::enum_fn_param_defaults(param = "role", fn = "update_base_user")`.
-#' @param id_user NocoDB user identifier as returned by [user_id()]. A character scalar.
-#'
-#' @return `id_user`, invisibly.
-#' @family users
-#' @export
-update_base_user <- function(user_email,
-                             role = c("no-access", "commenter", "editor", "owner", "viewer", "creator"),
-                             id_user = user_id(user_email = user_email),
-                             id_base = base_id(),
-                             hostname = pal::pkg_config_val(key = "hostname",
-                                                            pkg = this_pkg),
-                             email = pal::pkg_config_val(key = "email",
-                                                         pkg = this_pkg,
-                                                         required = FALSE),
-                             password = pal::pkg_config_val(key = "password",
-                                                            pkg = this_pkg,
-                                                            required = FALSE),
-                             api_token = pal::pkg_config_val(key = "api_token",
-                                                             pkg = this_pkg,
-                                                             required = FALSE),
-                             quiet = FALSE) {
-
-  role <- rlang::arg_match(role)
-  checkmate::assert_string(id_user)
-  checkmate::assert_string(id_base)
-  checkmate::assert_flag(quiet)
-  
-  result <- api(path = glue::glue("api/v2/meta/bases/{id_base}/users/{id_user}"),
-                method = "PATCH",
-                hostname = hostname,
-                email = email,
-                password = password,
-                api_token = api_token,
-                body_json = list(email = user_email,
-                                 roles = role))
-  if (!quiet) {
-    if (stringr::str_detect(result$msg, "successfully")) {
-      cli::cli_alert_success(result$msg)
-    } else {
-      cli::cli_alert_info(result$msg)
-    }
-  }
-  
-  invisible(id_user)
+      api_token = api_token,
+      body_json = list(display_name = display_name)) |>
+    tidy_resp_data()
 }
 
 #' Invite NocoDB user
@@ -1896,8 +1840,9 @@ invite_user <- function(email_new,
 
 #' Sign up NocoDB user
 #'
-#' Signs up an invited user on a NocoDB server via its [`POST /api/v1/auth/user/signup`](https://data-apis-v1.nocodb.com/#tag/Auth/operation/auth-signup) API
-#' endpoint.
+#' Signs up a user on a NocoDB server via its [`POST /api/v1/auth/user/signup`](https://data-apis-v1.nocodb.com/#tag/Auth/operation/auth-signup) API endpoint.
+#' If sign-up is [restricted to invitees only](https://docs.nocodb.com/account-settings/oss-specific-details/#enable--disable-signup), the user must have been
+#' [invited][invite_user] before and an `invite_token` must be provided. Otherwise, the user is created straightaway (without sending an e-mail).
 #'
 #' # API errors
 #'
@@ -1953,6 +1898,98 @@ sign_up_user <- function(email_new,
     purrr::list_c(ptype = character()) |>
     store_access_token(hostname = hostname,
                        email = email_new)
+}
+
+#' List NocoDB base users
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about the users in the specified base on a NocoDB server from its
+#' [`GET /api/v2/meta/bases/{id_base}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-list) API endpoint.
+#'
+#' @inheritParams base
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family users
+#' @family bases
+#' @export
+base_users <- function(id_base = base_id(),
+                       hostname = pal::pkg_config_val(key = "hostname",
+                                                      pkg = this_pkg),
+                       email = pal::pkg_config_val(key = "email",
+                                                   pkg = this_pkg,
+                                                   required = FALSE),
+                       password = pal::pkg_config_val(key = "password",
+                                                      pkg = this_pkg,
+                                                      required = FALSE),
+                       api_token = pal::pkg_config_val(key = "api_token",
+                                                       pkg = this_pkg,
+                                                       required = FALSE)) {
+  checkmate::assert_string(id_base)
+  
+  api(path = glue::glue("api/v2/meta/bases/{id_base}/users"),
+      method = "GET",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token) |>
+    _$users$list |>
+    tibble::as_tibble()
+}
+
+#' Update NocoDB base user
+#'
+#' Updates the specified user regarding to the specified base on a NocoDB server via its
+#' [`PATCH /api/v2/meta/bases/{id_base}/users/{id_user}`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-update) API endpoint.
+#'
+#' Note that only the super admin user is allowed to update base users, i.e. the provided credentials must belong to them.
+#'
+#' @inheritParams user_id
+#' @inheritParams set_tbl_metadata
+#' @param role Base role to assign to the user. One of `r pal::enum_fn_param_defaults(param = "role", fn = "update_base_user")`.
+#' @param id_user NocoDB user identifier as returned by [user_id()]. A character scalar.
+#'
+#' @return `id_user`, invisibly.
+#' @family users
+#' @family bases
+#' @export
+update_base_user <- function(user_email,
+                             role = c("no-access", "commenter", "editor", "owner", "viewer", "creator"),
+                             id_user = user_id(user_email = user_email),
+                             id_base = base_id(),
+                             hostname = pal::pkg_config_val(key = "hostname",
+                                                            pkg = this_pkg),
+                             email = pal::pkg_config_val(key = "email",
+                                                         pkg = this_pkg,
+                                                         required = FALSE),
+                             password = pal::pkg_config_val(key = "password",
+                                                            pkg = this_pkg,
+                                                            required = FALSE),
+                             api_token = pal::pkg_config_val(key = "api_token",
+                                                             pkg = this_pkg,
+                                                             required = FALSE),
+                             quiet = FALSE) {
+
+  role <- rlang::arg_match(role)
+  checkmate::assert_string(id_user)
+  checkmate::assert_string(id_base)
+  checkmate::assert_flag(quiet)
+  
+  result <- api(path = glue::glue("api/v2/meta/bases/{id_base}/users/{id_user}"),
+                method = "PATCH",
+                hostname = hostname,
+                email = email,
+                password = password,
+                api_token = api_token,
+                body_json = list(email = user_email,
+                                 roles = role))
+  if (!quiet) {
+    if (stringr::str_detect(result$msg, "successfully")) {
+      cli::cli_alert_success(result$msg)
+    } else {
+      cli::cli_alert_info(result$msg)
+    }
+  }
+  
+  invisible(id_user)
 }
 
 #' List NocoDB app settings

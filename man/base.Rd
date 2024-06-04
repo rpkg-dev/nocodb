@@ -2,7 +2,7 @@
 % Please edit documentation in R/nocodb.gen.R
 \name{base}
 \alias{base}
-\title{Get NocoDB base metadata}
+\title{Get NocoDB base}
 \usage{
 base(
   id_base = base_id(),
@@ -38,6 +38,7 @@ Other functions to manage NocoDB bases:
 \code{\link{bases}()},
 \code{\link{create_base}()},
 \code{\link{delete_base}()},
-\code{\link{update_base}()}
+\code{\link{update_base}()},
+\code{\link{update_base_user}()}
 }
 \concept{bases}

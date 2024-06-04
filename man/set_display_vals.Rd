@@ -2,7 +2,7 @@
 % Please edit documentation in R/nocodb.gen.R
 \name{set_display_vals}
 \alias{set_display_vals}
-\title{Set all NocoDB display value columns}
+\title{Set display value columns for multiple NocoDB tables}
 \usage{
 set_display_vals(
   data,
@@ -35,8 +35,8 @@ provided.}
 \code{NULL}, invisibly.
 }
 \description{
-Sets the proper column as the \href{https://docs.nocodb.com/fields/display-value/}{display value} for all tables in \code{data}. A convenience function that combines
-several of the other functions found in this package.
+Sets the respective column as the \href{https://docs.nocodb.com/fields/display-value/}{display value} for all tables in \code{data}. A convenience function that
+combines several of the other functions found in this package.
 }
 \seealso{
 Other functions to manage NocoDB table columns:

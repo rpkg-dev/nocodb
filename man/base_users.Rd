@@ -2,7 +2,7 @@
 % Please edit documentation in R/nocodb.gen.R
 \name{base_users}
 \alias{base_users}
-\title{List NocoDB base users metadata}
+\title{List NocoDB base users}
 \usage{
 base_users(
   id_base = base_id(),
@@ -36,6 +36,7 @@ Other functions to manage NocoDB users:
 \code{\link{invite_user}()},
 \code{\link{sign_up_user}()},
 \code{\link{update_base_user}()},
+\code{\link{update_user}()},
 \code{\link{user}()},
 \code{\link{user_id}()}
 
@@ -45,7 +46,8 @@ Other functions to manage NocoDB bases:
 \code{\link{bases}()},
 \code{\link{create_base}()},
 \code{\link{delete_base}()},
-\code{\link{update_base}()}
+\code{\link{update_base}()},
+\code{\link{update_base_user}()}
 }
 \concept{bases}
 \concept{users}

@@ -55,7 +55,7 @@
       <dl><dt>
           <code><a href="bases.html">bases()</a></code>
         </dt>
-        <dd>List NocoDB bases metadata</dd>
+        <dd>List NocoDB bases</dd>
       </dl><dl><dt>
           <code><a href="base_id.html">base_id()</a></code>
         </dt>
@@ -63,7 +63,7 @@
       </dl><dl><dt>
           <code><a href="base.html">base()</a></code>
         </dt>
-        <dd>Get NocoDB base metadata</dd>
+        <dd>Get NocoDB base</dd>
       </dl><dl><dt>
           <code><a href="create_base.html">create_base()</a></code>
         </dt>
@@ -71,7 +71,7 @@
       </dl><dl><dt>
           <code><a href="update_base.html">update_base()</a></code>
         </dt>
-        <dd>Update NocoDB base metadata</dd>
+        <dd>Update NocoDB base</dd>
       </dl><dl><dt>
           <code><a href="delete_base.html">delete_base()</a></code>
         </dt>
@@ -83,7 +83,7 @@
       <dl><dt>
           <code><a href="data_srcs.html">data_srcs()</a></code>
         </dt>
-        <dd>List data sources metadata</dd>
+        <dd>List NocoDB data sources</dd>
       </dl><dl><dt>
           <code><a href="data_src_id.html">data_src_id()</a></code>
         </dt>
@@ -91,7 +91,7 @@
       </dl><dl><dt>
           <code><a href="data_src.html">data_src()</a></code>
         </dt>
-        <dd>Get NocoDB data source metadata</dd>
+        <dd>Get NocoDB data source</dd>
       </dl><dl><dt>
           <code><a href="create_data_src.html">create_data_src()</a></code>
         </dt>
@@ -107,7 +107,7 @@
       <dl><dt>
           <code><a href="tbls.html">tbls()</a></code>
         </dt>
-        <dd>List NocoDB tables metadata</dd>
+        <dd>List NocoDB tables</dd>
       </dl><dl><dt>
           <code><a href="tbl_id.html">tbl_id()</a></code>
         </dt>
@@ -115,11 +115,11 @@
       </dl><dl><dt>
           <code><a href="tbl.html">tbl()</a></code>
         </dt>
-        <dd>Get NocoDB table metadata</dd>
+        <dd>Get NocoDB table</dd>
       </dl><dl><dt>
           <code><a href="update_tbl.html">update_tbl()</a></code>
         </dt>
-        <dd>Update NocoDB table metadata</dd>
+        <dd>Update NocoDB table</dd>
       </dl><dl><dt>
           <code><a href="reorder_tbl.html">reorder_tbl()</a></code>
         </dt>
@@ -135,7 +135,7 @@
       <dl><dt>
           <code><a href="tbl_cols.html">tbl_cols()</a></code>
         </dt>
-        <dd>List NocoDB table columns metadata</dd>
+        <dd>List NocoDB table columns</dd>
       </dl><dl><dt>
           <code><a href="tbl_col_id.html">tbl_col_id()</a></code>
         </dt>
@@ -143,20 +143,20 @@
       </dl><dl><dt>
           <code><a href="tbl_col.html">tbl_col()</a></code>
         </dt>
-        <dd>Get NocoDB table column metadata</dd>
+        <dd>Get NocoDB table column</dd>
       </dl><dl><dt>
           <code><a href="update_tbl_col.html">update_tbl_col()</a></code>
           <span class="badge lifecycle lifecycle-experimental">experimental</span>
         </dt>
-        <dd>Update NocoDB table column metadata</dd>
+        <dd>Update NocoDB table column</dd>
       </dl><dl><dt>
           <code><a href="set_display_val.html">set_display_val()</a></code>
         </dt>
-        <dd>Set column as NocoDB display value</dd>
+        <dd>Set display value column for NocoDB table</dd>
       </dl><dl><dt>
           <code><a href="set_display_vals.html">set_display_vals()</a></code>
         </dt>
-        <dd>Set all NocoDB display value columns</dd>
+        <dd>Set display value columns for multiple NocoDB tables</dd>
       </dl></div><div class="section level2">
       <h3 id="attachments">Attachments<a class="anchor" aria-label="anchor" href="#attachments"></a></h3>
       <div class="section-desc"><p>Functions to manage NocoDB <a href="https://docs.nocodb.com/fields/field-types/custom-types/attachment/" class="external-link">attachments</a>.</p></div>
@@ -172,19 +172,15 @@
       <dl><dt>
           <code><a href="user.html">user()</a></code>
         </dt>
-        <dd>Get NocoDB user metadata</dd>
+        <dd>Get NocoDB user</dd>
       </dl><dl><dt>
           <code><a href="user_id.html">user_id()</a></code>
         </dt>
         <dd>Get NocoDB user ID</dd>
       </dl><dl><dt>
-          <code><a href="base_users.html">base_users()</a></code>
+          <code><a href="update_user.html">update_user()</a></code>
         </dt>
-        <dd>List NocoDB base users metadata</dd>
-      </dl><dl><dt>
-          <code><a href="update_base_user.html">update_base_user()</a></code>
-        </dt>
-        <dd>Update NocoDB base user</dd>
+        <dd>Update NocoDB user</dd>
       </dl><dl><dt>
           <code><a href="invite_user.html">invite_user()</a></code>
         </dt>
@@ -193,6 +189,14 @@
           <code><a href="sign_up_user.html">sign_up_user()</a></code>
         </dt>
         <dd>Sign up NocoDB user</dd>
+      </dl><dl><dt>
+          <code><a href="base_users.html">base_users()</a></code>
+        </dt>
+        <dd>List NocoDB base users</dd>
+      </dl><dl><dt>
+          <code><a href="update_base_user.html">update_base_user()</a></code>
+        </dt>
+        <dd>Update NocoDB base user</dd>
       </dl></div><div class="section level2">
       <h3 id="app-settings">App settings<a class="anchor" aria-label="anchor" href="#app-settings"></a></h3>
       <div class="section-desc"><p>Functions to manage NocoDB’s <a href="https://docs.nocodb.com/account-settings/oss-specific-details" class="external-link">application settings</a>.</p></div>

@@ -57,10 +57,11 @@ reference:
 - contents:
   - user
   - user_id
-  - base_users
-  - update_base_user
+  - update_user
   - invite_user
   - sign_up_user
+  - base_users
+  - update_base_user
 - subtitle: App settings
   desc: Functions to manage NocoDB's [application settings](https://docs.nocodb.com/account-settings/oss-specific-details).
 - contents:

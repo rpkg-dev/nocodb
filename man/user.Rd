@@ -2,7 +2,7 @@
 % Please edit documentation in R/nocodb.gen.R
 \name{user}
 \alias{user}
-\title{Get NocoDB user metadata}
+\title{Get NocoDB user}
 \usage{
 user(
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
@@ -38,6 +38,7 @@ Other functions to manage NocoDB users:
 \code{\link{invite_user}()},
 \code{\link{sign_up_user}()},
 \code{\link{update_base_user}()},
+\code{\link{update_user}()},
 \code{\link{user_id}()}
 }
 \concept{users}

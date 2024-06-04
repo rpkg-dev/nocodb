@@ -2,7 +2,7 @@
 % Please edit documentation in R/nocodb.gen.R
 \name{data_src}
 \alias{data_src}
-\title{Get NocoDB data source metadata}
+\title{Get NocoDB data source}
 \usage{
 data_src(
   id_source,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/nocodb.gen.R
 \name{set_display_val}
 \alias{set_display_val}
-\title{Set column as NocoDB display value}
+\title{Set display value column for NocoDB table}
 \usage{
 set_display_val(
   id_col,
@@ -28,7 +28,7 @@ provided.}
 \code{TRUE}, invisibly.
 }
 \description{
-Sets a column as the corresponding table's \href{https://docs.nocodb.com/fields/display-value/}{display value} on a NocoDB server via its
+Sets the specified column as the corresponding table's \href{https://docs.nocodb.com/fields/display-value/}{display value} on a NocoDB server via its
 \href{https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-primary-column-set}{\code{POST /api/v2/meta/columns/{id_col}/primary}} API
 endpoint.
 }

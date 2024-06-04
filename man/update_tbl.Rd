@@ -2,7 +2,7 @@
 % Please edit documentation in R/nocodb.gen.R
 \name{update_tbl}
 \alias{update_tbl}
-\title{Update NocoDB table metadata}
+\title{Update NocoDB table}
 \usage{
 update_tbl(
   id_tbl,

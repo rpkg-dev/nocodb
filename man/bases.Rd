@@ -2,7 +2,7 @@
 % Please edit documentation in R/nocodb.gen.R
 \name{bases}
 \alias{bases}
-\title{List NocoDB bases metadata}
+\title{List NocoDB bases}
 \usage{
 bases(
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
@@ -35,6 +35,7 @@ Other functions to manage NocoDB bases:
 \code{\link{base_users}()},
 \code{\link{create_base}()},
 \code{\link{delete_base}()},
-\code{\link{update_base}()}
+\code{\link{update_base}()},
+\code{\link{update_base_user}()}
 }
 \concept{bases}

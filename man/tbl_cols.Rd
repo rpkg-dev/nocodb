@@ -2,7 +2,7 @@
 % Please edit documentation in R/nocodb.gen.R
 \name{tbl_cols}
 \alias{tbl_cols}
-\title{List NocoDB table columns metadata}
+\title{List NocoDB table columns}
 \usage{
 tbl_cols(
   id_tbl,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/nocodb.gen.R
 \name{tbls}
 \alias{tbls}
-\title{List NocoDB tables metadata}
+\title{List NocoDB tables}
 \usage{
 tbls(
   id_base = base_id(),

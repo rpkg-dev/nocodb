@@ -37,8 +37,9 @@ provided.}
 The generated access token for the signed up user as a character scalar, invisibly.
 }
 \description{
-Signs up an invited user on a NocoDB server via its \href{https://data-apis-v1.nocodb.com/#tag/Auth/operation/auth-signup}{\code{POST /api/v1/auth/user/signup}} API
-endpoint.
+Signs up a user on a NocoDB server via its \href{https://data-apis-v1.nocodb.com/#tag/Auth/operation/auth-signup}{\code{POST /api/v1/auth/user/signup}} API endpoint.
+If sign-up is \href{https://docs.nocodb.com/account-settings/oss-specific-details/#enable--disable-signup}{restricted to invitees only}, the user must have been
+\link[=invite_user]{invited} before and an \code{invite_token} must be provided. Otherwise, the user is created straightaway (without sending an e-mail).
 }
 \section{API errors}{
 \itemize{
@@ -54,6 +55,7 @@ Other functions to manage NocoDB users:
 \code{\link{base_users}()},
 \code{\link{invite_user}()},
 \code{\link{update_base_user}()},
+\code{\link{update_user}()},
 \code{\link{user}()},
 \code{\link{user_id}()}
 

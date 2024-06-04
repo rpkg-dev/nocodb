@@ -2,7 +2,7 @@
 % Please edit documentation in R/nocodb.gen.R
 \name{tbl}
 \alias{tbl}
-\title{Get NocoDB table metadata}
+\title{Get NocoDB table}
 \usage{
 tbl(
   id_tbl,

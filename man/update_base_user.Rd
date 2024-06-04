@@ -51,7 +51,18 @@ Other functions to manage NocoDB users:
 \code{\link{base_users}()},
 \code{\link{invite_user}()},
 \code{\link{sign_up_user}()},
+\code{\link{update_user}()},
 \code{\link{user}()},
 \code{\link{user_id}()}
+
+Other functions to manage NocoDB bases:
+\code{\link{base}()},
+\code{\link{base_id}()},
+\code{\link{base_users}()},
+\code{\link{bases}()},
+\code{\link{create_base}()},
+\code{\link{delete_base}()},
+\code{\link{update_base}()}
 }
+\concept{bases}
 \concept{users}

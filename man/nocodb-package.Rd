@@ -6,7 +6,7 @@
 \alias{nocodb-package}
 \title{nocodb: Use NocoDB's RESTful APIs}
 \description{
-nocodb allows to work with NocoDB's RESTful APIs from R. NocoDB is a web application that provides an intuitive spreadsheet-like front-end for relational databases, see https://nocodb.com.
+nocodb allows to work with NocoDB's RESTful APIs from R. NocoDB (https://nocodb.com) is a web application that provides an intuitive spreadsheet-like front-end for relational databases.
 }
 \seealso{
 Useful links:

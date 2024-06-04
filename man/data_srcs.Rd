@@ -2,7 +2,7 @@
 % Please edit documentation in R/nocodb.gen.R
 \name{data_srcs}
 \alias{data_srcs}
-\title{List data sources metadata}
+\title{List NocoDB data sources}
 \usage{
 data_srcs(
   id_base = base_id(),

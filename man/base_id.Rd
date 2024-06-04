@@ -37,6 +37,7 @@ Other functions to manage NocoDB bases:
 \code{\link{bases}()},
 \code{\link{create_base}()},
 \code{\link{delete_base}()},
-\code{\link{update_base}()}
+\code{\link{update_base}()},
+\code{\link{update_base_user}()}
 }
 \concept{bases}

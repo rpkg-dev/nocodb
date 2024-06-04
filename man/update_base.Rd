@@ -2,7 +2,7 @@
 % Please edit documentation in R/nocodb.gen.R
 \name{update_base}
 \alias{update_base}
-\title{Update NocoDB base metadata}
+\title{Update NocoDB base}
 \usage{
 update_base(
   title = NULL,
@@ -51,6 +51,7 @@ Other functions to manage NocoDB bases:
 \code{\link{base_users}()},
 \code{\link{bases}()},
 \code{\link{create_base}()},
-\code{\link{delete_base}()}
+\code{\link{delete_base}()},
+\code{\link{update_base_user}()}
 }
 \concept{bases}
