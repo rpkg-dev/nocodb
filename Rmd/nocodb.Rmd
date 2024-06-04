@@ -197,6 +197,9 @@ store_access_token <- function(x,
 #' @param x Access token to be decoded.
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
+#' 
+#'   Column `iat` gives the time at which the JWT was issued and column `exp` gives the expiration time on or after which the JWT must not be accepted anymore.
+#'   They are [registered claim names in the JWT standard](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1).
 #' @family access_token
 #' @keywords internal
 decode_access_token <- function(x) {

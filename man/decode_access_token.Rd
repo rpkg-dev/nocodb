@@ -11,6 +11,9 @@ decode_access_token(x)
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble}.
+
+Column \code{iat} gives the time at which the JWT was issued and column \code{exp} gives the expiration time on or after which the JWT must not be accepted anymore.
+They are \href{https://datatracker.ietf.org/doc/html/rfc7519#section-4.1}{registered claim names in the JWT standard}.
 }
 \description{
 Decodes an access token that adheres to the \href{https://de.wikipedia.org/wiki/JSON_Web_Token}{JSON Web Token (JWT)} standard and returns it as a
