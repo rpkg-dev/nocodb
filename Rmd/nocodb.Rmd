@@ -1595,9 +1595,10 @@ set_tbl_metadata <- function(data,
   
   checkmate::assert_data_frame(data,
                                min.cols = 3L)
-  checkmate::assert_names(data,
+  checkmate::assert_names(colnames(data),
                           must.include = c("name", "meta.icon"),
-                          what = "colnames")
+                          what = "colnames",
+                          .var.name = "data")
   checkmate::assert_flag(quiet)
   
   nrow(data) |>
