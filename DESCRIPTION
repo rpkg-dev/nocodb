@@ -34,10 +34,12 @@ Imports:
     tools
 Suggests: 
     pkgdown.tpl (>= 0.0.9000),
+    pkgsnip (>= 0.0.9037),
     utils
 Remotes:
     gitlab::rpkg.dev/pal,
-    gitlab::rpkg.dev/pkgdown.tpl
+    gitlab::rpkg.dev/pkgdown.tpl,
+    gitlab::rpkg.dev/pkgsnip
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
