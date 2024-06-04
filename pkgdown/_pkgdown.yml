@@ -60,6 +60,7 @@ reference:
   - update_user
   - invite_user
   - sign_up_user
+  - validate_user_email
   - base_users
   - update_base_user
 - subtitle: App settings

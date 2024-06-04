@@ -262,20 +262,23 @@ Common functions that are of generic use.
 NOTES:
 
 -   Several `GET` endpoints of the (meta) API just return an empty body instead of properly erroring when an invalid path component (e.g. an invalid base ID) is
-    specified in the URL. Since it's tedious (and inefficient) to ensure paths are always valid and/or handle all the cases where the API might return an empty
-    response, we just return a generic error in such case. Hopefully, NocoDB's meta API might improve over time.
+    specified in the URL. Since it's tedious (and inefficient) to ensure paths are always valid, we just return a generic error in such case. Hopefully,
+    NocoDB's meta API might improve over time and return proper HTTP status codes for unknown/inexistent routes.
 
 ```{r}
 #' Call NocoDB API
 #'
 #' Performs an API call to a NocoDB server and returns the response as a list if it is of type JSON, otherwise as a character scalar.
 #'
-#' See [req_auth()] for details about the authentication logic.
+#' See [req_auth()] for details about the authentication logic enabled via `auth`.
+#' 
+#' For full control over the performed HTTP request, resort to the lower-level [req_basic()].
 #'
 #' @inheritParams httr2::req_perform
 #' @inheritParams httr2::req_body_json
 #' @inheritParams req_basic
 #' @inheritParams req_auth
+#' @param auth Whether or not to include an [authentication header][req_auth] in the HTTP request.
 #' @param body_json Data to include as JSON in the HTTP request body. Set to `NULL` for an empty body.
 #' @param auto_unbox Whether or not to automatically "unbox" length-1 vectors in `body_json` to JSON scalars.
 #' @param simplify Whether or not to automatically simplify JSON structures in the returned JSON. Enables/disables all `simplify*` arguments of
@@ -298,6 +301,7 @@ api <- function(path,
                 api_token = pal::pkg_config_val(key = "api_token",
                                                 pkg = this_pkg,
                                                 required = FALSE),
+                auth = TRUE,
                 body_json = NULL,
                 auto_unbox = TRUE,
                 simplify = TRUE,
@@ -305,18 +309,21 @@ api <- function(path,
                 max_tries = 3L,
                 verbosity = NULL) {
   
+  checkmate::assert_flag(auth)
   checkmate::assert_flag(auto_unbox)
   
-  req <-
-    req_basic(path = path,
-              method = method,
-              hostname = hostname,
-              max_tries = max_tries) |>
-    req_auth(email = email,
-             password = password,
-             api_token = api_token)
+  req <- req_basic(path = path,
+                   method = method,
+                   hostname = hostname,
+                   max_tries = max_tries)
   
-  if (!is.null(body_json)) {
+  if (auth) {
+    req %<>% req_auth(email = email,
+                      password = password,
+                      api_token = api_token)
+  }
+  
+  if (length(body_json) > 0L) {
     req %<>% httr2::req_body_json(data = body_json,
                                   auto_unbox = auto_unbox)
   }
@@ -327,7 +334,7 @@ api <- function(path,
   if (!httr2::resp_has_body(resp)) {
     cli::cli_abort(paste0("API responded with HTTP status {.field ",
                           paste(httr2::resp_status(resp), httr2::resp_status_desc(resp)),
-                          "} but an empty body, which likely means some component in the URL path {.path {paste0('/', path)}} is invalid."))
+                          "} but an empty body, which likely means some component in the URL path {.path {path}} is invalid."))
   }
   
   if (isTRUE(httr2::resp_content_type(resp) == "application/json")) {
@@ -2134,7 +2141,7 @@ user_id <- function(user_email,
 #' Update NocoDB user
 #'
 #' Updates the metadata of the specified user on a NocoDB server via its
-#' `PATCH /api/v2/meta/tables/{id_tbl}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-update) API endpoint.
+#' `PATCH /api/v1/user/profile` API endpoint.
 #'
 #' @inheritParams api
 #' @param display_name Name to be displayed for the user in NocoDB.
@@ -2142,7 +2149,7 @@ user_id <- function(user_email,
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family users
 #' @export
-update_user <- function(display_name,
+update_user <- function(display_name = NULL,
                         hostname = pal::pkg_config_val(key = "hostname",
                                                        pkg = this_pkg),
                         email = pal::pkg_config_val(key = "email",
@@ -2154,15 +2161,16 @@ update_user <- function(display_name,
                         api_token = pal::pkg_config_val(key = "api_token",
                                                         pkg = this_pkg,
                                                         required = FALSE)) {
-  checkmate::assert_string(display_name)
+  checkmate::assert_string(display_name,
+                           null.ok = TRUE)
   
-  api(path = glue::glue("api/v1/user/profile"),
+  api(path = "api/v1/user/profile",
       method = "PATCH",
       hostname = hostname,
       email = email,
       password = password,
       api_token = api_token,
-      body_json = list(display_name = display_name)) |>
+      body_json = purrr::compact(list(display_name = display_name))) |>
     tidy_resp_data()
 }
 ```
@@ -2220,7 +2228,7 @@ invite_user <- function(email_new,
                 body_json = list(email = email_new,
                                  roles = role))
   if (!quiet) {
-    if (stringr::str_detect(result$msg, "invited successfully")) {
+    if (stringr::str_detect(result$msg, "successfully")) {
       cli::cli_alert_success(result$msg)
     } else {
       cli::cli_alert_info(result$msg)
@@ -2300,6 +2308,44 @@ sign_up_user <- function(email_new,
     purrr::list_c(ptype = character()) |>
     store_access_token(hostname = hostname,
                        email = email_new)
+}
+```
+
+#### `validate_user_email`
+
+```{r}
+#' Validate NocoDB user e-mail
+#'
+#' Validates a user's e-mail address on a NocoDB server via its
+#' [`POST /api/v1/auth/email/validate/{verification_token}`](https://data-apis-v1.nocodb.com/#tag/Auth/operation/auth-email-validate) API endpoint.
+#'
+#' You can use [update_user()] to get a tibble containing a user's `email_verification_token`.
+#'
+#' @inheritParams set_tbl_metadata
+#' @param verification_token User's e-mail verification token.
+#'
+#' @return `NULL`, invisibly.
+#' @family users
+#' @export
+validate_user_email <- function(verification_token,
+                                hostname = pal::pkg_config_val(key = "hostname",
+                                                               pkg = this_pkg),
+                                quiet = FALSE) {
+  
+  result <- api(path = glue::glue("api/v1/auth/email/validate/{verification_token}"),
+                method = "POST",
+                hostname = hostname,
+                auth = FALSE)
+  
+  if (!quiet) {
+    if (stringr::str_detect(result$msg, "successfully")) {
+      cli::cli_alert_success(result$msg)
+    } else {
+      cli::cli_alert_info(result$msg)
+    }
+  }
+  
+  invisible(NULL)
 }
 ```
 

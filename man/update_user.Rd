@@ -5,7 +5,7 @@
 \title{Update NocoDB user}
 \usage{
 update_user(
-  display_name,
+  display_name = NULL,
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
   email = pal::pkg_config_val(key = "email", pkg = this_pkg, required = FALSE),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg, required = FALSE),
@@ -29,7 +29,7 @@ A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
 Updates the metadata of the specified user on a NocoDB server via its
-\code{PATCH /api/v2/meta/tables/{id_tbl}}](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-update) API endpoint.
+\code{PATCH /api/v1/user/profile} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB users:
@@ -38,6 +38,7 @@ Other functions to manage NocoDB users:
 \code{\link{sign_up_user}()},
 \code{\link{update_base_user}()},
 \code{\link{user}()},
-\code{\link{user_id}()}
+\code{\link{user_id}()},
+\code{\link{validate_user_email}()}
 }
 \concept{users}

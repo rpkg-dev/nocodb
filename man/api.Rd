@@ -12,6 +12,7 @@ api(
   email = pal::pkg_config_val(key = "email", pkg = this_pkg, required = FALSE),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg, required = FALSE),
   api_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg, required = FALSE),
+  auth = TRUE,
   body_json = NULL,
   auto_unbox = TRUE,
   simplify = TRUE,
@@ -35,6 +36,8 @@ for large responses since it avoids storing the response in memory.}
 
 \item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
 provided.}
+
+\item{auth}{Whether or not to include an \link[=req_auth]{authentication header} in the HTTP request.}
 
 \item{body_json}{Data to include as JSON in the HTTP request body. Set to \code{NULL} for an empty body.}
 
@@ -66,7 +69,9 @@ A list if the response body is of type JSON, otherwise a character scalar.
 Performs an API call to a NocoDB server and returns the response as a list if it is of type JSON, otherwise as a character scalar.
 }
 \details{
-See \code{\link[=req_auth]{req_auth()}} for details about the authentication logic.
+See \code{\link[=req_auth]{req_auth()}} for details about the authentication logic enabled via \code{auth}.
+
+For full control over the performed HTTP request, resort to the lower-level \code{\link[=req_basic]{req_basic()}}.
 }
 \seealso{
 Other common functions:

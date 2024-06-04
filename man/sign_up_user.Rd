@@ -57,7 +57,8 @@ Other functions to manage NocoDB users:
 \code{\link{update_base_user}()},
 \code{\link{update_user}()},
 \code{\link{user}()},
-\code{\link{user_id}()}
+\code{\link{user_id}()},
+\code{\link{validate_user_email}()}
 
 Other functions to manage NocoDB authentication:
 \code{\link{is_signed_in}()},

@@ -39,6 +39,7 @@ Other functions to manage NocoDB users:
 \code{\link{sign_up_user}()},
 \code{\link{update_base_user}()},
 \code{\link{update_user}()},
-\code{\link{user_id}()}
+\code{\link{user_id}()},
+\code{\link{validate_user_email}()}
 }
 \concept{users}
