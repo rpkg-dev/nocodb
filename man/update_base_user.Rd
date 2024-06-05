@@ -8,7 +8,7 @@ update_base_user(
   user_email,
   role = c("no-access", "commenter", "editor", "owner", "viewer", "creator"),
   id_user = user_id(user_email = user_email),
-  id_base = base_id(),
+  id_base = base_id(hostname = hostname),
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
   email = pal::pkg_config_val(key = "email", pkg = this_pkg, required = FALSE),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg, required = FALSE),

@@ -668,7 +668,7 @@ base_id <- function(title = pal::pkg_config_val(key = "base_title",
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family bases
 #' @export
-base <- function(id_base = base_id(),
+base <- function(id_base = base_id(hostname = hostname),
                  hostname = pal::pkg_config_val(key = "hostname",
                                                 pkg = this_pkg),
                  email = pal::pkg_config_val(key = "email",
@@ -761,7 +761,7 @@ update_base <- function(title = NULL,
                         description = NULL,
                         color = NULL,
                         show_null_and_empty_in_filter = NULL,
-                        id_base = base_id(),
+                        id_base = base_id(hostname = hostname),
                         hostname = pal::pkg_config_val(key = "hostname",
                                                        pkg = this_pkg),
                         email = pal::pkg_config_val(key = "email",
@@ -854,7 +854,7 @@ delete_base <- function(id_base,
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family data_src
 #' @export
-data_srcs <- function(id_base = base_id(),
+data_srcs <- function(id_base = base_id(hostname = hostname),
                       hostname = pal::pkg_config_val(key = "hostname",
                                                      pkg = this_pkg),
                       email = pal::pkg_config_val(key = "email",
@@ -890,7 +890,7 @@ data_srcs <- function(id_base = base_id(),
 #' @family data_src
 #' @export
 data_src_id <- function(alias,
-                        id_base = base_id(),
+                        id_base = base_id(hostname = hostname),
                         hostname = pal::pkg_config_val(key = "hostname",
                                                        pkg = this_pkg),
                         email = pal::pkg_config_val(key = "email",
@@ -937,7 +937,7 @@ data_src_id <- function(alias,
 #' @family data_src
 #' @export
 data_src <- function(id_data_src,
-                     id_base = base_id(),
+                     id_base = base_id(hostname = hostname),
                      hostname = pal::pkg_config_val(key = "hostname",
                                                     pkg = this_pkg),
                      email = pal::pkg_config_val(key = "email",
@@ -984,7 +984,7 @@ create_data_src <- function(alias = NULL,
                             inflection_column = c("none", "camelize"),
                             inflection_table = c("none", "camelize"),
                             enabled = TRUE,
-                            id_base = base_id(),
+                            id_base = base_id(hostname = hostname),
                             hostname = pal::pkg_config_val(key = "hostname",
                                                            pkg = this_pkg),
                             email = pal::pkg_config_val(key = "email",
@@ -1033,7 +1033,7 @@ create_data_src <- function(alias = NULL,
 #' @family data_src
 #' @export
 delete_data_src <- function(id_data_src,
-                            id_base = base_id(),
+                            id_base = base_id(hostname = hostname),
                             hostname = pal::pkg_config_val(key = "hostname",
                                                            pkg = this_pkg),
                             email = pal::pkg_config_val(key = "email",
@@ -1068,7 +1068,7 @@ delete_data_src <- function(id_data_src,
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family tbls
 #' @export
-tbls <- function(id_base = base_id(),
+tbls <- function(id_base = base_id(hostname = hostname),
                  hostname = pal::pkg_config_val(key = "hostname",
                                                 pkg = this_pkg),
                  email = pal::pkg_config_val(key = "email",
@@ -1104,7 +1104,7 @@ tbls <- function(id_base = base_id(),
 #' @family tbls
 #' @export
 tbl_id <- function(tbl_name,
-                   id_base = base_id(),
+                   id_base = base_id(hostname = hostname),
                    hostname = pal::pkg_config_val(key = "hostname",
                                                   pkg = this_pkg),
                    email = pal::pkg_config_val(key = "email",
@@ -1283,7 +1283,7 @@ reorder_tbl <- function(id_tbl,
 #' @family tbls
 #' @export
 set_tbl_metadata <- function(data,
-                             id_base = base_id(),
+                             id_base = base_id(hostname = hostname),
                              hostname = pal::pkg_config_val(key = "hostname",
                                                             pkg = this_pkg),
                              email = pal::pkg_config_val(key = "email",
@@ -1566,7 +1566,7 @@ set_display_val <- function(id_col,
 #' @family cols
 #' @export
 set_display_vals <- function(data,
-                             id_base = base_id(),
+                             id_base = base_id(hostname = hostname),
                              hostname = pal::pkg_config_val(key = "hostname",
                                                             pkg = this_pkg),
                              email = pal::pkg_config_val(key = "email",
@@ -1727,7 +1727,7 @@ user <- function(hostname = pal::pkg_config_val(key = "hostname",
 #' @family users
 #' @export
 user_id <- function(user_email,
-                    id_base = base_id(),
+                    id_base = base_id(hostname = hostname),
                     hostname = pal::pkg_config_val(key = "hostname",
                                                    pkg = this_pkg),
                     email = pal::pkg_config_val(key = "email",
@@ -1812,7 +1812,7 @@ update_user <- function(display_name = NULL,
 #' @export
 invite_user <- function(email_new,
                         role = c("no-access", "viewer", "commenter", "editor", "creator"),
-                        id_base = base_id(),
+                        id_base = base_id(hostname = hostname),
                         hostname = pal::pkg_config_val(key = "hostname",
                                                        pkg = this_pkg),
                         email = pal::pkg_config_val(key = "email",
@@ -1957,7 +1957,7 @@ validate_user_email <- function(verification_token,
 #' @family users
 #' @family bases
 #' @export
-base_users <- function(id_base = base_id(),
+base_users <- function(id_base = base_id(hostname = hostname),
                        hostname = pal::pkg_config_val(key = "hostname",
                                                       pkg = this_pkg),
                        email = pal::pkg_config_val(key = "email",
@@ -2000,7 +2000,7 @@ base_users <- function(id_base = base_id(),
 update_base_user <- function(user_email,
                              role = c("no-access", "commenter", "editor", "owner", "viewer", "creator"),
                              id_user = user_id(user_email = user_email),
-                             id_base = base_id(),
+                             id_base = base_id(hostname = hostname),
                              hostname = pal::pkg_config_val(key = "hostname",
                                                             pkg = this_pkg),
                              email = pal::pkg_config_val(key = "email",
