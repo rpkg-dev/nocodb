@@ -51,6 +51,23 @@ provided.}
 Adds a data source to the specified base on a NocoDB server via its
 \href{https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-create}{\code{POST /api/v2/meta/bases/{id_base}/sources}} API endpoint.
 }
+\examples{
+\dontrun{
+nocodb::create_data_src(alias = "REPLACE-ME",
+                        type = "pg",
+                        config = list(client = "pg",
+                                      connection = list(sslmode = "verify-full",
+                                                        user = "REPLACE-ME",
+                                                        password = "REPLACE-ME",
+                                                        database = REPLACE-ME,
+                                                        host = "REPLACE-ME",
+                                                        port = 5432,
+                                                        ssl = list(ca = "",
+                                                                   cert = "",
+                                                                   key = ""))),
+                        inflection_column = "none",
+                        inflection_table = "none")}
+}
 \seealso{
 Other functions to manage NocoDB base data sources:
 \code{\link{data_src}()},

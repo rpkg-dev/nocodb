@@ -978,6 +978,23 @@ data_src <- function(id_data_src,
 #' @return `alias`, invisibly.
 #' @family data_src
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' nocodb::create_data_src(alias = "REPLACE-ME",
+#'                         type = "pg",
+#'                         config = list(client = "pg",
+#'                                       connection = list(sslmode = "verify-full",
+#'                                                         user = "REPLACE-ME",
+#'                                                         password = "REPLACE-ME",
+#'                                                         database = REPLACE-ME,
+#'                                                         host = "REPLACE-ME",
+#'                                                         port = 5432,
+#'                                                         ssl = list(ca = "",
+#'                                                                    cert = "",
+#'                                                                    key = ""))),
+#'                         inflection_column = "none",
+#'                         inflection_table = "none")}
 create_data_src <- function(alias = NULL,
                             type = c("mssql", "mysql", "pg", "sqlite3"),
                             config = NULL,
