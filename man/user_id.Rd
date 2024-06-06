@@ -35,12 +35,15 @@ Returns the identifier of the user with the specified display \code{name} on a N
 }
 \seealso{
 Other functions to manage NocoDB users:
+\code{\link{add_user}()},
 \code{\link{base_users}()},
+\code{\link{invite_base_user}()},
 \code{\link{invite_user}()},
 \code{\link{sign_up_user}()},
 \code{\link{update_base_user}()},
 \code{\link{update_user}()},
 \code{\link{user}()},
+\code{\link{users}()},
 \code{\link{validate_user_email}()}
 }
 \concept{users}

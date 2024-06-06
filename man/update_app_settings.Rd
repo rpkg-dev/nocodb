@@ -32,6 +32,8 @@ Updates the application settings of a NocoDB server via its
 }
 \details{
 This API endpoint does not support authentication via \href{https://docs.nocodb.com/account-settings/api-tokens/}{API tokens}.
+
+Only the super admin user is allowed to use this API endpoint, i.e. the provided credentials must belong to them.
 }
 \seealso{
 Other functions to manage NocoDB's application settings:

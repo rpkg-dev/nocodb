@@ -29,12 +29,15 @@ You can use \code{\link[=update_user]{update_user()}} to get a tibble containing
 }
 \seealso{
 Other functions to manage NocoDB users:
+\code{\link{add_user}()},
 \code{\link{base_users}()},
+\code{\link{invite_base_user}()},
 \code{\link{invite_user}()},
 \code{\link{sign_up_user}()},
 \code{\link{update_base_user}()},
 \code{\link{update_user}()},
 \code{\link{user}()},
-\code{\link{user_id}()}
+\code{\link{user_id}()},
+\code{\link{users}()}
 }
 \concept{users}

@@ -44,16 +44,19 @@ Updates the specified user regarding to the specified base on a NocoDB server vi
 \href{https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-update}{\code{PATCH /api/v2/meta/bases/{id_base}/users/{id_user}}} API endpoint.
 }
 \details{
-Note that only the super admin user is allowed to update base users, i.e. the provided credentials must belong to them.
+Only the super admin user is allowed to use this API endpoint, i.e. the provided credentials must belong to them.
 }
 \seealso{
 Other functions to manage NocoDB users:
+\code{\link{add_user}()},
 \code{\link{base_users}()},
+\code{\link{invite_base_user}()},
 \code{\link{invite_user}()},
 \code{\link{sign_up_user}()},
 \code{\link{update_user}()},
 \code{\link{user}()},
 \code{\link{user_id}()},
+\code{\link{users}()},
 \code{\link{validate_user_email}()}
 
 Other functions to manage NocoDB bases:

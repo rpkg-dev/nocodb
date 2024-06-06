@@ -28,17 +28,20 @@ provided.}
 A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
-Returns a \link[tibble:tbl_df-class]{tibble} with metadata about the users in the specified base on a NocoDB server from its
+Returns a \link[tibble:tbl_df-class]{tibble} with metadata about all users in regard to the specified base on a NocoDB server from its
 \href{https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-list}{\code{GET /api/v2/meta/bases/{id_base}/users}} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB users:
+\code{\link{add_user}()},
+\code{\link{invite_base_user}()},
 \code{\link{invite_user}()},
 \code{\link{sign_up_user}()},
 \code{\link{update_base_user}()},
 \code{\link{update_user}()},
 \code{\link{user}()},
 \code{\link{user_id}()},
+\code{\link{users}()},
 \code{\link{validate_user_email}()}
 
 Other functions to manage NocoDB bases:

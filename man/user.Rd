@@ -8,7 +8,7 @@ user(
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
   email = pal::pkg_config_val(key = "email", pkg = this_pkg, required = FALSE),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg, required = FALSE),
-  api_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg, required = FALSE)
+  api_token = NULL
 )
 }
 \arguments{
@@ -25,21 +25,25 @@ provided.}
 A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
-Returns a \link[tibble:tbl_df-class]{tibble} with metadata about a NocoDB user via the
+Returns a \link[tibble:tbl_df-class]{tibble} with metadata about the specified user from a NocoDB server via its
 \href{https://data-apis-v1.nocodb.com/#tag/Auth/operation/auth-me}{\code{GET /api/v1/auth/user/me}} API endpoint.
 }
 \details{
-The user is determined based on \code{api_token} or \code{email} and \code{password} (the former takes precedence). The returned columns differ between the two modes of
-authentication.
+The user is determined based on \code{api_token} or \code{email} and \code{password} (the former takes precedence). The returned columns differ between the two modes of authentication.
+
+If an invalid \code{api_token} is provided, the request still succeeds and generic data for a \code{guest} user is returned.
 }
 \seealso{
 Other functions to manage NocoDB users:
+\code{\link{add_user}()},
 \code{\link{base_users}()},
+\code{\link{invite_base_user}()},
 \code{\link{invite_user}()},
 \code{\link{sign_up_user}()},
 \code{\link{update_base_user}()},
 \code{\link{update_user}()},
 \code{\link{user_id}()},
+\code{\link{users}()},
 \code{\link{validate_user_email}()}
 }
 \concept{users}

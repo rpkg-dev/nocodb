@@ -37,31 +37,38 @@ provided.}
 The generated access token for the signed up user as a character scalar, invisibly.
 }
 \description{
-Signs up a user on a NocoDB server via its \href{https://data-apis-v1.nocodb.com/#tag/Auth/operation/auth-signup}{\code{POST /api/v1/auth/user/signup}} API endpoint.
-If sign-up is \href{https://docs.nocodb.com/account-settings/oss-specific-details/#enable--disable-signup}{restricted to invitees only}, the user must have been
-\link[=invite_user]{invited} before and an \code{invite_token} must be provided. Otherwise, the user is created straightaway (without sending an e-mail).
+Signs up the specified user on a NocoDB server via its \href{https://data-apis-v1.nocodb.com/#tag/Auth/operation/auth-signup}{\code{POST /api/v1/auth/user/signup}} API
+endpoint.
+
+If sign-up is \href{https://docs.nocodb.com/account-settings/oss-specific-details/#enable--disable-signup}{restricted to invitees only}, the user must
+have been invited before (via \code{\link[=invite_user]{invite_user()}} or \code{\link[=invite_base_user]{invite_base_user()}}) and an \code{invite_token} must be provided. Otherwise, the user is created straightaway.
 }
 \section{API errors}{
 \itemize{
 \item If you \emph{did} provide an \code{invite_token} and encounter a \strong{\verb{Not allowed to signup}} error, it means the provided \code{email_new} does not match the
 \code{invite_token}.
-\item If you \emph{did not} provide an \code{invite_token} and encounter a \strong{\verb{Not allowed to signup}} error, it means sign-up of new users is \href{https://docs.nocodb.com/account-settings/oss-specific-details/#enable--disable-signup}{restricted to invitees only}.
+\item If you did \emph{not} provide an \code{invite_token} and encounter a \strong{\verb{Not allowed to signup}} error, it means sign-up of new users is \href{https://docs.nocodb.com/account-settings/oss-specific-details/#enable--disable-signup}{restricted to invitees only}.
 \item If you encounter an \strong{\verb{Invalid invite url}} error, it means the provided \code{invite_token} is either invalid or has already been used to sign up.
 }
 }
 
 \seealso{
 Other functions to manage NocoDB users:
+\code{\link{add_user}()},
 \code{\link{base_users}()},
+\code{\link{invite_base_user}()},
 \code{\link{invite_user}()},
 \code{\link{update_base_user}()},
 \code{\link{update_user}()},
 \code{\link{user}()},
 \code{\link{user_id}()},
+\code{\link{users}()},
 \code{\link{validate_user_email}()}
 
 Other functions to manage NocoDB authentication:
+\code{\link{assert_super_admin}()},
 \code{\link{is_signed_in}()},
+\code{\link{is_super_admin}()},
 \code{\link{refresh_sign_in}()},
 \code{\link{req_auth}()},
 \code{\link{sign_in}()},

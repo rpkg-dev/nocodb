@@ -36,10 +36,20 @@ Note that the \code{email} address to sign out and the \code{api_token} to authe
 }
 \seealso{
 Other functions to manage NocoDB authentication:
+\code{\link{assert_super_admin}()},
 \code{\link{is_signed_in}()},
+\code{\link{is_super_admin}()},
 \code{\link{refresh_sign_in}()},
 \code{\link{req_auth}()},
 \code{\link{sign_in}()},
 \code{\link{sign_up_user}()}
+
+Other user: 
+\code{\link{assert_super_admin}()},
+\code{\link{is_signed_in}()},
+\code{\link{is_super_admin}()},
+\code{\link{refresh_sign_in}()},
+\code{\link{sign_in}()}
 }
 \concept{auth}
+\concept{user}

@@ -26,11 +26,21 @@ Besides generating a fresh access token, also a new refresh token is cached to d
 }
 \seealso{
 Other functions to manage NocoDB authentication:
+\code{\link{assert_super_admin}()},
 \code{\link{is_signed_in}()},
+\code{\link{is_super_admin}()},
 \code{\link{req_auth}()},
 \code{\link{sign_in}()},
 \code{\link{sign_out}()},
 \code{\link{sign_up_user}()}
+
+Other user: 
+\code{\link{assert_super_admin}()},
+\code{\link{is_signed_in}()},
+\code{\link{is_super_admin}()},
+\code{\link{sign_in}()},
+\code{\link{sign_out}()}
 }
 \concept{auth}
+\concept{user}
 \keyword{internal}
