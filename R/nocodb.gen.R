@@ -643,11 +643,10 @@ is_super_admin <- function(hostname = pal::pkg_config_val(key = "hostname",
                    api_token = api_token)
   }
   
-  result |>
-    dplyr::pull(roles) |>
-    unlist() |>
-    purrr::pluck("super") |>
-    isTRUE()
+  result %<>% purrr::pluck("roles") %>% unlist()
+  
+  # handle token payload differences between `sign_in()` and `refresh_sign_in()`
+  isTRUE(purrr::pluck(result, "super")) || any(stringr::str_detect(result, "super"))
 }
 
 #' Assert super admin
