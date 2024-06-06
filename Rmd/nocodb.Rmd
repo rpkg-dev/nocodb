@@ -205,11 +205,16 @@ store_access_token <- function(x,
 
 #### `decode_access_token`
 
+NOTES:
+
+-   The JWT's signature is not checked but simply ignored. Verifying the signature can be done with `jose::jwt_decode_hmac()` and requires the JWT secret
+    (configured in NocoDB via env var `NC_AUTH_JWT_SECRET`).
+
 ```{r}
 #' Decode access token (JWT)
 #'
-#' Decodes an access token that adheres to the [JSON Web Token (JWT)](https://de.wikipedia.org/wiki/JSON_Web_Token) standard and returns it as a
-#' [tibble][tibble::tbl_df]. Only the payload is returned.
+#' Decodes an access token that adheres to the [JSON Web Token (JWT)](https://de.wikipedia.org/wiki/JSON_Web_Token) standard and returns the payload as a
+#' [tibble][tibble::tbl_df]. The JWT's cryptographic signature is simply ignored.
 #'
 #' @param x Access token to be decoded.
 #'

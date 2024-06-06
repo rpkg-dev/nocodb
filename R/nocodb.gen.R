@@ -141,8 +141,8 @@ store_access_token <- function(x,
 
 #' Decode access token (JWT)
 #'
-#' Decodes an access token that adheres to the [JSON Web Token (JWT)](https://de.wikipedia.org/wiki/JSON_Web_Token) standard and returns it as a
-#' [tibble][tibble::tbl_df]. Only the payload is returned.
+#' Decodes an access token that adheres to the [JSON Web Token (JWT)](https://de.wikipedia.org/wiki/JSON_Web_Token) standard and returns the payload as a
+#' [tibble][tibble::tbl_df]. The JWT's cryptographic signature is simply ignored.
 #'
 #' @param x Access token to be decoded.
 #'

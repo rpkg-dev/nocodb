@@ -16,8 +16,8 @@ Column \code{iat} gives the time at which the JWT was issued and column \code{ex
 They are \href{https://datatracker.ietf.org/doc/html/rfc7519#section-4.1}{registered claim names in the JWT standard}.
 }
 \description{
-Decodes an access token that adheres to the \href{https://de.wikipedia.org/wiki/JSON_Web_Token}{JSON Web Token (JWT)} standard and returns it as a
-\link[tibble:tbl_df-class]{tibble}. Only the payload is returned.
+Decodes an access token that adheres to the \href{https://de.wikipedia.org/wiki/JSON_Web_Token}{JSON Web Token (JWT)} standard and returns the payload as a
+\link[tibble:tbl_df-class]{tibble}. The JWT's cryptographic signature is simply ignored.
 }
 \seealso{
 Other access_token: 
