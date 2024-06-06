@@ -41,8 +41,8 @@ provided.}
 \code{id_base}, invisibly.
 }
 \description{
-Updates the specified base on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update}{\code{PATCH /api/v2/meta/bases/{id_base}}} API endpoint.
+Updates the specified base on a NocoDB server via its \href{https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update}{\code{PATCH /api/v2/meta/bases/{id_base}}}
+API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB bases:

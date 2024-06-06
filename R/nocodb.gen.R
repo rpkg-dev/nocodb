@@ -854,8 +854,8 @@ create_base <- function(title = pal::pkg_config_val(key = "base_title",
 
 #' Update NocoDB base
 #'
-#' Updates the specified base on a NocoDB server via its
-#' [`PATCH /api/v2/meta/bases/{id_base}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update) API endpoint.
+#' Updates the specified base on a NocoDB server via its [`PATCH /api/v2/meta/bases/{id_base}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update)
+#' API endpoint.
 #'
 #' @inheritParams create_base
 #' @inheritParams base

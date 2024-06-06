@@ -1079,13 +1079,20 @@ TODO:
         specified as regular JSON. Instead we must provide it as a **character scalar** (i.e. escape the JSON obj).
 
     This was reported upstream as [nocodb/nocodb#8417](https://github.com/nocodb/nocodb/issues/8417). Once it is fixed, we must remove the `jsonlite::toJSON()`
-    workaround.
+    workaround below.
+
+-   The `meta` field of a base does not yet allow to configure the *Show M2M Tables* (`show_m2m_tables`) and *Show NULL in Cells* settings. The former setting
+    seems to be somehow triggered by a
+    [`GET /api/v1/db/meta/projects/{id_base}/tables`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis) API call with the `includeM2M`
+    URL parameter set to `true`/`false`. But calling that API endpoint alone doesn't alter the setting... 😕
+
+    Once [this is fixed](), update the fn below accordingly.
 
 ```{r}
 #' Update NocoDB base
 #'
-#' Updates the specified base on a NocoDB server via its
-#' [`PATCH /api/v2/meta/bases/{id_base}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update) API endpoint.
+#' Updates the specified base on a NocoDB server via its [`PATCH /api/v2/meta/bases/{id_base}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update)
+#' API endpoint.
 #'
 #' @inheritParams create_base
 #' @inheritParams base
