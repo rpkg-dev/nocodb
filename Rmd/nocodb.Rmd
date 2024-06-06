@@ -2452,13 +2452,15 @@ update_user <- function(display_name = NULL,
     tidy_resp_data()
   
   # trigger NocoDB internal state update (so `base_users()` etc. reflect the updated metadata) if possible
-  if (!is.null(email) && !is.null(password)) {
+  if (!is.null(email) && !is.null(password) && is_super_admin(hostname = hostname,
+                                                              email = email,
+                                                              password = password)) {
     users(hostname = hostname,
           email = email,
           password = password)
   } else {
     cli::cli_alert_info(paste0("In order for other API endpoints to reflect the updated metadata, NocoDB's internal state must yet update, which can be ",
-                               "triggered by invoking [.fun nocodb::users]."))
+                               "triggered by invoking {.run nocodb::users()}."))
   }
   
   result
