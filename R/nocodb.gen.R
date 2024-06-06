@@ -1952,7 +1952,8 @@ add_user <- function(email_new,
                  email = email,
                  password = password,
                  api_token = NULL) |>
-    dplyr::pull(inviteOnlySignup)
+    purrr::pluck("inviteOnlySignup") |>
+    isTRUE()
   
   # temporarily allow sign-up without invitation
   if (invite_only_signup) {
