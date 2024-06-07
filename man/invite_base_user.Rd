@@ -5,7 +5,7 @@
 \title{Invite NocoDB base user}
 \usage{
 invite_base_user(
-  email_new,
+  user_email,
   role = c("no-access", "viewer", "commenter", "editor", "creator"),
   id_base = base_id(hostname = hostname),
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
@@ -16,7 +16,7 @@ invite_base_user(
 )
 }
 \arguments{
-\item{email_new}{E-mail address of the user to invite. A character scalar.}
+\item{user_email}{E-mail address of the user to invite. A character scalar.}
 
 \item{role}{Base role to assign to the user. One of \code{"no-access"}, \code{"viewer"}, \code{"commenter"}, \code{"editor"} or \code{"creator"}.}
 
@@ -34,7 +34,7 @@ provided.}
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }
 \value{
-\code{email_new}, invisibly.
+\code{user_email}, invisibly.
 }
 \description{
 Invites a new user to the specified base on a NocoDB server via its

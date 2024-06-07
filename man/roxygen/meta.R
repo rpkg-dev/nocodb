@@ -6,6 +6,7 @@ list(
                          cols         = "Other functions to manage NocoDB table columns:",
                          common       = "Other common functions:",
                          data_src     = "Other functions to manage NocoDB base data sources:",
+                         plugins      = "Other functions to manage NocoDB plugins:",
                          tbls         = "Other functions to manage NocoDB tables:",
                          users        = "Other functions to manage NocoDB users:")
 )

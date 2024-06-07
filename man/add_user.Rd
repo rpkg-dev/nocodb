@@ -5,8 +5,8 @@
 \title{Add NocoDB user account}
 \usage{
 add_user(
-  email_new,
-  password_new,
+  user_email,
+  user_password,
   display_name = NULL,
   subscribe_to_newsletter = FALSE,
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
@@ -16,9 +16,9 @@ add_user(
 )
 }
 \arguments{
-\item{email_new}{E-mail address of the user to sign up. A character scalar.}
+\item{user_email}{E-mail address of the user to sign up. A character scalar.}
 
-\item{password_new}{Password of the user to sign up. A character scalar.}
+\item{user_password}{Password of the user to sign up. A character scalar.}
 
 \item{display_name}{Name to be displayed for the user in NocoDB.}
 

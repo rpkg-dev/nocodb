@@ -5,7 +5,7 @@
 \title{Invite NocoDB user}
 \usage{
 invite_user(
-  email_new,
+  user_email,
   org_role = c("org-level-viewer", "org-level-creator"),
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
   email = pal::pkg_config_val(key = "email", pkg = this_pkg),
@@ -14,7 +14,7 @@ invite_user(
 )
 }
 \arguments{
-\item{email_new}{E-mail address of the user to invite. A character scalar.}
+\item{user_email}{E-mail address of the user to invite. A character scalar.}
 
 \item{org_role}{\href{https://docs.nocodb.com/collaboration/oss-specific-details/#organisation-level-permissions}{Organisation-level role} to assign to the user.
 One of \code{"org-level-viewer"} or \code{"org-level-creator"}.}

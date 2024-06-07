@@ -27,9 +27,14 @@
 <url><loc>https://nocodb.rpkg.dev/dev/reference/invite_base_user.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/invite_user.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/is_access_token_expired.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/is_plugin_active.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/is_signed_in.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/is_super_admin.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/nocodb-package.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/plugin.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/plugin_category.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/plugin_id.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/plugins.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/refresh_sign_in.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/reorder_tbl.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/req_auth.html</loc></url>
@@ -48,9 +53,11 @@
 <url><loc>https://nocodb.rpkg.dev/dev/reference/tbl_cols.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/tbl_id.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/tbls.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/test_plugin.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_app_settings.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_base.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_base_user.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/update_plugin.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_tbl.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_tbl_col.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_user.html</loc></url>

@@ -18,7 +18,7 @@ update_tbl(
 \arguments{
 \item{id_tbl}{NocoDB table identifier as returned by \code{\link[=tbl_id]{tbl_id()}}. A character scalar.}
 
-\item{body_json}{Data to include as JSON in the HTTP request body. Set to \code{NULL} for an empty body.}
+\item{body_json}{Data to include as JSON in the HTTP request body. Either a list or \code{NULL} for an empty body.}
 
 \item{auto_unbox}{Whether or not to automatically "unbox" length-1 vectors in \code{body_json} to JSON scalars.}
 

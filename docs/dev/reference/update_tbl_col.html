@@ -53,7 +53,7 @@ PATCH /api/v2/meta/columns/{id_col} API endpoint."><meta name="twitter:card" con
     <dl><dt id="arg-id-col">id_col<a class="anchor" aria-label="anchor" href="#arg-id-col"></a></dt>
 <dd><p>NocoDB column identifier as returned by <code><a href="tbl_col_id.html">tbl_col_id()</a></code>. A character scalar.</p></dd>
 <dt id="arg-body-json">body_json<a class="anchor" aria-label="anchor" href="#arg-body-json"></a></dt>
-<dd><p>Data to include as JSON in the HTTP request body. Set to <code>NULL</code> for an empty body.</p></dd>
+<dd><p>Data to include as JSON in the HTTP request body. Either a list or <code>NULL</code> for an empty body.</p></dd>
 <dt id="arg-auto-unbox">auto_unbox<a class="anchor" aria-label="anchor" href="#arg-auto-unbox"></a></dt>
 <dd><p>Whether or not to automatically "unbox" length-1 vectors in <code>body_json</code> to JSON scalars.</p></dd>
 <dt id="arg-hostname">hostname<a class="anchor" aria-label="anchor" href="#arg-hostname"></a></dt>

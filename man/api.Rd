@@ -39,7 +39,7 @@ provided.}
 
 \item{auth}{Whether or not to include an \link[=req_auth]{authentication header} in the HTTP request.}
 
-\item{body_json}{Data to include as JSON in the HTTP request body. Set to \code{NULL} for an empty body.}
+\item{body_json}{Data to include as JSON in the HTTP request body. Either a list or \code{NULL} for an empty body.}
 
 \item{auto_unbox}{Whether or not to automatically "unbox" length-1 vectors in \code{body_json} to JSON scalars.}
 

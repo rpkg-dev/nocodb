@@ -182,7 +182,7 @@ decode_access_token <- function(x) {
 is_access_token_expired <- function(x) {
   
   decode_access_token(x) |>
-    dplyr::pull(exp) |>
+    dplyr::pull("exp") |>
     magrittr::is_less_than(clock::date_now(zone = "UTC"))
 }
 
@@ -208,7 +208,7 @@ stateful$access_token <- list()
 #' @inheritParams req_basic
 #' @inheritParams req_auth
 #' @param auth Whether or not to include an [authentication header][req_auth] in the HTTP request.
-#' @param body_json Data to include as JSON in the HTTP request body. Set to `NULL` for an empty body.
+#' @param body_json Data to include as JSON in the HTTP request body. Either a list or `NULL` for an empty body.
 #' @param auto_unbox Whether or not to automatically "unbox" length-1 vectors in `body_json` to JSON scalars.
 #' @param simplify Whether or not to automatically simplify JSON structures in the returned JSON. Enables/disables all `simplify*` arguments of
 #'   [jsonlite::fromJSON()].
@@ -253,6 +253,7 @@ api <- function(path,
   }
   
   if (length(body_json) > 0L) {
+    checkmate::assert_list(body_json)
     req %<>% httr2::req_body_json(data = body_json,
                                   auto_unbox = auto_unbox)
   }
@@ -782,7 +783,7 @@ base_id <- function(title = pal::pkg_config_val(key = "base_title",
           password = password,
           api_token = api_token) |>
     dplyr::filter(title == !!title) |>
-    dplyr::pull(id)
+    dplyr::pull("id")
   
   n_result <- length(result)
   
@@ -1050,7 +1051,7 @@ data_src_id <- function(alias,
               password = password,
               api_token = api_token) |>
     dplyr::filter(alias == !!alias) |>
-    dplyr::pull(id)
+    dplyr::pull("id")
   
   n_result <- length(result)
   
@@ -1281,7 +1282,7 @@ tbl_id <- function(tbl_name,
          password = password,
          api_token = api_token) |>
     dplyr::filter(table_name == !!tbl_name) |>
-    dplyr::pull(id)
+    dplyr::pull("id")
   
   n_result <- length(result)
   
@@ -1577,7 +1578,7 @@ tbl_col_id <- function(id_tbl,
               ~ dplyr::filter(., column_name == !!col_name)) |>
     pal::when(is.null(col_title) ~ .,
               ~ dplyr::filter(., title == !!col_title)) |>
-    dplyr::pull(id)
+    dplyr::pull("id")
   
   n_result <- length(result)
   
@@ -1938,7 +1939,7 @@ user_id <- function(user_email,
                password = password,
                api_token = api_token) |>
     dplyr::filter(email == !!user_email) |>
-    dplyr::pull(id)
+    dplyr::pull("id")
   
   n_result <- length(result)
   
@@ -1966,8 +1967,8 @@ user_id <- function(user_email,
 #' @inherit update_user return
 #' @family users
 #' @export
-add_user <- function(email_new,
-                     password_new,
+add_user <- function(user_email,
+                     user_password,
                      display_name = NULL,
                      subscribe_to_newsletter = FALSE,
                      hostname = pal::pkg_config_val(key = "hostname",
@@ -1996,8 +1997,8 @@ add_user <- function(email_new,
   }
   
   # add new user
-  sign_up_user(email_new = email_new,
-               password_new = password_new,
+  sign_up_user(user_email = user_email,
+               user_password = user_password,
                subscribe_to_newsletter = subscribe_to_newsletter,
                hostname = hostname,
                email = email,
@@ -2007,8 +2008,8 @@ add_user <- function(email_new,
   # set user display name
   result <- update_user(display_name = display_name,
                         hostname = hostname,
-                        email = email_new,
-                        password = password_new,
+                        email = user_email,
+                        password = user_password,
                         api_token = NULL)
   
   # validate user's e-mail address
@@ -2144,7 +2145,7 @@ delete_user <- function(id_user,
 #' @return `NULL`, invisibly.
 #' @family users
 #' @export
-invite_user <- function(email_new,
+invite_user <- function(user_email,
                         org_role = c("org-level-viewer", "org-level-creator"),
                         hostname = pal::pkg_config_val(key = "hostname",
                                                        pkg = this_pkg),
@@ -2154,7 +2155,7 @@ invite_user <- function(email_new,
                                                        pkg = this_pkg),
                         quiet = FALSE) {
   
-  checkmate::assert_string(email_new)
+  checkmate::assert_string(user_email)
   org_role <- rlang::arg_match(org_role)
   checkmate::assert_flag(quiet)
   
@@ -2165,7 +2166,7 @@ invite_user <- function(email_new,
                 password = password,
                 api_token = NULL,
                 body_json = list(roles = org_role,
-                                 email = email_new))
+                                 email = user_email))
   if (!quiet) {
     cli_alert_status(msg = result$msg)
   }
@@ -2184,7 +2185,7 @@ invite_user <- function(email_new,
 #'
 #' # API errors
 #'
-#' - If you *did* provide an `invite_token` and encounter a **`Not allowed to signup`** error, it means the provided `email_new` does not match the
+#' - If you *did* provide an `invite_token` and encounter a **`Not allowed to signup`** error, it means the provided `user_email` does not match the
 #'   `invite_token`.
 #' 
 #' - If you did *not* provide an `invite_token` and encounter a **`Not allowed to signup`** error, it means sign-up of new users is [restricted to invitees
@@ -2193,8 +2194,8 @@ invite_user <- function(email_new,
 #' - If you encounter an **`Invalid invite url`** error, it means the provided `invite_token` is either invalid or has already been used to sign up.
 #'
 #' @inheritParams api
-#' @param email_new E-mail address of the user to sign up. A character scalar.
-#' @param password_new Password of the user to sign up. A character scalar.
+#' @param user_email E-mail address of the user to sign up. A character scalar.
+#' @param user_password Password of the user to sign up. A character scalar.
 #' @param invite_token Invite token of the user to sign up. A character scalar.
 #' @param subscribe_to_newsletter Whether or not to subscribe the signed up user to the NocoDB newsletter.
 #'
@@ -2202,8 +2203,8 @@ invite_user <- function(email_new,
 #' @family users
 #' @family auth
 #' @export
-sign_up_user <- function(email_new,
-                         password_new,
+sign_up_user <- function(user_email,
+                         user_password,
                          invite_token = NULL,
                          subscribe_to_newsletter = FALSE,
                          hostname = pal::pkg_config_val(key = "hostname",
@@ -2217,8 +2218,8 @@ sign_up_user <- function(email_new,
                          api_token = pal::pkg_config_val(key = "api_token",
                                                          pkg = this_pkg,
                                                          required = FALSE)) {
-  checkmate::assert_string(email_new)
-  checkmate::assert_string(password_new)
+  checkmate::assert_string(user_email)
+  checkmate::assert_string(user_password)
   checkmate::assert_string(invite_token,
                            null.ok = TRUE)
   checkmate::assert_flag(subscribe_to_newsletter)
@@ -2229,13 +2230,13 @@ sign_up_user <- function(email_new,
       email = email,
       password = password,
       api_token = api_token,
-      body_json = purrr::compact(list(email = email_new,
-                                      password = password_new,
+      body_json = purrr::compact(list(email = user_email,
+                                      password = user_password,
                                       token = invite_token,
                                       ignore_subscribe = !subscribe_to_newsletter))) |>
     purrr::list_c(ptype = character()) |>
     store_access_token(hostname = hostname,
-                       email = email_new)
+                       email = user_email)
 }
 
 #' Validate NocoDB user e-mail
@@ -2415,14 +2416,14 @@ delete_base_user <- function(id_user,
 #' [`POST /api/v2/meta/bases/{id_base}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-add) API endpoint.
 #'
 #' @inheritParams set_tbl_metadata
-#' @param email_new E-mail address of the user to invite. A character scalar.
+#' @param user_email E-mail address of the user to invite. A character scalar.
 #' @param role Base role to assign to the user. One of `r pal::enum_fn_param_defaults(param = "role", fn = "invite_base_user")`.
 #'
-#' @return `email_new`, invisibly.
+#' @return `user_email`, invisibly.
 #' @family users
 #' @family bases
 #' @export
-invite_base_user <- function(email_new,
+invite_base_user <- function(user_email,
                              role = c("no-access", "viewer", "commenter", "editor", "creator"),
                              id_base = base_id(hostname = hostname),
                              hostname = pal::pkg_config_val(key = "hostname",
@@ -2438,7 +2439,7 @@ invite_base_user <- function(email_new,
                                                              required = FALSE),
                              quiet = FALSE) {
   
-  checkmate::assert_string(email_new)
+  checkmate::assert_string(user_email)
   role <- rlang::arg_match(role)
   checkmate::assert_string(id_base)
   checkmate::assert_flag(quiet)
@@ -2449,13 +2450,13 @@ invite_base_user <- function(email_new,
                 email = email,
                 password = password,
                 api_token = api_token,
-                body_json = list(email = email_new,
+                body_json = list(email = user_email,
                                  roles = role))
   if (!quiet) {
     cli_alert_status(msg = result$msg)
   }
   
-  invisible(email_new)
+  invisible(user_email)
 }
 
 #' Resend NocoDB base user invitation
@@ -2504,6 +2505,290 @@ resend_base_user_invitation <- function(id_user,
   }
 
   invisible(id_user)
+}
+
+#' List NocoDB plugins
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about the available plugins of a NocoDB server via its
+#' [`GET /api/v1/db/meta/plugins`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis) API endpoint.
+#'
+#' @inheritParams api
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family plugins
+#' @export
+plugins <- function(hostname = pal::pkg_config_val(key = "hostname",
+                                                   pkg = this_pkg),
+                    email = pal::pkg_config_val(key = "email",
+                                                pkg = this_pkg,
+                                                required = FALSE),
+                    password = pal::pkg_config_val(key = "password",
+                                                   pkg = this_pkg,
+                                                   required = FALSE),
+                    api_token = pal::pkg_config_val(key = "api_token",
+                                                    pkg = this_pkg,
+                                                    required = FALSE)) {
+  api(path = "api/v1/db/meta/plugins",
+      method = "GET",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token) |>
+    _$list |>
+    tibble::as_tibble() |>
+    tidy_date_time_cols()
+}
+
+#' Get NocoDB plugin ID
+#'
+#' Returns the identifier of the plugin with the specified title on a NocoDB server.
+#'
+#' @inheritParams api
+#' @param title NocoDB plugin title. A character scalar.
+#'
+#' @return Plugin identifier as a character scalar.
+#' @family plugins
+#' @export
+plugin_id <- function(title,
+                      hostname = pal::pkg_config_val(key = "hostname",
+                                                     pkg = this_pkg),
+                      email = pal::pkg_config_val(key = "email",
+                                                  pkg = this_pkg,
+                                                  required = FALSE),
+                      password = pal::pkg_config_val(key = "password",
+                                                     pkg = this_pkg,
+                                                     required = FALSE),
+                      api_token = pal::pkg_config_val(key = "api_token",
+                                                      pkg = this_pkg,
+                                                      required = FALSE)) {
+  checkmate::assert_string(title)
+  
+  result <-
+    plugins(hostname = hostname,
+            email = email,
+            password = password,
+            api_token = api_token) |>
+    dplyr::filter(title == !!title) |>
+    dplyr::pull("id")
+  
+  n_result <- length(result)
+  
+  if (n_result > 1L) {
+    result <- result[1L]
+    cli::cli_warn("{.val {n_result}} plugins with title {.val {title}} present. The identifier of the first one listed in the API response is returned.")
+  } else if (n_result == 0L) {
+    cli::cli_abort("No plugin found with title {.val {title}} on the {.field {hostname}} NocoDB server.")
+  }
+  
+  result
+}
+
+#' Get NocoDB plugin category
+#'
+#' Returns the category of the specified plugin on a NocoDB server.
+#'
+#' @inheritParams plugin
+#'
+#' @return Plugin category as a character scalar.
+#' @family plugins
+#' @export
+plugin_category <- function(id_plugin,
+                            hostname = pal::pkg_config_val(key = "hostname",
+                                                           pkg = this_pkg),
+                            email = pal::pkg_config_val(key = "email",
+                                                        pkg = this_pkg,
+                                                        required = FALSE),
+                            password = pal::pkg_config_val(key = "password",
+                                                           pkg = this_pkg,
+                                                           required = FALSE),
+                            api_token = pal::pkg_config_val(key = "api_token",
+                                                            pkg = this_pkg,
+                                                            required = FALSE)) {
+  checkmate::assert_string(id_plugin)
+  
+  plugins(hostname = hostname,
+          email = email,
+          password = password,
+          api_token = api_token) |>
+    dplyr::filter(id == !!id_plugin) |>
+    dplyr::pull("category")
+}
+
+#' Get NocoDB plugin
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about the specified plugin on a NocoDB server from its
+#' [`GET /api/v1/db/meta/plugins/{id_plugin}`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis) API endpoint.
+#'
+#' @inheritParams api
+#' @param id_plugin NocoDB plugin identifier as returned by [plugin_id()]. A character scalar.
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family plugins
+#' @export
+plugin <- function(id_plugin,
+                   hostname = pal::pkg_config_val(key = "hostname",
+                                                  pkg = this_pkg),
+                   email = pal::pkg_config_val(key = "email",
+                                               pkg = this_pkg,
+                                               required = FALSE),
+                   password = pal::pkg_config_val(key = "password",
+                                                  pkg = this_pkg,
+                                                  required = FALSE),
+                   api_token = pal::pkg_config_val(key = "api_token",
+                                                   pkg = this_pkg,
+                                                   required = FALSE)) {
+  checkmate::assert_string(id_plugin)
+  
+  api(path = glue::glue("api/v1/db/meta/plugins/{id_plugin}"),
+      method = "GET",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token) |>
+    tidy_resp_data()
+}
+
+#' Update NocoDB plugin configuration
+#'
+#' Updates the configuration of the specified plugin on a NocoDB server via its
+#' [`PATCH /api/v1/db/meta/plugins/{id_plugin}`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis) API endpoint.
+#'
+#' @inheritParams plugin
+#' @inheritParams api
+#' @param config Plugin configuration. A list or `NULL`. If `NULL`, the plugin's configuration is left untouched.
+#' @param activate Whether or not to activate the plugin. If `NULL`, the plugin's activation status is left untouched.
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family plugins
+#' @export
+#'
+#' @examples
+#' try(
+#'   nocodb::update_plugin(id_plugin = nocodb::plugin_id(title = "Backblaze B2"),
+#'                         config = list(bucket = "REPLACE-ME",
+#'                                       region = "REPLACE-ME",
+#'                                       access_key = "REPLACE-ME",
+#'                                       access_secret = "REPLACE-ME"),
+#'                         activate = TRUE)
+#' )
+update_plugin <- function(id_plugin,
+                          config = NULL,
+                          activate = NULL,
+                          hostname = pal::pkg_config_val(key = "hostname",
+                                                         pkg = this_pkg),
+                          email = pal::pkg_config_val(key = "email",
+                                                      pkg = this_pkg,
+                                                      required = FALSE),
+                          password = pal::pkg_config_val(key = "password",
+                                                         pkg = this_pkg,
+                                                         required = FALSE),
+                          api_token = pal::pkg_config_val(key = "api_token",
+                                                          pkg = this_pkg,
+                                                          required = FALSE)) {
+  checkmate::assert_string(id_plugin)
+  checkmate::assert_flag(activate,
+                         null.ok = TRUE)
+  checkmate::assert_list(config,
+                         names = "named",
+                         null.ok = TRUE)
+  
+  # NOTE: we must send `input` as a *string* of JSON
+  if (!is.null(config)) {
+    config %<>% jsonlite::toJSON(auto_unbox = TRUE)
+  }
+  
+  api(path = glue::glue("api/v1/db/meta/plugins/{id_plugin}"),
+      method = "PATCH",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token,
+      body_json = purrr::compact(list(input = config,
+                                      active = activate))) |>
+    tidy_resp_data()
+}
+
+#' Test NocoDB plugin configuration
+#'
+#' Tests the configuration of the plugin with the specified title and category on a NocoDB server via its
+#' [`POST /api/v1/db/meta/plugins/test`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis) API endpoint.
+#'
+#' @inheritParams plugin_id
+#' @inheritParams update_plugin
+#' @param config Plugin configuration. A list.
+#' @param category NocoDB plugin category as returned by [plugin_category()]. A character scalar.
+#'
+#' @return `TRUE` if the test was successful.
+#' @family plugins
+#' @export
+test_plugin <- function(title,
+                        config,
+                        category = plugin_category(id_plugin = plugin_id(title = title)),
+                        hostname = pal::pkg_config_val(key = "hostname",
+                                                       pkg = this_pkg),
+                        email = pal::pkg_config_val(key = "email",
+                                                    pkg = this_pkg,
+                                                    required = FALSE),
+                        password = pal::pkg_config_val(key = "password",
+                                                       pkg = this_pkg,
+                                                       required = FALSE),
+                        api_token = pal::pkg_config_val(key = "api_token",
+                                                        pkg = this_pkg,
+                                                        required = FALSE)) {
+  checkmate::assert_string(title)
+  checkmate::assert_list(config,
+                         min.len = 1L,
+                         names = "named")
+  checkmate::assert_string(category)
+  
+  api(path = "api/v1/db/meta/plugins/test",
+      method = "POST",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token,
+      # NOTE: we must send `input` as a *string* of JSON
+      body_json = list(title = title,
+                       category = category,
+                       input = jsonlite::toJSON(config,
+                                                auto_unbox = TRUE))) |>
+    jsonlite::fromJSON()
+}
+
+#' Test if plugin is active
+#'
+#' Tests whether the plugin with the specified `title` is active on a NocoDB server via its
+#' [`GET /api/v1/db/meta/plugins/{title}/status`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis) API endpoint.
+#'
+#' Note that the API endpoint doesn't check the plugin `title` for validity and simply returns `FALSE` for a `title` which does not actually exist.
+#'
+#' @inheritParams plugin_id
+#'
+#' @return A logical scalar.
+#' @family plugins
+#' @export
+is_plugin_active <- function(title,
+                             hostname = pal::pkg_config_val(key = "hostname",
+                                                            pkg = this_pkg),
+                             email = pal::pkg_config_val(key = "email",
+                                                         pkg = this_pkg,
+                                                         required = FALSE),
+                             password = pal::pkg_config_val(key = "password",
+                                                            pkg = this_pkg,
+                                                            required = FALSE),
+                             api_token = pal::pkg_config_val(key = "api_token",
+                                                             pkg = this_pkg,
+                                                             required = FALSE)) {
+  checkmate::assert_string(title)
+  title %<>% utils::URLencode()
+  
+  api(path = glue::glue("api/v1/db/meta/plugins/{title}/status"),
+      method = "GET",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token) |>
+    jsonlite::fromJSON()
 }
 
 #' List NocoDB app settings

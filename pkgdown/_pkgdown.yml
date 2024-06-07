@@ -70,6 +70,17 @@ reference:
   - delete_base_user
   - invite_base_user
   - resend_base_user_invitation
+- subtitle: Plugins
+  desc: Functions to manage NocoDB [plugins](https://docs.nocodb.com/account-settings/oss-specific-details/#app-store)
+    (aka "integrations").
+- contents:
+  - plugins
+  - plugin_id
+  - plugin_category
+  - plugin
+  - update_plugin
+  - test_plugin
+  - is_plugin_active
 - subtitle: App settings
   desc: Functions to manage NocoDB's [application settings](https://docs.nocodb.com/account-settings/oss-specific-details).
 - contents:

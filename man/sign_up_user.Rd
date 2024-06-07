@@ -5,8 +5,8 @@
 \title{Sign up NocoDB user}
 \usage{
 sign_up_user(
-  email_new,
-  password_new,
+  user_email,
+  user_password,
   invite_token = NULL,
   subscribe_to_newsletter = FALSE,
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
@@ -16,9 +16,9 @@ sign_up_user(
 )
 }
 \arguments{
-\item{email_new}{E-mail address of the user to sign up. A character scalar.}
+\item{user_email}{E-mail address of the user to sign up. A character scalar.}
 
-\item{password_new}{Password of the user to sign up. A character scalar.}
+\item{user_password}{Password of the user to sign up. A character scalar.}
 
 \item{invite_token}{Invite token of the user to sign up. A character scalar.}
 
@@ -45,7 +45,7 @@ have been invited before (via \code{\link[=invite_user]{invite_user()}} or \code
 }
 \section{API errors}{
 \itemize{
-\item If you \emph{did} provide an \code{invite_token} and encounter a \strong{\verb{Not allowed to signup}} error, it means the provided \code{email_new} does not match the
+\item If you \emph{did} provide an \code{invite_token} and encounter a \strong{\verb{Not allowed to signup}} error, it means the provided \code{user_email} does not match the
 \code{invite_token}.
 \item If you did \emph{not} provide an \code{invite_token} and encounter a \strong{\verb{Not allowed to signup}} error, it means sign-up of new users is \href{https://docs.nocodb.com/account-settings/oss-specific-details/#enable--disable-signup}{restricted to invitees only}.
 \item If you encounter an \strong{\verb{Invalid invite url}} error, it means the provided \code{invite_token} is either invalid or has already been used to sign up.
