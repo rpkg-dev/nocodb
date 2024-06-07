@@ -6,8 +6,8 @@
 \usage{
 users(
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
-  email = pal::pkg_config_val(key = "email", pkg = this_pkg, required = FALSE),
-  password = pal::pkg_config_val(key = "password", pkg = this_pkg, required = FALSE)
+  email = pal::pkg_config_val(key = "email", pkg = this_pkg),
+  password = pal::pkg_config_val(key = "password", pkg = this_pkg)
 )
 }
 \arguments{
@@ -33,13 +33,16 @@ Only the super admin user is allowed to use this API endpoint, i.e. the provided
 Other functions to manage NocoDB users:
 \code{\link{add_user}()},
 \code{\link{base_users}()},
+\code{\link{delete_base_user}()},
+\code{\link{delete_user}()},
 \code{\link{invite_base_user}()},
 \code{\link{invite_user}()},
+\code{\link{resend_base_user_invitation}()},
 \code{\link{sign_up_user}()},
 \code{\link{update_base_user}()},
 \code{\link{update_user}()},
-\code{\link{user}()},
 \code{\link{user_id}()},
-\code{\link{validate_user_email}()}
+\code{\link{validate_user_email}()},
+\code{\link{whoami}()}
 }
 \concept{users}

@@ -5,6 +5,7 @@
 <url><loc>https://nocodb.rpkg.dev/dev/reference/access_token.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/add_user.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/api.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/api_tokens.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/app_settings.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/assemble_url.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/assert_super_admin.html</loc></url>
@@ -19,7 +20,9 @@
 <url><loc>https://nocodb.rpkg.dev/dev/reference/data_srcs.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/decode_access_token.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/delete_base.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/delete_base_user.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/delete_data_src.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/delete_user.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/index.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/invite_base_user.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/invite_user.html</loc></url>
@@ -31,6 +34,7 @@
 <url><loc>https://nocodb.rpkg.dev/dev/reference/reorder_tbl.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/req_auth.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/req_basic.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/resend_base_user_invitation.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/set_display_val.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/set_display_vals.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/set_tbl_metadata.html</loc></url>
@@ -51,9 +55,9 @@
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_tbl_col.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_user.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/upload_attachments.html</loc></url>
-<url><loc>https://nocodb.rpkg.dev/dev/reference/user.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/user_id.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/users.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/validate_user_email.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/whoami.html</loc></url>
 </urlset>
 

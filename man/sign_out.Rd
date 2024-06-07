@@ -5,17 +5,17 @@
 \title{Sign out NocoDB user}
 \usage{
 sign_out(
-  email = pal::pkg_config_val(key = "email", pkg = this_pkg),
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
+  email = pal::pkg_config_val(key = "email", pkg = this_pkg),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg, required = FALSE),
   api_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg, required = FALSE),
   quiet = FALSE
 )
 }
 \arguments{
-\item{email}{E-mail address of the NocoDB user to sign out. A character scalar.}
-
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+
+\item{email}{E-mail address of the NocoDB user to sign out. A character scalar.}
 
 \item{password}{Password of the NocoDB user to authenticate with.}
 
@@ -36,6 +36,7 @@ Note that the \code{email} address to sign out and the \code{api_token} to authe
 }
 \seealso{
 Other functions to manage NocoDB authentication:
+\code{\link{api_tokens}()},
 \code{\link{assert_super_admin}()},
 \code{\link{is_signed_in}()},
 \code{\link{is_super_admin}()},

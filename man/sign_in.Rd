@@ -38,6 +38,7 @@ has expired or been invalidated by \code{\link[=sign_out]{sign_out()}} in the me
 }
 \seealso{
 Other functions to manage NocoDB authentication:
+\code{\link{api_tokens}()},
 \code{\link{assert_super_admin}()},
 \code{\link{is_signed_in}()},
 \code{\link{is_super_admin}()},

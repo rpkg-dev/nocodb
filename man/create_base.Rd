@@ -48,6 +48,9 @@ Other functions to manage NocoDB bases:
 \code{\link{base_users}()},
 \code{\link{bases}()},
 \code{\link{delete_base}()},
+\code{\link{delete_base_user}()},
+\code{\link{invite_base_user}()},
+\code{\link{resend_base_user_invitation}()},
 \code{\link{update_base}()},
 \code{\link{update_base_user}()}
 }

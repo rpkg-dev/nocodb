@@ -44,13 +44,29 @@ Invites a new user to the specified base on a NocoDB server via its
 Other functions to manage NocoDB users:
 \code{\link{add_user}()},
 \code{\link{base_users}()},
+\code{\link{delete_base_user}()},
+\code{\link{delete_user}()},
 \code{\link{invite_user}()},
+\code{\link{resend_base_user_invitation}()},
 \code{\link{sign_up_user}()},
 \code{\link{update_base_user}()},
 \code{\link{update_user}()},
-\code{\link{user}()},
 \code{\link{user_id}()},
 \code{\link{users}()},
-\code{\link{validate_user_email}()}
+\code{\link{validate_user_email}()},
+\code{\link{whoami}()}
+
+Other functions to manage NocoDB bases:
+\code{\link{base}()},
+\code{\link{base_id}()},
+\code{\link{base_users}()},
+\code{\link{bases}()},
+\code{\link{create_base}()},
+\code{\link{delete_base}()},
+\code{\link{delete_base_user}()},
+\code{\link{resend_base_user_invitation}()},
+\code{\link{update_base}()},
+\code{\link{update_base_user}()}
 }
+\concept{bases}
 \concept{users}

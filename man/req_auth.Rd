@@ -60,6 +60,7 @@ Other common functions:
 \code{\link{req_basic}()}
 
 Other functions to manage NocoDB authentication:
+\code{\link{api_tokens}()},
 \code{\link{assert_super_admin}()},
 \code{\link{is_signed_in}()},
 \code{\link{is_super_admin}()},

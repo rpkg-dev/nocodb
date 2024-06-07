@@ -10,6 +10,7 @@ reference:
 - contents:
   - sign_in
   - sign_out
+  - api_tokens
 - title: Meta
   desc: Functions to work with NocoDB's RESTful [meta APIs](https://meta-apis-v2.nocodb.com/).
 - subtitle: Bases
@@ -55,17 +56,20 @@ reference:
 - subtitle: Users
   desc: Functions to manage NocoDB [users](https://docs.nocodb.com/collaboration/oss-specific-details/#user-management).
 - contents:
+  - whoami
   - users
-  - user
   - user_id
   - add_user
   - update_user
+  - delete_user
   - invite_user
   - sign_up_user
   - validate_user_email
   - base_users
   - update_base_user
+  - delete_base_user
   - invite_base_user
+  - resend_base_user_invitation
 - subtitle: App settings
   desc: Functions to manage NocoDB's [application settings](https://docs.nocodb.com/account-settings/oss-specific-details).
 - contents:

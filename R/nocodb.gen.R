@@ -47,9 +47,11 @@ assemble_url <- function(...,
                               path = fs::path(...)))
 }
 
-cli_alert_status <- function(msg) {
+cli_alert_status <- function(msg,
+                             pattern_success = "success") {
   
-  if (stringr::str_detect(msg, "success")) {
+  if (stringr::str_detect(string = msg,
+                          pattern = pattern_success)) {
     cli::cli_alert_success(msg)
   } else {
     cli::cli_alert_info(msg)
@@ -261,7 +263,8 @@ api <- function(path,
   if (!httr2::resp_has_body(resp)) {
     cli::cli_abort(paste0("API responded with HTTP status {.field ",
                           paste(httr2::resp_status(resp), httr2::resp_status_desc(resp)),
-                          "} but an empty body, which likely means some component in the URL path {.path {path}} is invalid."))
+                          "} and an empty body, which likely means some component in the URL path {.path {path}} is invalid or the method ",
+                          "{.field {method}} is not implemented for the endpoint."))
   }
   
   if (isTRUE(httr2::resp_content_type(resp) == "application/json")) {
@@ -494,10 +497,10 @@ sign_in <- function(hostname = pal::pkg_config_val(key = "hostname",
 #' @family auth
 #' @family user
 #' @export
-sign_out <- function(email = pal::pkg_config_val(key = "email",
-                                                 pkg = this_pkg),
-                     hostname = pal::pkg_config_val(key = "hostname",
+sign_out <- function(hostname = pal::pkg_config_val(key = "hostname",
                                                     pkg = this_pkg),
+                     email = pal::pkg_config_val(key = "email",
+                                                 pkg = this_pkg),
                      password = pal::pkg_config_val(key = "password",
                                                     pkg = this_pkg,
                                                     required = FALSE),
@@ -506,8 +509,8 @@ sign_out <- function(email = pal::pkg_config_val(key = "email",
                                                      required = FALSE),
                      quiet = FALSE) {
   
-  checkmate::assert_string(email)
   checkmate::assert_string(hostname)
+  checkmate::assert_string(email)
   checkmate::assert_flag(quiet)
   
   path_cookie <- path_cookie(hostname = hostname,
@@ -551,6 +554,35 @@ sign_out <- function(email = pal::pkg_config_val(key = "email",
                      hostname = hostname,
                      email = email)
   invisible(email)
+}
+
+#' List API tokens
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about all API tokens the authenticating user has access to on a NocoDB server from its
+#' [`GET /api/v1/tokens`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis) API endpoint.
+#'
+#' `r md_text_no_api_token_support`
+#'
+#' @inheritParams api
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family auth
+#' @export
+api_tokens <- function(hostname = pal::pkg_config_val(key = "hostname",
+                                                      pkg = this_pkg),
+                       email = pal::pkg_config_val(key = "email",
+                                                   pkg = this_pkg),
+                       password = pal::pkg_config_val(key = "password",
+                                                      pkg = this_pkg)) {
+  api(path = "api/v1/tokens",
+      method = "GET",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = NULL) |>
+    _$list |>
+    tibble::as_tibble() |>
+    tidy_date_time_cols()
 }
 
 #' Test if user is signed in
@@ -639,8 +671,8 @@ is_super_admin <- function(hostname = pal::pkg_config_val(key = "hostname",
       decode_access_token()
     
   } else {
-    result <- user(hostname = hostname,
-                   api_token = api_token)
+    result <- whoami(hostname = hostname,
+                     api_token = api_token)
   }
   
   result %<>% purrr::pluck("roles") %>% unlist()
@@ -1803,6 +1835,42 @@ upload_attachments <- function(paths,
     purrr::list_rbind()
 }
 
+#' Get NocoDB user info
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about the specified user from a NocoDB server via its
+#' [`GET /api/v1/auth/user/me`](https://data-apis-v1.nocodb.com/#tag/Auth/operation/auth-me) API endpoint.
+#'
+#' `r md_text_user_from_auth` The returned columns differ between the two modes of authentication.
+#'
+#' The API endpoint does not require authentication. If an invalid `api_token` is provided, the request still succeeds and generic data for a `guest` user is
+#' returned, same as for `auth = FALSE`.
+#'
+#' @inheritParams api
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family users
+#' @export
+whoami <- function(hostname = pal::pkg_config_val(key = "hostname",
+                                                  pkg = this_pkg),
+                   email = pal::pkg_config_val(key = "email",
+                                               pkg = this_pkg,
+                                               required = FALSE),
+                   password = pal::pkg_config_val(key = "password",
+                                                  pkg = this_pkg,
+                                                  required = FALSE),
+                   api_token = NULL,
+                   auth = TRUE) {
+  
+  api(path = "api/v1/auth/user/me",
+      method = "GET",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token,
+      auth = auth) |>
+    tidy_resp_data()
+}
+
 #' List NocoDB users
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about all users on a NocoDB server from its
@@ -1820,11 +1888,9 @@ upload_attachments <- function(paths,
 users <- function(hostname = pal::pkg_config_val(key = "hostname",
                                                  pkg = this_pkg),
                   email = pal::pkg_config_val(key = "email",
-                                              pkg = this_pkg,
-                                              required = FALSE),
+                                              pkg = this_pkg),
                   password = pal::pkg_config_val(key = "password",
-                                                 pkg = this_pkg,
-                                                 required = FALSE)) {
+                                                 pkg = this_pkg)) {
   assert_super_admin(hostname = hostname,
                      email = email,
                      password = password)
@@ -1838,39 +1904,6 @@ users <- function(hostname = pal::pkg_config_val(key = "hostname",
     _$list |>
     tibble::as_tibble() |>
     tidy_date_time_cols()
-}
-
-#' Get NocoDB user
-#'
-#' Returns a [tibble][tibble::tbl_df] with metadata about the specified user from a NocoDB server via its
-#' [`GET /api/v1/auth/user/me`](https://data-apis-v1.nocodb.com/#tag/Auth/operation/auth-me) API endpoint.
-#'
-#' `r md_text_user_from_auth` The returned columns differ between the two modes of authentication.
-#'
-#' If an invalid `api_token` is provided, the request still succeeds and generic data for a `guest` user is returned.
-#'
-#' @inheritParams api
-#'
-#' @return `r pkgsnip::return_lbl("tibble")`
-#' @family users
-#' @export
-user <- function(hostname = pal::pkg_config_val(key = "hostname",
-                                                pkg = this_pkg),
-                 email = pal::pkg_config_val(key = "email",
-                                             pkg = this_pkg,
-                                             required = FALSE),
-                 password = pal::pkg_config_val(key = "password",
-                                                pkg = this_pkg,
-                                                required = FALSE),
-                 api_token = NULL) {
-  
-  api(path = "api/v1/auth/user/me",
-      method = "GET",
-      hostname = hostname,
-      email = email,
-      password = password,
-      api_token = api_token) |>
-    tidy_resp_data()
 }
 
 #' Get NocoDB user ID
@@ -1940,11 +1973,9 @@ add_user <- function(email_new,
                      hostname = pal::pkg_config_val(key = "hostname",
                                                     pkg = this_pkg),
                      email = pal::pkg_config_val(key = "email",
-                                                 pkg = this_pkg,
-                                                 required = FALSE),
+                                                 pkg = this_pkg),
                      password = pal::pkg_config_val(key = "password",
-                                                    pkg = this_pkg,
-                                                    required = FALSE),
+                                                    pkg = this_pkg),
                      quiet = TRUE) {
   
   invite_only_signup <-
@@ -2037,18 +2068,66 @@ update_user <- function(display_name = NULL,
     tidy_resp_data()
   
   # trigger NocoDB internal state update (so `base_users()` etc. reflect the updated metadata) if possible
-  if (!is.null(email) && !is.null(password) && is_super_admin(hostname = hostname,
-                                                              email = email,
-                                                              password = password)) {
-    users(hostname = hostname,
-          email = email,
-          password = password)
-  } else {
-    cli::cli_alert_info(paste0("In order for other API endpoints to reflect the updated metadata, NocoDB's internal state must yet update, which can be ",
-                               "triggered by invoking {.run nocodb::users()}."))
+  if (!is.null(display_name)) {
+    if (!is.null(email) && !is.null(password) && is_super_admin(hostname = hostname,
+                                                                email = email,
+                                                                password = password)) {
+      users(hostname = hostname,
+            email = email,
+            password = password)
+    } else {
+      cli::cli_alert_info(paste0("In order for other API endpoints to reflect the updated metadata, NocoDB's internal state must yet update, which can be ",
+                                 "triggered by invoking {.run nocodb::users()}."))
+    }
   }
   
   result
+}
+
+#' Delete NocoDB user
+#'
+#' Deletes the specified user on a NocoDB server via its
+#' [`DELETE /api/v1/users/{id_user}`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis) API endpoint.
+#'
+#' `r md_text_no_api_token_support`
+#'
+#' # API errors
+#'
+#' - If you encounter a **`Cannot read properties of undefined (reading 'roles')`** error, it likely means the specified `id_user` is invalid (i.e. doesn't
+#'   exist).
+#'
+#' - If you encounter a **`userDelete -  : Not allowed`** error, it means the authenticating user doesn't have sufficient privileges (must be
+#'   `"org-level-creator"`).
+#'
+#' @inheritParams update_base_user
+#'
+#' @return `NULL`, invisibly.
+#' @family users
+#' @export
+delete_user <- function(id_user,
+                        hostname = pal::pkg_config_val(key = "hostname",
+                                                       pkg = this_pkg),
+                        email = pal::pkg_config_val(key = "email",
+                                                    pkg = this_pkg,
+                                                    required = FALSE),
+                        password = pal::pkg_config_val(key = "password",
+                                                       pkg = this_pkg,
+                                                       required = FALSE),
+                        quiet = FALSE) {
+  
+  checkmate::assert_string(id_user)
+  
+  result <- api(path = glue::glue("api/v1/users/{id_user}"),
+                method = "DELETE",
+                hostname = hostname,
+                email = email,
+                password = password,
+                api_token = NULL)
+  if (!quiet) {
+    cli_alert_status(msg = result$msg)
+  }
+  
+  invisible(NULL)
 }
 
 #' Invite NocoDB user
@@ -2070,11 +2149,9 @@ invite_user <- function(email_new,
                         hostname = pal::pkg_config_val(key = "hostname",
                                                        pkg = this_pkg),
                         email = pal::pkg_config_val(key = "email",
-                                                    pkg = this_pkg,
-                                                    required = FALSE),
+                                                    pkg = this_pkg),
                         password = pal::pkg_config_val(key = "password",
-                                                       pkg = this_pkg,
-                                                       required = FALSE),
+                                                       pkg = this_pkg),
                         quiet = FALSE) {
   
   checkmate::assert_string(email_new)
@@ -2227,7 +2304,7 @@ base_users <- function(id_base = base_id(hostname = hostname),
 
 #' Update NocoDB base user
 #'
-#' Updates the specified user regarding to the specified base on a NocoDB server via its
+#' Updates the specified user in regard to the specified base on a NocoDB server via its
 #' [`PATCH /api/v2/meta/bases/{id_base}/users/{id_user}`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-update) API endpoint.
 #'
 #' `r md_text_super_admin_required`
@@ -2257,16 +2334,16 @@ update_base_user <- function(user_email,
                                                              pkg = this_pkg,
                                                              required = FALSE),
                              quiet = FALSE) {
-  
-  assert_super_admin(hostname = hostname,
-                     email = email,
-                     password = password,
-                     api_token = api_token)
 
   role <- rlang::arg_match(role)
   checkmate::assert_string(id_user)
   checkmate::assert_string(id_base)
   checkmate::assert_flag(quiet)
+  
+  assert_super_admin(hostname = hostname,
+                     email = email,
+                     password = password,
+                     api_token = api_token)
   
   result <- api(path = glue::glue("api/v2/meta/bases/{id_base}/users/{id_user}"),
                 method = "PATCH",
@@ -2276,6 +2353,55 @@ update_base_user <- function(user_email,
                 api_token = api_token,
                 body_json = list(email = user_email,
                                  roles = role))
+  if (!quiet) {
+    cli_alert_status(msg = result$msg)
+  }
+  
+  invisible(id_user)
+}
+
+#' Delete NocoDB base user
+#'
+#' Revokes all privileges from a user in regard to the specified base on a NocoDB server via its
+#' [`DELETE /api/v2/meta/bases/{id_base}/users/{id_user}`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-remove) API endpoint.
+#'
+#' Despite the endpoint name, the user is not actually deleted but is instead assigned the `"no-access"` role in regard to `id_base`.
+#'
+#' @inheritParams update_base_user
+#'
+#' @return `id_user`, invisibly.
+#' @family users
+#' @family bases
+#' @export
+delete_base_user <- function(id_user,
+                             id_base = base_id(hostname = hostname),
+                             hostname = pal::pkg_config_val(key = "hostname",
+                                                            pkg = this_pkg),
+                             email = pal::pkg_config_val(key = "email",
+                                                         pkg = this_pkg,
+                                                         required = FALSE),
+                             password = pal::pkg_config_val(key = "password",
+                                                            pkg = this_pkg,
+                                                            required = FALSE),
+                             api_token = pal::pkg_config_val(key = "api_token",
+                                                             pkg = this_pkg,
+                                                             required = FALSE),
+                             quiet = FALSE) {
+  
+  checkmate::assert_string(id_user)
+  checkmate::assert_string(id_base)
+  
+  assert_super_admin(hostname = hostname,
+                     email = email,
+                     password = password,
+                     api_token = api_token)
+  
+  result <- api(path = glue::glue("api/v2/meta/bases/{id_base}/users/{id_user}"),
+                method = "DELETE",
+                hostname = hostname,
+                email = email,
+                password = password,
+                api_token = api_token)
   if (!quiet) {
     cli_alert_status(msg = result$msg)
   }
@@ -2294,6 +2420,7 @@ update_base_user <- function(user_email,
 #'
 #' @return `email_new`, invisibly.
 #' @family users
+#' @family bases
 #' @export
 invite_base_user <- function(email_new,
                              role = c("no-access", "viewer", "commenter", "editor", "creator"),
@@ -2329,6 +2456,54 @@ invite_base_user <- function(email_new,
   }
   
   invisible(email_new)
+}
+
+#' Resend NocoDB base user invitation
+#'
+#' Resends the invitation e-mail message to the specified user in regard to the specified base on a NocoDB server via its
+#' [`POST /api/v2/meta/bases/{id_base}/users/{id_user/resend-invite}`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-resend-invite) API
+#' endpoint.
+#'
+#' @inheritParams update_base_user
+#'
+#' @return `id_user`, invisibly.
+#' @family users
+#' @family bases
+#' @export
+resend_base_user_invitation <- function(id_user,
+                                        id_base = base_id(hostname = hostname),
+                                        hostname = pal::pkg_config_val(key = "hostname",
+                                                                       pkg = this_pkg),
+                                        email = pal::pkg_config_val(key = "email",
+                                                                    pkg = this_pkg,
+                                                                    required = FALSE),
+                                        password = pal::pkg_config_val(key = "password",
+                                                                       pkg = this_pkg,
+                                                                       required = FALSE),
+                                        api_token = pal::pkg_config_val(key = "api_token",
+                                                                        pkg = this_pkg,
+                                                                        required = FALSE),
+                                        quiet = FALSE) {
+  checkmate::assert_string(id_user)
+  checkmate::assert_string(id_base)
+  
+  assert_super_admin(hostname = hostname,
+                     email = email,
+                     password = password,
+                     api_token = api_token)
+  
+  result <- api(path = glue::glue("api/v2/meta/bases/{id_base}/users/{id_user}/resend-invite"),
+                method = "POST",
+                hostname = hostname,
+                email = email,
+                password = password,
+                api_token = api_token)
+  if (!quiet) {
+    cli_alert_status(msg = result$msg,
+                     pattern_success = "has been sent")
+  }
+
+  invisible(id_user)
 }
 
 #' List NocoDB app settings
@@ -2382,22 +2557,20 @@ update_app_settings <- function(invite_only_signup = NULL,
                                 hostname = pal::pkg_config_val(key = "hostname",
                                                                pkg = this_pkg),
                                 email = pal::pkg_config_val(key = "email",
-                                                            pkg = this_pkg,
-                                                            required = FALSE),
+                                                            pkg = this_pkg),
                                 password = pal::pkg_config_val(key = "password",
-                                                               pkg = this_pkg,
-                                                               required = FALSE),
+                                                               pkg = this_pkg),
                                 quiet = FALSE) {
-  
-  assert_super_admin(hostname = hostname,
-                     email = email,
-                     password = password)
   
   checkmate::assert_flag(invite_only_signup,
                          null.ok = TRUE)
   checkmate::assert_string(email)
   checkmate::assert_string(password)
   checkmate::assert_flag(quiet)
+  
+  assert_super_admin(hostname = hostname,
+                     email = email,
+                     password = password)
   
   result <- api(path = "api/v1/app-settings",
                 method = "POST",

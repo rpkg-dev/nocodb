@@ -22,6 +22,7 @@ Tests whether the user with the specified \code{email} has signed in during the 
 }
 \seealso{
 Other functions to manage NocoDB authentication:
+\code{\link{api_tokens}()},
 \code{\link{assert_super_admin}()},
 \code{\link{is_super_admin}()},
 \code{\link{refresh_sign_in}()},
