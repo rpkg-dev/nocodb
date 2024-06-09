@@ -260,20 +260,24 @@ api <- function(path,
   resp <- httr2::req_perform(req = req,
                              verbosity = verbosity)
   
-  if (!httr2::resp_has_body(resp)) {
+  if (method == "GET" && !httr2::resp_has_body(resp)) {
     cli::cli_abort(paste0("API responded with HTTP status {.field ",
                           paste(httr2::resp_status(resp), httr2::resp_status_desc(resp)),
                           "} and an empty body, which likely means some component in the URL path {.path {path}} is invalid or the method ",
                           "{.field {method}} is not implemented for the endpoint."))
   }
   
-  if (isTRUE(httr2::resp_content_type(resp) == "application/json")) {
-    
-    result <- httr2::resp_body_json(resp = resp,
-                                    simplifyVector = simplify,
-                                    flatten = flatten)
-  } else {
-    result <- httr2::resp_body_string(resp = resp)
+  result <- NULL
+  
+  if (httr2::resp_has_body(resp)) {
+    if (isTRUE(httr2::resp_content_type(resp) == "application/json")) {
+      
+      result <- httr2::resp_body_json(resp = resp,
+                                      simplifyVector = simplify,
+                                      flatten = flatten)
+    } else {
+      result <- httr2::resp_body_string(resp = resp)
+    }
   }
   
   result
