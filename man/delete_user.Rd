@@ -7,8 +7,8 @@
 delete_user(
   id_user,
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
-  email = pal::pkg_config_val(key = "email", pkg = this_pkg, required = FALSE),
-  password = pal::pkg_config_val(key = "password", pkg = this_pkg, required = FALSE),
+  email = pal::pkg_config_val(key = "email", pkg = this_pkg),
+  password = pal::pkg_config_val(key = "password", pkg = this_pkg),
   quiet = FALSE
 )
 }

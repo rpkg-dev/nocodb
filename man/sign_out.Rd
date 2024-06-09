@@ -6,9 +6,9 @@
 \usage{
 sign_out(
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
-  email = pal::pkg_config_val(key = "email", pkg = this_pkg),
-  password = pal::pkg_config_val(key = "password", pkg = this_pkg, required = FALSE),
-  api_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg, required = FALSE),
+  email = pal::pkg_config_val(key = "email", pkg = this_pkg, require = TRUE),
+  password = pal::pkg_config_val(key = "password", pkg = this_pkg),
+  api_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg),
   quiet = FALSE
 )
 }

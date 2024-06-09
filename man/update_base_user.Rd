@@ -10,9 +10,9 @@ update_base_user(
   id_user = user_id(user_email = user_email),
   id_base = base_id(hostname = hostname),
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
-  email = pal::pkg_config_val(key = "email", pkg = this_pkg, required = FALSE),
-  password = pal::pkg_config_val(key = "password", pkg = this_pkg, required = FALSE),
-  api_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg, required = FALSE),
+  email = pal::pkg_config_val(key = "email", pkg = this_pkg),
+  password = pal::pkg_config_val(key = "password", pkg = this_pkg),
+  api_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg),
   quiet = FALSE
 )
 }
