@@ -48,7 +48,7 @@ assemble_url <- function(...,
 }
 
 cli_alert_status <- function(msg,
-                             pattern_success = "success") {
+                             pattern_success = "\\bsuccess") {
   
   if (stringr::str_detect(string = msg,
                           pattern = pattern_success)) {
@@ -360,6 +360,7 @@ req_basic <- function(path,
 #' @family common
 #' @family auth
 #' @keywords internal
+# nolint start: cyclocomp_linter
 req_auth <- function(req,
                      email = pal::pkg_config_val(key = "email",
                                                  pkg = this_pkg),
@@ -433,6 +434,7 @@ req_auth <- function(req,
   
   cli::cli_abort("Either {.arg email} and {.arg password} or {.arg api_token} must be provided for authentication.")
 }
+# nolint end
 
 #' Sign in NocoDB user
 #'
@@ -532,15 +534,10 @@ sign_out <- function(hostname = pal::pkg_config_val(key = "hostname",
              api_token = api_token) |>
     httr2::req_cookie_preserve(path = path_cookie) |>
     httr2::req_perform() |>
-    httr2::resp_body_json() |>
-    _$msg
+    httr2::resp_body_json()
   
   if (!quiet) {
-    if (stringr::str_detect(result, "successfully")) {
-      cli::cli_alert_success(result)
-    } else {
-      cli::cli_alert_info(result)
-    }
+    cli_alert_status(msg = result$msg)
   }
   
   # clear cache
@@ -655,7 +652,7 @@ is_super_admin <- function(hostname = pal::pkg_config_val(key = "hostname",
   result %<>% purrr::pluck("roles") %>% unlist()
   
   # handle token payload differences between `sign_in()` and `refresh_sign_in()`
-  isTRUE(purrr::pluck(result, "super")) || any(stringr::str_detect(result, "super"))
+  isTRUE(purrr::pluck(result, "super")) || any(stringr::str_detect(result, "\\bsuper\\b"))
 }
 
 #' Assert super admin
@@ -685,9 +682,9 @@ assert_super_admin <- function(hostname = pal::pkg_config_val(key = "hostname",
                            api_token = api_token)
   if (!result) {
     cli::cli_abort(paste0("Must be super admin, but the provided ",
-                          ifelse(!is.null(api_token),
-                                 "{.arg api_token}",
-                                 "{.arg email}"),
+                          ifelse(is.null(api_token),
+                                 "{.arg email}",
+                                 "{.arg api_token}"),
                           "  belongs to a regular user."))
   }
   
@@ -785,7 +782,7 @@ delete_api_token <- function(api_token,
                                                             pkg = this_pkg,
                                                             require = TRUE)) {
   
-  api(path = paste0("api/v1/tokens/", utils::URLencode(api_token)),
+  api(path = fs::path("api/v1/tokens/", utils::URLencode(api_token)),
       method = "DELETE",
       hostname = hostname,
       email = email,
@@ -2483,7 +2480,7 @@ resend_base_user_invitation <- function(id_user,
                 api_token = api_token)
   if (!quiet) {
     cli_alert_status(msg = result$msg,
-                     pattern_success = "has been sent")
+                     pattern_success = stringr::fixed("has been sent"))
   }
 
   invisible(id_user)
@@ -2826,11 +2823,8 @@ update_app_settings <- function(invite_only_signup = NULL,
                 body_json = purrr::compact(list(invite_only_signup = invite_only_signup)))
   
   if (!quiet) {
-    if (stringr::str_detect(result, "settings have been saved")) {
-      cli::cli_alert_success(result)
-    } else {
-      cli::cli_alert_info(result)
-    }
+    cli_alert_status(msg = result,
+                     pattern_success = stringr::fixed("settings have been saved"))
   }
   
   invisible(NULL)
