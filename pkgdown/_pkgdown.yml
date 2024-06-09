@@ -31,7 +31,9 @@ reference:
   - data_srcs
   - data_src_id
   - data_src
+  - test_data_src
   - create_data_src
+  - update_data_src
   - delete_data_src
 - subtitle: Tables
   desc: Functions to manage NocoDB [tables](https://docs.nocodb.com/category/tables).
@@ -80,8 +82,8 @@ reference:
   - plugin_id
   - plugin_category
   - plugin
-  - update_plugin
   - test_plugin
+  - update_plugin
   - is_plugin_active
 - subtitle: App settings
   desc: Functions to manage NocoDB's [application settings](https://docs.nocodb.com/account-settings/oss-specific-details).

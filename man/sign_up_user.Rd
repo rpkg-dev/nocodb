@@ -41,7 +41,8 @@ Signs up the specified user on a NocoDB server via its \href{https://data-apis-v
 endpoint.
 
 If sign-up is \href{https://docs.nocodb.com/account-settings/oss-specific-details/#enable--disable-signup}{restricted to invitees only}, the user must
-have been invited before (via \code{\link[=invite_user]{invite_user()}} or \code{\link[=invite_base_user]{invite_base_user()}}) and an \code{invite_token} must be provided. Otherwise, the user is created straightaway.
+have been invited before (via \code{\link[=invite_user]{invite_user()}} or \code{\link[=invite_base_user]{invite_base_user()}}) and an \code{invite_token} must be provided. Otherwise, the user is created straightaway
+(with the \href{https://docs.nocodb.com/collaboration/oss-specific-details/#organisation-level-permissions}{\code{"org-level-viewer"} role} assigned).
 }
 \section{API errors}{
 \itemize{

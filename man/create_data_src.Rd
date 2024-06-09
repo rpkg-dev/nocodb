@@ -5,13 +5,14 @@
 \title{Create NocoDB data source}
 \usage{
 create_data_src(
-  alias = NULL,
+  connection,
   type = c("mssql", "mysql", "pg", "sqlite3"),
-  config = NULL,
+  alias = NULL,
   inflection_column = c("none", "camelize"),
   inflection_table = c("none", "camelize"),
   enabled = TRUE,
-  id_base = base_id(hostname = hostname),
+  id_base = base_id(hostname = hostname, email = email, password = password, api_token =
+    api_token),
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
   email = pal::pkg_config_val(key = "email", pkg = this_pkg),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg),
@@ -19,16 +20,16 @@ create_data_src(
 )
 }
 \arguments{
+\item{connection}{Type-specific connection details for the data source. A list.}
+
+\item{type}{Type of the data source. One of \code{"mssql"}, \code{"mysql"}, \code{"pg"} or \code{"sqlite3"}.}
+
 \item{alias}{Alias of the data source. A character scalar.}
 
-\item{type}{Type of the data source to add. One of \code{"mssql"}, \code{"mysql"}, \code{"pg"} or \code{"sqlite3"}.}
-
-\item{config}{Type-specific configuration for the data source to add. A list.}
-
-\item{inflection_column}{Type of inflection to apply for column names in the data source to add. One of
+\item{inflection_column}{Type of inflection to apply for column names in the data source. One of
 \code{"none"} or \code{"camelize"}.}
 
-\item{inflection_table}{Type of inflection to apply for table names in the data source to add. One of
+\item{inflection_table}{Type of inflection to apply for table names in the data source. One of
 \code{"none"} or \code{"camelize"}.}
 
 \item{enabled}{Whether the added data source is enabled or disabled.}
@@ -53,18 +54,17 @@ Adds a data source to the specified base on a NocoDB server via its
 }
 \examples{
 \dontrun{
-nocodb::create_data_src(alias = "REPLACE-ME",
-                        type = "pg",
-                        config = list(client = "pg",
-                                      connection = list(sslmode = "verify-full",
-                                                        user = "REPLACE-ME",
-                                                        password = "REPLACE-ME",
-                                                        database = REPLACE-ME,
-                                                        host = "REPLACE-ME",
-                                                        port = 5432,
-                                                        ssl = list(ca = "",
-                                                                   cert = "",
-                                                                   key = ""))),
+nocodb::create_data_src(type = "pg",
+                        connection = list(sslmode = "verify-full",
+                                          user = "REPLACE-ME",
+                                          password = "REPLACE-ME",
+                                          database = REPLACE-ME,
+                                          host = "REPLACE-ME",
+                                          port = 5432,
+                                          ssl = list(ca = "",
+                                                     cert = "",
+                                                     key = "")),
+                        alias = "REPLACE-ME",
                         inflection_column = "none",
                         inflection_table = "none")}
 }
@@ -73,6 +73,8 @@ Other functions to manage NocoDB base data sources:
 \code{\link{data_src}()},
 \code{\link{data_src_id}()},
 \code{\link{data_srcs}()},
-\code{\link{delete_data_src}()}
+\code{\link{delete_data_src}()},
+\code{\link{test_data_src}()},
+\code{\link{update_data_src}()}
 }
 \concept{data_src}

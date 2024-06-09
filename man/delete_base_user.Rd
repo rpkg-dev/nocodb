@@ -6,7 +6,8 @@
 \usage{
 delete_base_user(
   id_user,
-  id_base = base_id(hostname = hostname),
+  id_base = base_id(hostname = hostname, email = email, password = password, api_token =
+    api_token),
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
   email = pal::pkg_config_val(key = "email", pkg = this_pkg),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg),
@@ -38,7 +39,8 @@ Revokes all privileges from a user in regard to the specified base on a NocoDB s
 \href{https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-remove}{\code{DELETE /api/v2/meta/bases/{id_base}/users/{id_user}}} API endpoint.
 }
 \details{
-Despite the endpoint name, the user is not actually deleted but is instead assigned the \code{"no-access"} role in regard to \code{id_base}.
+Despite the endpoint name, the user is not actually deleted but is instead revoked any assigned role in regard to \code{id_base}, which has the same effect as
+assigning the \code{"no-access"} role.
 }
 \seealso{
 Other functions to manage NocoDB users:

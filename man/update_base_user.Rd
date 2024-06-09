@@ -6,9 +6,11 @@
 \usage{
 update_base_user(
   user_email,
-  role = c("no-access", "commenter", "editor", "owner", "viewer", "creator"),
-  id_user = user_id(user_email = user_email),
-  id_base = base_id(hostname = hostname),
+  role = c("no-access", "viewer", "commenter", "editor", "creator"),
+  id_user = user_id(user_email = user_email, id_base = id_base, hostname = hostname,
+    email = email, password = password, api_token = api_token),
+  id_base = base_id(hostname = hostname, email = email, password = password, api_token =
+    api_token),
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
   email = pal::pkg_config_val(key = "email", pkg = this_pkg),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg),
@@ -19,7 +21,7 @@ update_base_user(
 \arguments{
 \item{user_email}{E-mail address of the user. A character scalar.}
 
-\item{role}{Base role to assign to the user. One of \code{"no-access"}, \code{"commenter"}, \code{"editor"}, \code{"owner"}, \code{"viewer"} or \code{"creator"}.}
+\item{role}{Base role to assign to the user. One of \code{"no-access"}, \code{"viewer"}, \code{"commenter"}, \code{"editor"} or \code{"creator"}.}
 
 \item{id_user}{NocoDB user identifier as returned by \code{\link[=user_id]{user_id()}}. A character scalar.}
 

@@ -6,7 +6,7 @@
 \usage{
 user_id(
   user_email,
-  id_base = base_id(hostname = hostname),
+  id_base = NULL,
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
   email = pal::pkg_config_val(key = "email", pkg = this_pkg),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg),
@@ -32,6 +32,10 @@ User identifier as a character scalar.
 }
 \description{
 Returns the identifier of the user with the specified display \code{name} on a NocoDB server.
+}
+\details{
+If \code{id_base} is provided, the user ID is determined via \code{\link[=base_users]{base_users()}}, otherwise via \code{\link[=users]{users()}}. The latter requires super admin credentials and does not
+support \code{api_token}s.
 }
 \seealso{
 Other functions to manage NocoDB users:

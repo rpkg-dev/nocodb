@@ -55,10 +55,12 @@
 <url><loc>https://nocodb.rpkg.dev/dev/reference/tbl_cols.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/tbl_id.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/tbls.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/test_data_src.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/test_plugin.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_app_settings.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_base.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_base_user.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/update_data_src.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_plugin.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_tbl.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_tbl_col.html</loc></url>

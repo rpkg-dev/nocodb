@@ -33,8 +33,8 @@ Updates the metadata of the specified user on a NocoDB server via its \code{PATC
 \details{
 The user is determined based on \code{api_token} or \code{email} and \code{password} (the former takes precedence).
 
-Note that \code{\link[=base_users]{base_users()}} does only reflect the updated user metadata after NocoDB's internal state is updated, which is only triggered by this function if
-\code{email} and \code{password} are provided.
+In order for other API endpoints to reflect the updated metadata, NocoDB's internal state must update, which is only triggered by this function iff the user
+to be updated is the super admin and authentication is done via \code{email} and \code{password} instead of \code{api_token}.
 }
 \seealso{
 Other functions to manage NocoDB users:

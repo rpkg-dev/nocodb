@@ -874,7 +874,10 @@ base_id <- function(title = pal::pkg_config_val(key = "base_title",
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family bases
 #' @export
-base <- function(id_base = base_id(hostname = hostname),
+base <- function(id_base = base_id(hostname = hostname,
+                                   email = email,
+                                   password = password,
+                                   api_token = api_token),
                  hostname = pal::pkg_config_val(key = "hostname",
                                                 pkg = this_pkg),
                  email = pal::pkg_config_val(key = "email",
@@ -961,7 +964,10 @@ update_base <- function(title = NULL,
                         description = NULL,
                         color = NULL,
                         show_null_and_empty_in_filter = NULL,
-                        id_base = base_id(hostname = hostname),
+                        id_base = base_id(hostname = hostname,
+                                          email = email,
+                                          password = password,
+                                          api_token = api_token),
                         hostname = pal::pkg_config_val(key = "hostname",
                                                        pkg = this_pkg),
                         email = pal::pkg_config_val(key = "email",
@@ -1048,7 +1054,10 @@ delete_base <- function(id_base,
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family data_src
 #' @export
-data_srcs <- function(id_base = base_id(hostname = hostname),
+data_srcs <- function(id_base = base_id(hostname = hostname,
+                                        email = email,
+                                        password = password,
+                                        api_token = api_token),
                       hostname = pal::pkg_config_val(key = "hostname",
                                                      pkg = this_pkg),
                       email = pal::pkg_config_val(key = "email",
@@ -1081,7 +1090,10 @@ data_srcs <- function(id_base = base_id(hostname = hostname),
 #' @family data_src
 #' @export
 data_src_id <- function(alias,
-                        id_base = base_id(hostname = hostname),
+                        id_base = base_id(hostname = hostname,
+                                          email = email,
+                                          password = password,
+                                          api_token = api_token),
                         hostname = pal::pkg_config_val(key = "hostname",
                                                        pkg = this_pkg),
                         email = pal::pkg_config_val(key = "email",
@@ -1125,7 +1137,10 @@ data_src_id <- function(alias,
 #' @family data_src
 #' @export
 data_src <- function(id_data_src,
-                     id_base = base_id(hostname = hostname),
+                     id_base = base_id(hostname = hostname,
+                                       email = email,
+                                       password = password,
+                                       api_token = api_token),
                      hostname = pal::pkg_config_val(key = "hostname",
                                                     pkg = this_pkg),
                      email = pal::pkg_config_val(key = "email",
@@ -1146,17 +1161,75 @@ data_src <- function(id_data_src,
     tidy_resp_data()
 }
 
+#' Test NocoDB data source
+#'
+#' Tests a data source's connection details via a NocoDB server's
+#' [`POST /api/v2/meta/connection/test`](https://meta-apis-v2.nocodb.com/#tag/Utils/operation/utils-test-connection) API endpoint.
+#'
+#' @inheritParams create_data_src
+#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#'
+#' @return A logical scalar indicating whether the connection test was successful or not.
+#' @family data_src
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' nocodb::test_data_src(type = "pg",
+#'                       connection = list(sslmode = "verify-full",
+#'                                         user = "REPLACE-ME",
+#'                                         password = "REPLACE-ME",
+#'                                         host = "REPLACE-ME",
+#'                                         port = 5432L,
+#'                                         ssl = list()))}
+test_data_src <- function(connection,
+                          type = c("mssql", "mysql", "pg", "sqlite3"),
+                          hostname = pal::pkg_config_val(key = "hostname",
+                                                         pkg = this_pkg),
+                          email = pal::pkg_config_val(key = "email",
+                                                      pkg = this_pkg),
+                          password = pal::pkg_config_val(key = "password",
+                                                         pkg = this_pkg),
+                          api_token = pal::pkg_config_val(key = "api_token",
+                                                          pkg = this_pkg),
+                          quiet = FALSE) {
+  
+  checkmate::assert_list(connection,
+                         any.missing = FALSE)
+  type <- rlang::arg_match(type)
+  checkmate::assert_flag(quiet)
+  
+  result <- api(path = "api/v2/meta/connection/test",
+                method = "POST",
+                hostname = hostname,
+                email = email,
+                password = password,
+                api_token = api_token,
+                body_json = list(client = type,
+                                 connection = connection))
+  if (result$code != 0L) {
+    if (!quiet && nchar(result$message) > 0L) {
+      cli::cli_alert_info(result$message)
+    }
+    result <- FALSE
+  } else {
+    result <- TRUE
+  }
+  
+  result
+}
+
 #' Create NocoDB data source
 #'
 #' Adds a data source to the specified base on a NocoDB server via its
 #' [`POST /api/v2/meta/bases/{id_base}/sources`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-create) API endpoint.
 #'
 #' @inheritParams data_src_id
-#' @param type Type of the data source to add. One of `r pal::enum_fn_param_defaults(param = "type", fn = "create_data_src")`.
-#' @param config Type-specific configuration for the data source to add. A list.
-#' @param inflection_column Type of inflection to apply for column names in the data source to add. One of
+#' @param connection Type-specific connection details for the data source. A list.
+#' @param type Type of the data source. One of `r pal::enum_fn_param_defaults(param = "type", fn = "create_data_src")`.
+#' @param inflection_column Type of inflection to apply for column names in the data source. One of
 #'   `r pal::enum_fn_param_defaults(param = "inflection_column", fn = "create_data_src")`.
-#' @param inflection_table Type of inflection to apply for table names in the data source to add. One of
+#' @param inflection_table Type of inflection to apply for table names in the data source. One of
 #'   `r pal::enum_fn_param_defaults(param = "inflection_column", fn = "create_data_src")`.
 #' @param enabled Whether the added data source is enabled or disabled.
 #'
@@ -1166,27 +1239,29 @@ data_src <- function(id_data_src,
 #'
 #' @examples
 #' \dontrun{
-#' nocodb::create_data_src(alias = "REPLACE-ME",
-#'                         type = "pg",
-#'                         config = list(client = "pg",
-#'                                       connection = list(sslmode = "verify-full",
-#'                                                         user = "REPLACE-ME",
-#'                                                         password = "REPLACE-ME",
-#'                                                         database = REPLACE-ME,
-#'                                                         host = "REPLACE-ME",
-#'                                                         port = 5432,
-#'                                                         ssl = list(ca = "",
-#'                                                                    cert = "",
-#'                                                                    key = ""))),
+#' nocodb::create_data_src(type = "pg",
+#'                         connection = list(sslmode = "verify-full",
+#'                                           user = "REPLACE-ME",
+#'                                           password = "REPLACE-ME",
+#'                                           database = REPLACE-ME,
+#'                                           host = "REPLACE-ME",
+#'                                           port = 5432,
+#'                                           ssl = list(ca = "",
+#'                                                      cert = "",
+#'                                                      key = "")),
+#'                         alias = "REPLACE-ME",
 #'                         inflection_column = "none",
 #'                         inflection_table = "none")}
-create_data_src <- function(alias = NULL,
+create_data_src <- function(connection,
                             type = c("mssql", "mysql", "pg", "sqlite3"),
-                            config = NULL,
+                            alias = NULL,
                             inflection_column = c("none", "camelize"),
                             inflection_table = c("none", "camelize"),
                             enabled = TRUE,
-                            id_base = base_id(hostname = hostname),
+                            id_base = base_id(hostname = hostname,
+                                              email = email,
+                                              password = password,
+                                              api_token = api_token),
                             hostname = pal::pkg_config_val(key = "hostname",
                                                            pkg = this_pkg),
                             email = pal::pkg_config_val(key = "email",
@@ -1198,8 +1273,7 @@ create_data_src <- function(alias = NULL,
   checkmate::assert_string(alias,
                            null.ok = TRUE)
   type <- rlang::arg_match(type)
-  checkmate::assert_list(config,
-                         null.ok = TRUE,
+  checkmate::assert_list(connection,
                          any.missing = FALSE)
   inflection_column <- rlang::arg_match(inflection_column)
   inflection_table <- rlang::arg_match(inflection_table)
@@ -1214,11 +1288,80 @@ create_data_src <- function(alias = NULL,
       api_token = api_token,
       body_json = purrr::compact(list(alias = alias,
                                       type = type,
-                                      config = config,
+                                      config = list(client = type,
+                                                    connection = connection),
                                       inflection_column = inflection_column,
                                       inflection_table = inflection_table,
                                       enabled = enabled)))
   invisible(alias)
+}
+
+#' Update NocoDB data source
+#'
+#' Updates the specified data source of the specified base on a NocoDB server via its
+#' [`PATCH /api/v2/meta/bases/{id_base}/sources/{id_data_src}`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-update) API endpoint.
+#'
+#' @inheritParams data_src
+#' @inheritParams create_data_src
+#'
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the updated data source")`
+#' @family data_src
+#' @export
+update_data_src <- function(id_data_src,
+                            connection = NULL,
+                            type = NULL,
+                            alias = NULL,
+                            inflection_column = NULL,
+                            inflection_table = NULL,
+                            enabled = NULL,
+                            id_base = base_id(hostname = hostname,
+                                              email = email,
+                                              password = password,
+                                              api_token = api_token),
+                            hostname = pal::pkg_config_val(key = "hostname",
+                                                           pkg = this_pkg),
+                            email = pal::pkg_config_val(key = "email",
+                                                        pkg = this_pkg),
+                            password = pal::pkg_config_val(key = "password",
+                                                           pkg = this_pkg),
+                            api_token = pal::pkg_config_val(key = "api_token",
+                                                            pkg = this_pkg)) {
+  checkmate::assert_string(id_data_src)
+  checkmate::assert_list(connection,
+                         any.missing = FALSE,
+                         null.ok = TRUE)
+  if (!is.null(type)) {
+    type <- rlang::arg_match(arg = type,
+                             values = eval(formals(fun = create_data_src)$type))
+  }
+  checkmate::assert_string(alias,
+                           null.ok = TRUE)
+  if (!is.null(inflection_column)) {
+    inflection_column <- rlang::arg_match(arg = inflection_column,
+                                          values = eval(formals(fun = create_data_src)$inflection_column))
+  }
+  if (!is.null(inflection_table)) {
+    inflection_table <- rlang::arg_match(arg = inflection_table,
+                                         values = eval(formals(fun = create_data_src)$inflection_table))
+  }
+  checkmate::assert_flag(enabled,
+                         null.ok = TRUE)
+  checkmate::assert_string(id_base)
+  
+  api(path = glue::glue("api/v2/meta/bases/{id_base}/sources/{id_data_src}"),
+      method = "PATCH",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token,
+      body_json = purrr::compact(list(alias = alias,
+                                      type = type,
+                                      config = purrr::compact(list(client = type,
+                                                                   connection = connection)),
+                                      inflection_column = inflection_column,
+                                      inflection_table = inflection_table,
+                                      enabled = enabled))) |>
+    tidy_resp_data()
 }
 
 #' Delete NocoDB data source
@@ -1232,7 +1375,10 @@ create_data_src <- function(alias = NULL,
 #' @family data_src
 #' @export
 delete_data_src <- function(id_data_src,
-                            id_base = base_id(hostname = hostname),
+                            id_base = base_id(hostname = hostname,
+                                              email = email,
+                                              password = password,
+                                              api_token = api_token),
                             hostname = pal::pkg_config_val(key = "hostname",
                                                            pkg = this_pkg),
                             email = pal::pkg_config_val(key = "email",
@@ -1264,7 +1410,10 @@ delete_data_src <- function(id_data_src,
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family tbls
 #' @export
-tbls <- function(id_base = base_id(hostname = hostname),
+tbls <- function(id_base = base_id(hostname = hostname,
+                                   email = email,
+                                   password = password,
+                                   api_token = api_token),
                  hostname = pal::pkg_config_val(key = "hostname",
                                                 pkg = this_pkg),
                  email = pal::pkg_config_val(key = "email",
@@ -1297,7 +1446,10 @@ tbls <- function(id_base = base_id(hostname = hostname),
 #' @family tbls
 #' @export
 tbl_id <- function(tbl_name,
-                   id_base = base_id(hostname = hostname),
+                   id_base = base_id(hostname = hostname,
+                                     email = email,
+                                     password = password,
+                                     api_token = api_token),
                    hostname = pal::pkg_config_val(key = "hostname",
                                                   pkg = this_pkg),
                    email = pal::pkg_config_val(key = "email",
@@ -1460,7 +1612,10 @@ reorder_tbl <- function(id_tbl,
 #' @family tbls
 #' @export
 set_tbl_metadata <- function(data,
-                             id_base = base_id(hostname = hostname),
+                             id_base = base_id(hostname = hostname,
+                                               email = email,
+                                               password = password,
+                                               api_token = api_token),
                              hostname = pal::pkg_config_val(key = "hostname",
                                                             pkg = this_pkg),
                              email = pal::pkg_config_val(key = "email",
@@ -1485,8 +1640,8 @@ set_tbl_metadata <- function(data,
       
       name <- data$name[i]
       icon <- data$meta.icon[i]
-      id <- tbl_id(id_base = id_base,
-                   tbl_name = name,
+      id <- tbl_id(tbl_name = name,
+                   id_base = id_base,
                    hostname = hostname,
                    email = email,
                    password = password,
@@ -1725,7 +1880,10 @@ set_display_val <- function(id_col,
 #' @family cols
 #' @export
 set_display_vals <- function(data,
-                             id_base = base_id(hostname = hostname),
+                             id_base = base_id(hostname = hostname,
+                                               email = email,
+                                               password = password,
+                                               api_token = api_token),
                              hostname = pal::pkg_config_val(key = "hostname",
                                                             pkg = this_pkg),
                              email = pal::pkg_config_val(key = "email",
@@ -1753,8 +1911,8 @@ set_display_vals <- function(data,
                      pal::cli_progress_step_quick(msg = "Setting NocoDB display column for table {.field {tbl_name}} to {.val {col_name}}")
                    }
                    
-                   tbl_id(id_base = id_base,
-                          tbl_name = tbl_name,
+                   tbl_id(tbl_name = tbl_name,
+                          id_base = id_base,
                           hostname = hostname,
                           email = email,
                           password = password,
@@ -1911,6 +2069,9 @@ users <- function(hostname = pal::pkg_config_val(key = "hostname",
 #'
 #' Returns the identifier of the user with the specified display `name` on a NocoDB server.
 #'
+#' If `id_base` is provided, the user ID is determined via [base_users()], otherwise via [users()]. The latter requires super admin credentials and does not
+#' support `api_token`s.
+#'
 #' @inheritParams base
 #' @param user_email E-mail address of the user. A character scalar.
 #'
@@ -1918,7 +2079,7 @@ users <- function(hostname = pal::pkg_config_val(key = "hostname",
 #' @family users
 #' @export
 user_id <- function(user_email,
-                    id_base = base_id(hostname = hostname),
+                    id_base = NULL,
                     hostname = pal::pkg_config_val(key = "hostname",
                                                    pkg = this_pkg),
                     email = pal::pkg_config_val(key = "email",
@@ -1929,13 +2090,20 @@ user_id <- function(user_email,
                                                     pkg = this_pkg)) {
   checkmate::assert_string(user_email)
   
-  result <-
-    base_users(id_base = id_base,
-               hostname = hostname,
-               email = email,
-               password = password,
-               api_token = api_token) |>
-    dplyr::filter(email == !!user_email) |>
+  if (is.null(id_base)) {
+    result <- users(hostname = hostname,
+                    email = email,
+                    password = password)
+  } else {
+    result <- base_users(id_base = id_base,
+                         hostname = hostname,
+                         email = email,
+                         password = password,
+                         api_token = api_token)
+  }
+  
+  result %<>%
+    dplyr::filter(email == !!user_email) %>%
     dplyr::pull("id")
   
   n_result <- length(result)
@@ -2034,8 +2202,8 @@ add_user <- function(user_email,
 #'
 #' `r md_text_user_from_auth`
 #'
-#' Note that [base_users()] does only reflect the updated user metadata after NocoDB's internal state is updated, which is only triggered by this function if 
-#' `email` and `password` are provided.
+#' In order for other API endpoints to reflect the updated metadata, NocoDB's internal state must update, which is only triggered by this function iff the user
+#' to be updated is the super admin and authentication is done via `email` and `password` instead of `api_token`.
 #'
 #' @inheritParams api
 #' @param display_name Name to be displayed for the user in NocoDB.
@@ -2178,7 +2346,8 @@ invite_user <- function(user_email,
 #' endpoint.
 #' 
 #' If sign-up is [restricted to invitees only](https://docs.nocodb.com/account-settings/oss-specific-details/#enable--disable-signup), the user must
-#' have been invited before (via [invite_user()] or [invite_base_user()]) and an `invite_token` must be provided. Otherwise, the user is created straightaway.
+#' have been invited before (via [invite_user()] or [invite_base_user()]) and an `invite_token` must be provided. Otherwise, the user is created straightaway
+#' (with the [`"org-level-viewer"` role](https://docs.nocodb.com/collaboration/oss-specific-details/#organisation-level-permissions) assigned).
 #'
 #' # API errors
 #'
@@ -2273,7 +2442,10 @@ validate_user_email <- function(verification_token,
 #' @family users
 #' @family bases
 #' @export
-base_users <- function(id_base = base_id(hostname = hostname),
+base_users <- function(id_base = base_id(hostname = hostname,
+                                         email = email,
+                                         password = password,
+                                         api_token = api_token),
                        hostname = pal::pkg_config_val(key = "hostname",
                                                       pkg = this_pkg),
                        email = pal::pkg_config_val(key = "email",
@@ -2311,9 +2483,17 @@ base_users <- function(id_base = base_id(hostname = hostname),
 #' @family bases
 #' @export
 update_base_user <- function(user_email,
-                             role = c("no-access", "commenter", "editor", "owner", "viewer", "creator"),
-                             id_user = user_id(user_email = user_email),
-                             id_base = base_id(hostname = hostname),
+                             role = c("no-access", "viewer", "commenter", "editor", "creator"),
+                             id_user = user_id(user_email = user_email,
+                                               id_base = id_base,
+                                               hostname = hostname,
+                                               email = email,
+                                               password = password,
+                                               api_token = api_token),
+                             id_base = base_id(hostname = hostname,
+                                               email = email,
+                                               password = password,
+                                               api_token = api_token),
                              hostname = pal::pkg_config_val(key = "hostname",
                                                             pkg = this_pkg),
                              email = pal::pkg_config_val(key = "email",
@@ -2354,7 +2534,8 @@ update_base_user <- function(user_email,
 #' Revokes all privileges from a user in regard to the specified base on a NocoDB server via its
 #' [`DELETE /api/v2/meta/bases/{id_base}/users/{id_user}`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-remove) API endpoint.
 #'
-#' Despite the endpoint name, the user is not actually deleted but is instead assigned the `"no-access"` role in regard to `id_base`.
+#' Despite the endpoint name, the user is not actually deleted but is instead revoked any assigned role in regard to `id_base`, which has the same effect as
+#' assigning the `"no-access"` role.
 #'
 #' @inheritParams update_base_user
 #'
@@ -2363,7 +2544,10 @@ update_base_user <- function(user_email,
 #' @family bases
 #' @export
 delete_base_user <- function(id_user,
-                             id_base = base_id(hostname = hostname),
+                             id_base = base_id(hostname = hostname,
+                                               email = email,
+                                               password = password,
+                                               api_token = api_token),
                              hostname = pal::pkg_config_val(key = "hostname",
                                                             pkg = this_pkg),
                              email = pal::pkg_config_val(key = "email",
@@ -2410,7 +2594,10 @@ delete_base_user <- function(id_user,
 #' @export
 invite_base_user <- function(user_email,
                              role = c("no-access", "viewer", "commenter", "editor", "creator"),
-                             id_base = base_id(hostname = hostname),
+                             id_base = base_id(hostname = hostname,
+                                               email = email,
+                                               password = password,
+                                               api_token = api_token),
                              hostname = pal::pkg_config_val(key = "hostname",
                                                             pkg = this_pkg),
                              email = pal::pkg_config_val(key = "email",
@@ -2454,7 +2641,10 @@ invite_base_user <- function(user_email,
 #' @family bases
 #' @export
 resend_base_user_invitation <- function(id_user,
-                                        id_base = base_id(hostname = hostname),
+                                        id_base = base_id(hostname = hostname,
+                                                          email = email,
+                                                          password = password,
+                                                          api_token = api_token),
                                         hostname = pal::pkg_config_val(key = "hostname",
                                                                        pkg = this_pkg),
                                         email = pal::pkg_config_val(key = "email",
@@ -2615,6 +2805,58 @@ plugin <- function(id_plugin,
     tidy_resp_data()
 }
 
+#' Test NocoDB plugin configuration
+#'
+#' Tests the configuration of the plugin with the specified title and category on a NocoDB server via its
+#' [`POST /api/v1/db/meta/plugins/test`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis) API endpoint.
+#'
+#' @inheritParams plugin_id
+#' @inheritParams update_plugin
+#' @param config Plugin configuration. A list.
+#' @param category NocoDB plugin category as returned by [plugin_category()]. A character scalar.
+#'
+#' @return `TRUE` if the test was successful.
+#' @family plugins
+#' @export
+test_plugin <- function(title,
+                        config,
+                        category = plugin_category(id_plugin = plugin_id(title = title,
+                                                                         hostname = hostname,
+                                                                         email = email,
+                                                                         password = password,
+                                                                         api_token = api_token),
+                                                   hostname = hostname,
+                                                   email = email,
+                                                   password = password,
+                                                   api_token = api_token),
+                        hostname = pal::pkg_config_val(key = "hostname",
+                                                       pkg = this_pkg),
+                        email = pal::pkg_config_val(key = "email",
+                                                    pkg = this_pkg),
+                        password = pal::pkg_config_val(key = "password",
+                                                       pkg = this_pkg),
+                        api_token = pal::pkg_config_val(key = "api_token",
+                                                        pkg = this_pkg)) {
+  checkmate::assert_string(title)
+  checkmate::assert_list(config,
+                         min.len = 1L,
+                         names = "named")
+  checkmate::assert_string(category)
+  
+  api(path = "api/v1/db/meta/plugins/test",
+      method = "POST",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token,
+      # NOTE: we must send `input` as a *string* of JSON
+      body_json = list(title = title,
+                       category = category,
+                       input = jsonlite::toJSON(config,
+                                                auto_unbox = TRUE))) |>
+    jsonlite::fromJSON()
+}
+
 #' Update NocoDB plugin configuration
 #'
 #' Updates the configuration of the specified plugin on a NocoDB server via its
@@ -2630,14 +2872,13 @@ plugin <- function(id_plugin,
 #' @export
 #'
 #' @examples
-#' try(
-#'   nocodb::update_plugin(id_plugin = nocodb::plugin_id(title = "Backblaze B2"),
-#'                         config = list(bucket = "REPLACE-ME",
-#'                                       region = "REPLACE-ME",
-#'                                       access_key = "REPLACE-ME",
-#'                                       access_secret = "REPLACE-ME"),
-#'                         activate = TRUE)
-#' )
+#' \dontrun{
+#' nocodb::update_plugin(id_plugin = nocodb::plugin_id(title = "Backblaze B2"),
+#'                       config = list(bucket = "REPLACE-ME",
+#'                                     region = "REPLACE-ME",
+#'                                     access_key = "REPLACE-ME",
+#'                                     access_secret = "REPLACE-ME"),
+#'                       activate = TRUE)}
 update_plugin <- function(id_plugin,
                           config = NULL,
                           activate = NULL,
@@ -2670,50 +2911,6 @@ update_plugin <- function(id_plugin,
       body_json = purrr::compact(list(input = config,
                                       active = activate))) |>
     tidy_resp_data()
-}
-
-#' Test NocoDB plugin configuration
-#'
-#' Tests the configuration of the plugin with the specified title and category on a NocoDB server via its
-#' [`POST /api/v1/db/meta/plugins/test`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis) API endpoint.
-#'
-#' @inheritParams plugin_id
-#' @inheritParams update_plugin
-#' @param config Plugin configuration. A list.
-#' @param category NocoDB plugin category as returned by [plugin_category()]. A character scalar.
-#'
-#' @return `TRUE` if the test was successful.
-#' @family plugins
-#' @export
-test_plugin <- function(title,
-                        config,
-                        category = plugin_category(id_plugin = plugin_id(title = title)),
-                        hostname = pal::pkg_config_val(key = "hostname",
-                                                       pkg = this_pkg),
-                        email = pal::pkg_config_val(key = "email",
-                                                    pkg = this_pkg),
-                        password = pal::pkg_config_val(key = "password",
-                                                       pkg = this_pkg),
-                        api_token = pal::pkg_config_val(key = "api_token",
-                                                        pkg = this_pkg)) {
-  checkmate::assert_string(title)
-  checkmate::assert_list(config,
-                         min.len = 1L,
-                         names = "named")
-  checkmate::assert_string(category)
-  
-  api(path = "api/v1/db/meta/plugins/test",
-      method = "POST",
-      hostname = hostname,
-      email = email,
-      password = password,
-      api_token = api_token,
-      # NOTE: we must send `input` as a *string* of JSON
-      body_json = list(title = title,
-                       category = category,
-                       input = jsonlite::toJSON(config,
-                                                auto_unbox = TRUE))) |>
-    jsonlite::fromJSON()
 }
 
 #' Test if plugin is active

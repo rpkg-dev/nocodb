@@ -61,8 +61,8 @@ provided.</p></dd>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The user is determined based on <code>api_token</code> or <code>email</code> and <code>password</code> (the former takes precedence).</p>
-<p>Note that <code><a href="base_users.html">base_users()</a></code> does only reflect the updated user metadata after NocoDB's internal state is updated, which is only triggered by this function if
-<code>email</code> and <code>password</code> are provided.</p>
+<p>In order for other API endpoints to reflect the updated metadata, NocoDB's internal state must update, which is only triggered by this function iff the user
+to be updated is the super admin and authentication is done via <code>email</code> and <code>password</code> instead of <code>api_token</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

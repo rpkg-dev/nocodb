@@ -7,7 +7,8 @@
 invite_base_user(
   user_email,
   role = c("no-access", "viewer", "commenter", "editor", "creator"),
-  id_base = base_id(hostname = hostname),
+  id_base = base_id(hostname = hostname, email = email, password = password, api_token =
+    api_token),
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
   email = pal::pkg_config_val(key = "email", pkg = this_pkg),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg),

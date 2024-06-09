@@ -5,7 +5,8 @@
 \title{List NocoDB data sources}
 \usage{
 data_srcs(
-  id_base = base_id(hostname = hostname),
+  id_base = base_id(hostname = hostname, email = email, password = password, api_token =
+    api_token),
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
   email = pal::pkg_config_val(key = "email", pkg = this_pkg),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg),
@@ -36,6 +37,8 @@ Other functions to manage NocoDB base data sources:
 \code{\link{create_data_src}()},
 \code{\link{data_src}()},
 \code{\link{data_src_id}()},
-\code{\link{delete_data_src}()}
+\code{\link{delete_data_src}()},
+\code{\link{test_data_src}()},
+\code{\link{update_data_src}()}
 }
 \concept{data_src}

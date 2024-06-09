@@ -36,13 +36,14 @@ POST /api/v2/meta/bases/{id_base}/sources API endpoint."><meta name="twitter:car
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">create_data_src</span><span class="op">(</span></span>
-<span>  alias <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">connection</span>,</span>
 <span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mssql"</span>, <span class="st">"mysql"</span>, <span class="st">"pg"</span>, <span class="st">"sqlite3"</span><span class="op">)</span>,</span>
-<span>  config <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  alias <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  inflection_column <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"camelize"</span><span class="op">)</span>,</span>
 <span>  inflection_table <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"camelize"</span><span class="op">)</span>,</span>
 <span>  enabled <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  id_base <span class="op">=</span> <span class="fu"><a href="base_id.html">base_id</a></span><span class="op">(</span>hostname <span class="op">=</span> <span class="va">hostname</span><span class="op">)</span>,</span>
+<span>  id_base <span class="op">=</span> <span class="fu"><a href="base_id.html">base_id</a></span><span class="op">(</span>hostname <span class="op">=</span> <span class="va">hostname</span>, email <span class="op">=</span> <span class="va">email</span>, password <span class="op">=</span> <span class="va">password</span>, api_token <span class="op">=</span></span>
+<span>    <span class="va">api_token</span><span class="op">)</span>,</span>
 <span>  hostname <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"hostname"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
 <span>  email <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"email"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
 <span>  password <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"password"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
@@ -51,17 +52,17 @@ POST /api/v2/meta/bases/{id_base}/sources API endpoint."><meta name="twitter:car
     </div>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-alias">alias<a class="anchor" aria-label="anchor" href="#arg-alias"></a></dt>
-<dd><p>Alias of the data source. A character scalar.</p></dd>
+    <dl><dt id="arg-connection">connection<a class="anchor" aria-label="anchor" href="#arg-connection"></a></dt>
+<dd><p>Type-specific connection details for the data source. A list.</p></dd>
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
-<dd><p>Type of the data source to add. One of <code>"mssql"</code>, <code>"mysql"</code>, <code>"pg"</code> or <code>"sqlite3"</code>.</p></dd>
-<dt id="arg-config">config<a class="anchor" aria-label="anchor" href="#arg-config"></a></dt>
-<dd><p>Type-specific configuration for the data source to add. A list.</p></dd>
+<dd><p>Type of the data source. One of <code>"mssql"</code>, <code>"mysql"</code>, <code>"pg"</code> or <code>"sqlite3"</code>.</p></dd>
+<dt id="arg-alias">alias<a class="anchor" aria-label="anchor" href="#arg-alias"></a></dt>
+<dd><p>Alias of the data source. A character scalar.</p></dd>
 <dt id="arg-inflection-column">inflection_column<a class="anchor" aria-label="anchor" href="#arg-inflection-column"></a></dt>
-<dd><p>Type of inflection to apply for column names in the data source to add. One of
+<dd><p>Type of inflection to apply for column names in the data source. One of
 <code>"none"</code> or <code>"camelize"</code>.</p></dd>
 <dt id="arg-inflection-table">inflection_table<a class="anchor" aria-label="anchor" href="#arg-inflection-table"></a></dt>
-<dd><p>Type of inflection to apply for table names in the data source to add. One of
+<dd><p>Type of inflection to apply for table names in the data source. One of
 <code>"none"</code> or <code>"camelize"</code>.</p></dd>
 <dt id="arg-enabled">enabled<a class="anchor" aria-label="anchor" href="#arg-enabled"></a></dt>
 <dd><p>Whether the added data source is enabled or disabled.</p></dd>
@@ -87,23 +88,24 @@ provided.</p></dd>
 <code><a href="data_src.html">data_src</a>()</code>,
 <code><a href="data_src_id.html">data_src_id</a>()</code>,
 <code><a href="data_srcs.html">data_srcs</a>()</code>,
-<code><a href="delete_data_src.html">delete_data_src</a>()</code></p></div>
+<code><a href="delete_data_src.html">delete_data_src</a>()</code>,
+<code><a href="test_data_src.html">test_data_src</a>()</code>,
+<code><a href="update_data_src.html">update_data_src</a>()</code></p></div>
     </div>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="fu">nocodb</span><span class="fu">::</span><span class="fu">create_data_src</span><span class="op">(</span>alias <span class="op">=</span> <span class="st">"REPLACE-ME"</span>,</span></span>
-<span class="r-in"><span>                        type <span class="op">=</span> <span class="st">"pg"</span>,</span></span>
-<span class="r-in"><span>                        config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>client <span class="op">=</span> <span class="st">"pg"</span>,</span></span>
-<span class="r-in"><span>                                      connection <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sslmode <span class="op">=</span> <span class="st">"verify-full"</span>,</span></span>
-<span class="r-in"><span>                                                        user <span class="op">=</span> <span class="st">"REPLACE-ME"</span>,</span></span>
-<span class="r-in"><span>                                                        password <span class="op">=</span> <span class="st">"REPLACE-ME"</span>,</span></span>
-<span class="r-in"><span>                                                        database <span class="op">=</span> <span class="va">REPLACE</span><span class="op">-</span><span class="va">ME</span>,</span></span>
-<span class="r-in"><span>                                                        host <span class="op">=</span> <span class="st">"REPLACE-ME"</span>,</span></span>
-<span class="r-in"><span>                                                        port <span class="op">=</span> <span class="fl">5432</span>,</span></span>
-<span class="r-in"><span>                                                        ssl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>ca <span class="op">=</span> <span class="st">""</span>,</span></span>
-<span class="r-in"><span>                                                                   cert <span class="op">=</span> <span class="st">""</span>,</span></span>
-<span class="r-in"><span>                                                                   key <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span><span class="fu">nocodb</span><span class="fu">::</span><span class="fu">create_data_src</span><span class="op">(</span>type <span class="op">=</span> <span class="st">"pg"</span>,</span></span>
+<span class="r-in"><span>                        connection <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sslmode <span class="op">=</span> <span class="st">"verify-full"</span>,</span></span>
+<span class="r-in"><span>                                          user <span class="op">=</span> <span class="st">"REPLACE-ME"</span>,</span></span>
+<span class="r-in"><span>                                          password <span class="op">=</span> <span class="st">"REPLACE-ME"</span>,</span></span>
+<span class="r-in"><span>                                          database <span class="op">=</span> <span class="va">REPLACE</span><span class="op">-</span><span class="va">ME</span>,</span></span>
+<span class="r-in"><span>                                          host <span class="op">=</span> <span class="st">"REPLACE-ME"</span>,</span></span>
+<span class="r-in"><span>                                          port <span class="op">=</span> <span class="fl">5432</span>,</span></span>
+<span class="r-in"><span>                                          ssl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>ca <span class="op">=</span> <span class="st">""</span>,</span></span>
+<span class="r-in"><span>                                                     cert <span class="op">=</span> <span class="st">""</span>,</span></span>
+<span class="r-in"><span>                                                     key <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                        alias <span class="op">=</span> <span class="st">"REPLACE-ME"</span>,</span></span>
 <span class="r-in"><span>                        inflection_column <span class="op">=</span> <span class="st">"none"</span>,</span></span>
 <span class="r-in"><span>                        inflection_table <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span><span class="op">}</span></span></span>
 </code></pre></div>

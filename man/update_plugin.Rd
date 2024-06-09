@@ -38,14 +38,13 @@ Updates the configuration of the specified plugin on a NocoDB server via its
 \href{https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis}{\code{PATCH /api/v1/db/meta/plugins/{id_plugin}}} API endpoint.
 }
 \examples{
-try(
-  nocodb::update_plugin(id_plugin = nocodb::plugin_id(title = "Backblaze B2"),
-                        config = list(bucket = "REPLACE-ME",
-                                      region = "REPLACE-ME",
-                                      access_key = "REPLACE-ME",
-                                      access_secret = "REPLACE-ME"),
-                        activate = TRUE)
-)
+\dontrun{
+nocodb::update_plugin(id_plugin = nocodb::plugin_id(title = "Backblaze B2"),
+                      config = list(bucket = "REPLACE-ME",
+                                    region = "REPLACE-ME",
+                                    access_key = "REPLACE-ME",
+                                    access_secret = "REPLACE-ME"),
+                      activate = TRUE)}
 }
 \seealso{
 Other functions to manage NocoDB plugins:
