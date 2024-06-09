@@ -1166,6 +1166,8 @@ data_src <- function(id_data_src,
 #' Tests a data source's connection details via a NocoDB server's
 #' [`POST /api/v2/meta/connection/test`](https://meta-apis-v2.nocodb.com/#tag/Utils/operation/utils-test-connection) API endpoint.
 #'
+#' Note that the PostgreSQL `connection` parameters `sslmode` and `database` have no effect, i.e. are simply ignored by the API endpoint.
+#'
 #' @inheritParams create_data_src
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
@@ -2818,6 +2820,14 @@ plugin <- function(id_plugin,
 #' @return `TRUE` if the test was successful.
 #' @family plugins
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' nocodb::test_plugin(title = "Backblaze B2",
+#'                     config = list(bucket = "REPLACE-ME",
+#'                                   region = "REPLACE-ME",
+#'                                   access_key = "REPLACE-ME",
+#'                                   access_secret = "REPLACE-ME"))}
 test_plugin <- function(title,
                         config,
                         category = plugin_category(id_plugin = plugin_id(title = title,

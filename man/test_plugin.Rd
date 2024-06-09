@@ -39,6 +39,14 @@ provided.}
 Tests the configuration of the plugin with the specified title and category on a NocoDB server via its
 \href{https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis}{\code{POST /api/v1/db/meta/plugins/test}} API endpoint.
 }
+\examples{
+\dontrun{
+nocodb::test_plugin(title = "Backblaze B2",
+                    config = list(bucket = "REPLACE-ME",
+                                  region = "REPLACE-ME",
+                                  access_key = "REPLACE-ME",
+                                  access_secret = "REPLACE-ME"))}
+}
 \seealso{
 Other functions to manage NocoDB plugins:
 \code{\link{is_plugin_active}()},
