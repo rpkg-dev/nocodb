@@ -28,6 +28,8 @@ Besides generating a fresh access token, also a new refresh token is cached to d
 Other functions to manage NocoDB authentication:
 \code{\link{api_tokens}()},
 \code{\link{assert_super_admin}()},
+\code{\link{create_api_token}()},
+\code{\link{delete_api_token}()},
 \code{\link{is_signed_in}()},
 \code{\link{is_super_admin}()},
 \code{\link{req_auth}()},

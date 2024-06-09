@@ -33,6 +33,8 @@ The user is determined based on \code{api_token} or \code{email} and \code{passw
 \seealso{
 Other functions to manage NocoDB authentication:
 \code{\link{api_tokens}()},
+\code{\link{create_api_token}()},
+\code{\link{delete_api_token}()},
 \code{\link{is_signed_in}()},
 \code{\link{is_super_admin}()},
 \code{\link{refresh_sign_in}()},

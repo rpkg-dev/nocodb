@@ -38,6 +38,8 @@ Note that the \code{email} address to sign out and the \code{api_token} to authe
 Other functions to manage NocoDB authentication:
 \code{\link{api_tokens}()},
 \code{\link{assert_super_admin}()},
+\code{\link{create_api_token}()},
+\code{\link{delete_api_token}()},
 \code{\link{is_signed_in}()},
 \code{\link{is_super_admin}()},
 \code{\link{refresh_sign_in}()},

@@ -37,9 +37,9 @@
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"CONNECT"</span>, <span class="st">"DELETE"</span>, <span class="st">"HEAD"</span>, <span class="st">"OPTIONS"</span>, <span class="st">"PATCH"</span>, <span class="st">"POST"</span>, <span class="st">"PUT"</span>,</span>
 <span>    <span class="st">"TRACE"</span><span class="op">)</span>,</span>
 <span>  hostname <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"hostname"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
-<span>  email <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"email"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span>, required <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
-<span>  password <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"password"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span>, required <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
-<span>  api_token <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"api_token"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span>, required <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
+<span>  email <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"email"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
+<span>  password <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"password"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
+<span>  api_token <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"api_token"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
 <span>  auth <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  body_json <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  auto_unbox <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -90,8 +90,10 @@ you can't affect directly.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>A list if the response body is of type JSON, otherwise a character scalar.</p>
-    </div>
+<ul><li><p><code>NULL</code> if the API response's body is empty.</p></li>
+<li><p>The API response's body as a list if it is of type JSON.</p></li>
+<li><p>The API response's body as a character scalar in all other cases.</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>See <code><a href="req_auth.html">req_auth()</a></code> for details about the authentication logic enabled via <code>auth</code>.</p>

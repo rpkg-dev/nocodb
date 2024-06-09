@@ -63,7 +63,11 @@ Use \code{\link[httr2:with_verbosity]{with_verbosity()}} to control the verbosit
 you can't affect directly.}
 }
 \value{
-A list if the response body is of type JSON, otherwise a character scalar.
+\itemize{
+\item \code{NULL} if the API response's body is empty.
+\item The API response's body as a list if it is of type JSON.
+\item The API response's body as a character scalar in all other cases.
+}
 }
 \description{
 Performs an API call to a NocoDB server and returns the response as a list if it is of type JSON, otherwise as a character scalar.

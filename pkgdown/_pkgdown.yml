@@ -11,6 +11,8 @@ reference:
   - sign_in
   - sign_out
   - api_tokens
+  - create_api_token
+  - delete_api_token
 - title: Meta
   desc: Functions to work with NocoDB's RESTful [meta APIs](https://meta-apis-v2.nocodb.com/).
 - subtitle: Bases

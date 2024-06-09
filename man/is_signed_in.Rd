@@ -24,6 +24,8 @@ Tests whether the user with the specified \code{email} has signed in during the 
 Other functions to manage NocoDB authentication:
 \code{\link{api_tokens}()},
 \code{\link{assert_super_admin}()},
+\code{\link{create_api_token}()},
+\code{\link{delete_api_token}()},
 \code{\link{is_super_admin}()},
 \code{\link{refresh_sign_in}()},
 \code{\link{req_auth}()},

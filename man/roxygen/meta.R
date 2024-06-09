@@ -1,5 +1,6 @@
 list(
-  rd_family_title = list(app_settings = "Other functions to manage NocoDB's application settings:",
+  rd_family_title = list(api_tokens   = "Other functions to manage NocoDB API tokens:",
+                         app_settings = "Other functions to manage NocoDB's application settings:",
                          attachments  = "Other functions to manage NocoDB attachments:",
                          auth         = "Other functions to manage NocoDB authentication:",
                          bases        = "Other functions to manage NocoDB bases:",
