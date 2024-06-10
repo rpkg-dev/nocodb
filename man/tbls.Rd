@@ -34,6 +34,10 @@ Returns a \link[tibble:tbl_df-class]{tibble} with metadata about tables in the s
 }
 \seealso{
 Other functions to manage NocoDB tables:
+\code{\link{create_data_src_tbl}()},
+\code{\link{create_tbl}()},
+\code{\link{data_src_tbls}()},
+\code{\link{delete_tbl}()},
 \code{\link{reorder_tbl}()},
 \code{\link{set_tbl_metadata}()},
 \code{\link{tbl}},

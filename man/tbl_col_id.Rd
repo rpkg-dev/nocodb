@@ -6,8 +6,8 @@
 \usage{
 tbl_col_id(
   id_tbl,
-  col_name = NULL,
-  col_title = NULL,
+  name = NULL,
+  title = NULL,
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
   email = pal::pkg_config_val(key = "email", pkg = this_pkg),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg),
@@ -17,9 +17,9 @@ tbl_col_id(
 \arguments{
 \item{id_tbl}{NocoDB table identifier as returned by \code{\link[=tbl_id]{tbl_id()}}. A character scalar.}
 
-\item{col_name}{NocoDB column name. A character scalar.}
+\item{name}{NocoDB column name. A character scalar.}
 
-\item{col_title}{NocoDB column title. A character scalar.}
+\item{title}{NocoDB column title. A character scalar.}
 
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
 
@@ -34,7 +34,7 @@ provided.}
 A character scalar.
 }
 \description{
-Returns the identifier of the column with the specified \code{col_name} or \code{col_title} in the table with the specified \code{id_tbl} on a NocoDB server.
+Returns the identifier of the column with the specified \code{name} or \code{title} in the table with the specified \code{id_tbl} on a NocoDB server.
 }
 \seealso{
 Other functions to manage NocoDB table columns:

@@ -6,8 +6,10 @@
 \usage{
 update_tbl(
   id_tbl,
-  body_json,
-  auto_unbox = TRUE,
+  id_base = NULL,
+  name = NULL,
+  title = NULL,
+  meta = NULL,
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
   email = pal::pkg_config_val(key = "email", pkg = this_pkg),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg),
@@ -18,9 +20,13 @@ update_tbl(
 \arguments{
 \item{id_tbl}{NocoDB table identifier as returned by \code{\link[=tbl_id]{tbl_id()}}. A character scalar.}
 
-\item{body_json}{Data to include as JSON in the HTTP request body. Either a list or \code{NULL} for an empty body.}
+\item{id_base}{NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}. A character scalar.}
 
-\item{auto_unbox}{Whether or not to automatically "unbox" length-1 vectors in \code{body_json} to JSON scalars.}
+\item{name}{Table name. A character scalar.}
+
+\item{title}{NocoDB-specific table title. A character scalar.}
+
+\item{meta}{NocoDB-specific table metadata. A list.}
 
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
 
@@ -42,6 +48,10 @@ Updates the metadata of the specified table on a NocoDB server via its
 }
 \seealso{
 Other functions to manage NocoDB tables:
+\code{\link{create_data_src_tbl}()},
+\code{\link{create_tbl}()},
+\code{\link{data_src_tbls}()},
+\code{\link{delete_tbl}()},
 \code{\link{reorder_tbl}()},
 \code{\link{set_tbl_metadata}()},
 \code{\link{tbl}},

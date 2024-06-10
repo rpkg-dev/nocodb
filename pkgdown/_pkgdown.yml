@@ -35,13 +35,17 @@ reference:
   - create_data_src
   - update_data_src
   - delete_data_src
+  - data_src_tbls
+  - create_data_src_tbl
 - subtitle: Tables
   desc: Functions to manage NocoDB [tables](https://docs.nocodb.com/category/tables).
 - contents:
   - tbls
   - tbl_id
   - tbl
+  - create_tbl
   - update_tbl
+  - delete_tbl
   - reorder_tbl
   - set_tbl_metadata
 - subtitle: Table columns

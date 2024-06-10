@@ -15,16 +15,11 @@ access_token(
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 }
 \value{
-Access token as a character scalar.
+Access token as a character scalar. \code{NA_character_} if no access token exists for \code{hostname} and \code{email}.
 }
 \description{
 Retrieves the access token belonging to the user with the specified \code{email} from the corresponding package environment. An access token is only available if
 the user has \link[=sign_in]{signed in} or \link[=refresh_sign_in]{refreshed their access token} during the current \R session.
-}
-\examples{
-try(
-  nocodb:::access_token() |> nocodb:::decode_access_token()
-)
 }
 \seealso{
 Other access_token: 

@@ -42,12 +42,12 @@ GET /api/v2/meta/bases/{id_base}/sources/{id_data_src} API endpoint."><meta name
 <span>  hostname <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"hostname"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
 <span>  email <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"email"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
 <span>  password <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"password"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
-<span>  api_token <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"api_token"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span></span>
+<span>api_token <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"api_token"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-id-data-src">id_data_src<a class="anchor" aria-label="anchor" href="#arg-id-data-src"></a></dt>
+<dl><dt id="arg-id-data-src">id_data_src<a class="anchor" aria-label="anchor" href="#arg-id-data-src"></a></dt>
 <dd><p>NocoDB data source identifier as returned by <code><a href="data_src_id.html">data_src_id()</a></code>. A character scalar.</p></dd>
 <dt id="arg-id-base">id_base<a class="anchor" aria-label="anchor" href="#arg-id-base"></a></dt>
 <dd><p>NocoDB base identifier as returned by <code><a href="base_id.html">base_id()</a></code>. A character scalar.</p></dd>
@@ -63,13 +63,15 @@ provided.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>A <a href="https://tibble.tidyverse.org/reference/tbl_df-class.html" class="external-link">tibble</a>.</p>
+    <p>A <a href="https://tibble.tidyverse.org/reference/tbl_df-class.html" class="external-link">tibble</a>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other functions to manage NocoDB base data sources:
 <code><a href="create_data_src.html">create_data_src</a>()</code>,
+<code><a href="create_data_src_tbl.html">create_data_src_tbl</a>()</code>,
 <code><a href="data_src_id.html">data_src_id</a>()</code>,
+<code><a href="data_src_tbls.html">data_src_tbls</a>()</code>,
 <code><a href="data_srcs.html">data_srcs</a>()</code>,
 <code><a href="delete_data_src.html">delete_data_src</a>()</code>,
 <code><a href="test_data_src.html">test_data_src</a>()</code>,

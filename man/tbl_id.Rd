@@ -5,7 +5,7 @@
 \title{Get NocoDB table ID}
 \usage{
 tbl_id(
-  tbl_name,
+  name,
   id_base = base_id(hostname = hostname, email = email, password = password, api_token =
     api_token),
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
@@ -15,7 +15,7 @@ tbl_id(
 )
 }
 \arguments{
-\item{tbl_name}{NocoDB table name. A character scalar.}
+\item{name}{NocoDB table name. A character scalar.}
 
 \item{id_base}{NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}. A character scalar.}
 
@@ -36,6 +36,10 @@ Returns the identifier of the table with the specified name in the specified bas
 }
 \seealso{
 Other functions to manage NocoDB tables:
+\code{\link{create_data_src_tbl}()},
+\code{\link{create_tbl}()},
+\code{\link{data_src_tbls}()},
+\code{\link{delete_tbl}()},
 \code{\link{reorder_tbl}()},
 \code{\link{set_tbl_metadata}()},
 \code{\link{tbl}},

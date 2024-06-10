@@ -24,9 +24,8 @@ A character scalar.
 Assemble NocoDB URL
 }
 \examples{
-try(
-  nocodb:::assemble_url("api/v2/meta/bases/")
-)
+\dontrun{
+nocodb:::assemble_url("api/v2/meta/bases/")}
 }
 \concept{url_assembly}
 \keyword{internal}

@@ -16,7 +16,7 @@ reorder_tbl(
 \arguments{
 \item{id_tbl}{NocoDB table identifier as returned by \code{\link[=tbl_id]{tbl_id()}}. A character scalar.}
 
-\item{order}{A number to assign as the table's order "weight".}
+\item{order}{A number to assign as the table's NocoDB-specific order "weight".}
 
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
 
@@ -39,6 +39,10 @@ Lower numbers place the table higher up in the UI and vice versa. The current or
 }
 \seealso{
 Other functions to manage NocoDB tables:
+\code{\link{create_data_src_tbl}()},
+\code{\link{create_tbl}()},
+\code{\link{data_src_tbls}()},
+\code{\link{delete_tbl}()},
 \code{\link{set_tbl_metadata}()},
 \code{\link{tbl}},
 \code{\link{tbl_id}()},

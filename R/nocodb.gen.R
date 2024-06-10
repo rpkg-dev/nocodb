@@ -35,9 +35,8 @@ utils::globalVariables(names = c(".",
 #' @keywords internal
 #'
 #' @examples
-#' try(
-#'   nocodb:::assemble_url("api/v2/meta/bases/")
-#' )
+#' \dontrun{
+#' nocodb:::assemble_url("api/v2/meta/bases/")}
 assemble_url <- function(...,
                          .scheme = "https",
                          .hostname = pal::pkg_config_val(key = "hostname",
@@ -106,20 +105,18 @@ tidy_date_time_cols <- function(data) {
 #'
 #' @inheritParams sign_in
 #'
-#' @return Access token as a character scalar.
+#' @return Access token as a character scalar. `NA_character_` if no access token exists for `hostname` and `email`.
 #' @family access_token
 #' @keywords internal
-#'
-#' @examples
-#' try(
-#'   nocodb:::access_token() |> nocodb:::decode_access_token()
-#' )
 access_token <- function(hostname = pal::pkg_config_val(key = "hostname",
                                                         pkg = this_pkg),
                          email = pal::pkg_config_val(key = "email",
                                                      pkg = this_pkg,
                                                      require = TRUE)) {
-  stateful$access_token[[hostname]][[email]]
+  checkmate::assert_string(hostname)
+  checkmate::assert_string(email)
+  
+  stateful$access_token[[hostname]][[email]] %||% NA_character_
 }
 
 #' Store NocoDB access token
@@ -156,6 +153,10 @@ store_access_token <- function(x,
 #'   They are [registered claim names in the JWT standard](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1).
 #' @family access_token
 #' @keywords internal
+#'
+#' @examples
+#' \dontrun{
+#' nocodb:::access_token() |> nocodb:::decode_access_token()}
 decode_access_token <- function(x) {
 
   checkmate::assert_string(x)
@@ -368,10 +369,6 @@ req_auth <- function(req,
                                                     pkg = this_pkg),
                      api_token = pal::pkg_config_val(key = "api_token",
                                                      pkg = this_pkg)) {
-  checkmate::assert_string(email,
-                           null.ok = TRUE)
-  checkmate::assert_string(password,
-                           null.ok = TRUE)
   checkmate::assert_string(api_token,
                            null.ok = TRUE)
   
@@ -394,7 +391,7 @@ req_auth <- function(req,
     token <- access_token(hostname = hostname,
                           email = email)
     
-    if (!is_access_token_expired(token)) {
+    if (!is.na(token) && !is_access_token_expired(token)) {
       req %<>% httr2::req_headers(`xc-auth` = token,
                                   .redact = "xc-auth")
       return(req)
@@ -574,8 +571,8 @@ is_signed_in <- function(hostname = pal::pkg_config_val(key = "hostname",
                          email = pal::pkg_config_val(key = "email",
                                                      pkg = this_pkg,
                                                      require = TRUE)) {
-  !is.null(access_token(hostname = hostname,
-                        email = email))
+  !is.na(access_token(hostname = hostname,
+                      email = email))
 }
 
 #' Refresh NocoDB access token
@@ -637,7 +634,7 @@ is_super_admin <- function(hostname = pal::pkg_config_val(key = "hostname",
     
     result <-
       access_token(hostname = hostname,
-                   email = email) %||%
+                   email = email) %|%
       # sign in if necessary
       sign_in(hostname = hostname,
               email = email,
@@ -1402,6 +1399,123 @@ delete_data_src <- function(id_data_src,
   invisible(id_data_src)
 }
 
+#' List tables in NocoDB data source
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about all tables in the specified data source of the specified base on a NocoDB server from its
+#' [`GET /api/v2/meta/bases/{id_base}/{id_data_src}/tables`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/table-list) API endpoint.
+#'
+#' @inheritParams data_src
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family data_src
+#' @family tbls
+#' @export
+data_src_tbls <- function(id_data_src,
+                          id_base = base_id(hostname = hostname,
+                                            email = email,
+                                            password = password,
+                                            api_token = api_token),
+                          hostname = pal::pkg_config_val(key = "hostname",
+                                                         pkg = this_pkg),
+                          email = pal::pkg_config_val(key = "email",
+                                                      pkg = this_pkg),
+                          password = pal::pkg_config_val(key = "password",
+                                                         pkg = this_pkg),
+                          api_token = pal::pkg_config_val(key = "api_token",
+                                                          pkg = this_pkg)) {
+  checkmate::assert_string(id_data_src)
+  checkmate::assert_string(id_base)
+  
+  api(path = glue::glue("api/v2/meta/bases/{id_base}/{id_data_src}/tables"),
+      method = "GET",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token) |>
+    _$list |>
+    tibble::as_tibble() |>
+    tidy_date_time_cols()
+}
+
+#' Create table in NocoDB data source
+#'
+#' Adds a new table in the specified data source of the specified base on a NocoDB server via its
+#' [`POST /api/v2/meta/bases/{id_base}/{id_data_src}/tables`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/table-create) API endpoint.
+#'
+#' @inheritParams data_src
+#' @inheritParams reorder_tbl
+#' @param name Table name. A character scalar.
+#' @param cols Table columns specification as a list or something coercible to like a dataframe.
+#' @param title NocoDB-specific table title. A character scalar.
+#' @param meta NocoDB-specific table metadata. A list.
+#'
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created table")`
+#' @family data_src
+#' @family tbls
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # create new table with a single PK column
+#' nocodb::create_data_src_tbl(id_data_src = "REPLACE-ME",
+#'                             name = "my_new_table",
+#'                             title = "MyNewTable",
+#'                             cols = list(list(column_name = "id",
+#'                                              title = "id",
+#'                                              dt = "text",
+#'                                              dtx = "text",
+#'                                              nrqd = FALSE,
+#'                                              rqd = TRUE,
+#'                                              ck = FALSE,
+#'                                              pk = TRUE,
+#'                                              un = FALSE,
+#'                                              ai = FALSE,
+#'                                              uidt = "LongText")))}
+create_data_src_tbl <- function(id_data_src,
+                                name,
+                                cols,
+                                title = NULL,
+                                meta = NULL,
+                                order = NULL,
+                                id_base = base_id(hostname = hostname,
+                                                  email = email,
+                                                  password = password,
+                                                  api_token = api_token),
+                                hostname = pal::pkg_config_val(key = "hostname",
+                                                               pkg = this_pkg),
+                                email = pal::pkg_config_val(key = "email",
+                                                            pkg = this_pkg),
+                                password = pal::pkg_config_val(key = "password",
+                                                               pkg = this_pkg),
+                                api_token = pal::pkg_config_val(key = "api_token",
+                                                                pkg = this_pkg)) {
+  checkmate::assert_string(id_data_src)
+  checkmate::assert_string(name)
+  checkmate::assert_list(cols,
+                         min.len = 1L)
+  checkmate::assert_string(title,
+                           null.ok = TRUE)
+  checkmate::assert_list(meta,
+                         min.len = 1L,
+                         null.ok = TRUE)
+  checkmate::assert_number(order,
+                           null.ok = TRUE)
+  checkmate::assert_string(id_base)
+  
+  api(path = glue::glue("api/v2/meta/bases/{id_base}/{id_data_src}/tables"),
+      method = "POST",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token,
+      body_json = purrr::compact(list(columns = cols,
+                                      table_name = name,
+                                      title = title,
+                                      meta = meta,
+                                      order = order))) |>
+    tidy_resp_data()
+}
+
 #' List NocoDB tables
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about tables in the specified base on a NocoDB server from its
@@ -1442,12 +1556,12 @@ tbls <- function(id_base = base_id(hostname = hostname,
 #' Returns the identifier of the table with the specified name in the specified base on a NocoDB server.
 #'
 #' @inheritParams base
-#' @param tbl_name NocoDB table name. A character scalar.
+#' @param name NocoDB table name. A character scalar.
 #'
 #' @return A character scalar.
 #' @family tbls
 #' @export
-tbl_id <- function(tbl_name,
+tbl_id <- function(name,
                    id_base = base_id(hostname = hostname,
                                      email = email,
                                      password = password,
@@ -1460,7 +1574,7 @@ tbl_id <- function(tbl_name,
                                                   pkg = this_pkg),
                    api_token = pal::pkg_config_val(key = "api_token",
                                                    pkg = this_pkg)) {
-  checkmate::assert_string(tbl_name)
+  checkmate::assert_string(name)
   
   result <-
     tbls(id_base = id_base,
@@ -1468,16 +1582,16 @@ tbl_id <- function(tbl_name,
          email = email,
          password = password,
          api_token = api_token) |>
-    dplyr::filter(table_name == !!tbl_name) |>
+    dplyr::filter(table_name == !!name) |>
     dplyr::pull("id")
   
   n_result <- length(result)
   
   if (n_result > 1L) {
     result <- result[1L]
-    cli::cli_warn("{.val {n_result}} tables with name {.val {tbl_name}} present. The identifier of the first one listed in the API response is returned.")
+    cli::cli_warn("{.val {n_result}} tables with name {.val {name}} present. The identifier of the first one listed in the API response is returned.")
   } else if (n_result == 0L) {
-    cli::cli_abort("No table with name {.val {tbl_name}} present in base with ID {}.")
+    cli::cli_abort("No table with name {.val {name}} present in base with ID {}.")
   }
   
   result
@@ -1517,11 +1631,92 @@ tbl <- function(id_tbl,
     tidy_date_time_cols()
 }
 
+#' Create NocoDB table
+#'
+#' @description
+#' Adds a new table to the specified base's *default* data source on a NocoDB server via its
+#' [`POST /api/v2/meta/bases/{id_base}/tables`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-create) API endpoint.
+#'
+#' To add a new table to a *specific* (external) data source, use [create_data_src_tbl()] instead.
+#'
+#' @details
+#' Besides the specified `cols`, NocoDB automatically creates the additional columns
+#' [`created_at`](https://docs.nocodb.com/fields/field-types/date-time-based/created-time/),
+#' [`updated_at`](https://docs.nocodb.com/fields/field-types/date-time-based/last-modified-time/),
+#' [`created_by`](https://docs.nocodb.com/fields/field-types/user-based/created-by) and
+#' [`updated_by`](https://docs.nocodb.com/fields/field-types/user-based/last-modified-by) as system fields.
+#'
+#' @inheritParams create_data_src_tbl
+#'
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created table")`
+#' @family tbls
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # create new table with a single PK column
+#' nocodb::create_tbl(name = "my_new_table",
+#'                    title = "MyNewTable",
+#'                    cols = list(list(column_name = "id",
+#'                                     title = "id",
+#'                                     dt = "text",
+#'                                     dtx = "text",
+#'                                     nrqd = FALSE,
+#'                                     rqd = TRUE,
+#'                                     ck = FALSE,
+#'                                     pk = TRUE,
+#'                                     un = FALSE,
+#'                                     ai = FALSE,
+#'                                     uidt = "LongText")))}
+create_tbl <- function(name,
+                       cols,
+                       title = NULL,
+                       meta = NULL,
+                       order = NULL,
+                       id_base = base_id(hostname = hostname,
+                                         email = email,
+                                         password = password,
+                                         api_token = api_token),
+                       hostname = pal::pkg_config_val(key = "hostname",
+                                                      pkg = this_pkg),
+                       email = pal::pkg_config_val(key = "email",
+                                                   pkg = this_pkg),
+                       password = pal::pkg_config_val(key = "password",
+                                                      pkg = this_pkg),
+                       api_token = pal::pkg_config_val(key = "api_token",
+                                                       pkg = this_pkg)) {
+  checkmate::assert_string(name)
+  checkmate::assert_list(cols,
+                         min.len = 1L)
+  checkmate::assert_string(title,
+                           null.ok = TRUE)
+  checkmate::assert_list(meta,
+                         min.len = 1L,
+                         null.ok = TRUE)
+  checkmate::assert_number(order,
+                           null.ok = TRUE)
+  checkmate::assert_string(id_base)
+  
+  api(path = glue::glue("api/v2/meta/bases/{id_base}/tables"),
+      method = "POST",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token,
+      body_json = purrr::compact(list(columns = cols,
+                                      table_name = name,
+                                      title = title,
+                                      meta = meta,
+                                      order = order))) |>
+    tidy_resp_data()
+}
+
 #' Update NocoDB table
 #'
 #' Updates the metadata of the specified table on a NocoDB server via its
 #' [`PATCH /api/v2/meta/tables/{id_tbl}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-update) API endpoint.
 #'
+#' @inheritParams create_data_src_tbl
 #' @inheritParams tbl
 #' @inheritParams api
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
@@ -1530,8 +1725,10 @@ tbl <- function(id_tbl,
 #' @family tbls
 #' @export
 update_tbl <- function(id_tbl,
-                       body_json,
-                       auto_unbox = TRUE,
+                       id_base = NULL,
+                       name = NULL,
+                       title = NULL,
+                       meta = NULL,
                        hostname = pal::pkg_config_val(key = "hostname",
                                                       pkg = this_pkg),
                        email = pal::pkg_config_val(key = "email",
@@ -1543,19 +1740,62 @@ update_tbl <- function(id_tbl,
                        quiet = FALSE) {
   
   checkmate::assert_string(id_tbl)
+  checkmate::assert_string(id_base,
+                           null.ok = TRUE)
+  checkmate::assert_string(name,
+                           null.ok = TRUE)
+  checkmate::assert_string(title,
+                           null.ok = TRUE)
+  checkmate::assert_list(meta,
+                         min.len = 1L,
+                         null.ok = TRUE)
   checkmate::assert_flag(quiet)
   
   result <- api(path = glue::glue("api/v2/meta/tables/{id_tbl}"),
                 method = "PATCH",
-                auto_unbox = auto_unbox,
                 hostname = hostname,
                 email = email,
                 password = password,
                 api_token = api_token,
-                body_json = body_json)
+                body_json = purrr::compact(list(table_name = name,
+                                                title = title,
+                                                base_id = id_base,
+                                                meta = meta)))
   if (!quiet) {
     cli_alert_status(msg = result$msg)
   }
+  
+  invisible(id_tbl)
+}
+
+#' Delete NocoDB table
+#'
+#' Deletes the specified table on a NocoDB server via its
+#' [`DELETE /api/v2/meta/tables/{id_tbl}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-delete) API endpoint.
+#'
+#' @inheritParams tbl
+#'
+#' @return `id_tbl`, invisibly.
+#' @family tbls
+#' @export
+delete_tbl <- function(id_tbl,
+                       hostname = pal::pkg_config_val(key = "hostname",
+                                                      pkg = this_pkg),
+                       email = pal::pkg_config_val(key = "email",
+                                                   pkg = this_pkg),
+                       password = pal::pkg_config_val(key = "password",
+                                                      pkg = this_pkg),
+                       api_token = pal::pkg_config_val(key = "api_token",
+                                                       pkg = this_pkg)) {
+  
+  checkmate::assert_string(id_tbl)
+  
+  api(path = glue::glue("api/v2/meta/tables/{id_tbl}"),
+      method = "DELETE",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token)
   
   invisible(id_tbl)
 }
@@ -1568,7 +1808,7 @@ update_tbl <- function(id_tbl,
 #' Lower numbers place the table higher up in the UI and vice versa. The current order of all the tables in a base can be determined via [tbls()].
 #'
 #' @inheritParams tbl
-#' @param order A number to assign as the table's order "weight".
+#' @param order A number to assign as the table's NocoDB-specific order "weight".
 #'
 #' @return `id_tbl`, invisibly.
 #' @family tbls
@@ -1642,7 +1882,7 @@ set_tbl_metadata <- function(data,
       
       name <- data$name[i]
       icon <- data$meta.icon[i]
-      id <- tbl_id(tbl_name = name,
+      id <- tbl_id(name = name,
                    id_base = id_base,
                    hostname = hostname,
                    email = email,
@@ -1666,7 +1906,7 @@ set_tbl_metadata <- function(data,
       
       if (!is.na(icon)) {
         update_tbl(id_tbl = id,
-                   body_json = list(meta = list(icon = icon)),
+                   meta = list(icon = icon),
                    hostname = hostname,
                    email = email,
                    password = password,
@@ -1712,18 +1952,18 @@ tbl_cols <- function(id_tbl,
 
 #' Get NocoDB table column ID
 #'
-#' Returns the identifier of the column with the specified `col_name` or `col_title` in the table with the specified `id_tbl` on a NocoDB server.
+#' Returns the identifier of the column with the specified `name` or `title` in the table with the specified `id_tbl` on a NocoDB server.
 #'
 #' @inheritParams tbl_cols
-#' @param col_name NocoDB column name. A character scalar.
-#' @param col_title NocoDB column title. A character scalar.
+#' @param name NocoDB column name. A character scalar.
+#' @param title NocoDB column title. A character scalar.
 #'
 #' @return A character scalar.
 #' @family cols
 #' @export
 tbl_col_id <- function(id_tbl,
-                       col_name = NULL,
-                       col_title = NULL,
+                       name = NULL,
+                       title = NULL,
                        hostname = pal::pkg_config_val(key = "hostname",
                                                       pkg = this_pkg),
                        email = pal::pkg_config_val(key = "email",
@@ -1732,12 +1972,12 @@ tbl_col_id <- function(id_tbl,
                                                       pkg = this_pkg),
                        api_token = pal::pkg_config_val(key = "api_token",
                                                        pkg = this_pkg)) {
-  checkmate::assert_string(col_name,
+  checkmate::assert_string(name,
                            null.ok = TRUE)
-  checkmate::assert_string(col_title,
+  checkmate::assert_string(title,
                            null.ok = TRUE)
-  if (is.null(col_name) && is.null(col_title)) {
-    cli::cli_abort("At least one of {.or {.arg {c('col_name', 'col_title')}}} must be provided.")
+  if (is.null(name) && is.null(title)) {
+    cli::cli_abort("At least one of {.or {.arg {c('name', 'title')}}} must be provided.")
   }
   
   result <-
@@ -1746,21 +1986,28 @@ tbl_col_id <- function(id_tbl,
              email = email,
              password = password,
              api_token = api_token) |>
-    pal::when(is.null(col_name) ~ .,
-              ~ dplyr::filter(., column_name == !!col_name)) |>
-    pal::when(is.null(col_title) ~ .,
-              ~ dplyr::filter(., title == !!col_title)) |>
+    pal::when(is.null(name) ~ .,
+              ~ dplyr::filter(., column_name == !!name)) |>
+    pal::when(is.null(title) ~ .,
+              ~ dplyr::filter(., title == !!title)) |>
     dplyr::pull("id")
   
   n_result <- length(result)
+  msg_filter_cnds <-
+    c("name"[!is.null(name)],
+      "title"[!is.null(title)]) |>
+    purrr::map_chr(\(var_name) paste0(" ", var_name, " {.val {", var_name, "}}")) |>
+    paste0(collapse = " and")
   
   if (n_result > 1L) {
+    
     result <- result[1L]
-    cli::cli_warn(paste0("{.val {n_result}} columns with name {.val {col_name}} present in table with identifier {.val {id_tbl}}. The identifier of the ",
+    
+    cli::cli_warn(paste0("{.val {n_result}} columns with ", msg_filter_cnds, " present in table with identifier {.val {id_tbl}}. The identifier of the ",
                          "first column listed in the API response is returned."))
     
   } else if (n_result == 0L) {
-    cli::cli_abort("No column with name {.val {col_name}} present in table with identifier {.val {id_tbl}}.")
+    cli::cli_abort(paste0("No column with ", msg_filter_cnds, " present in table with identifier {.val {id_tbl}}."))
   }
   
   result
@@ -1833,8 +2080,7 @@ update_tbl_col <- function(id_col,
       email = email,
       password = password,
       api_token = api_token,
-      body_json = body_json) |>
-    invisible()
+      body_json = body_json)
 }
 
 #' Set display value column for NocoDB table
@@ -1913,13 +2159,13 @@ set_display_vals <- function(data,
                      pal::cli_progress_step_quick(msg = "Setting NocoDB display column for table {.field {tbl_name}} to {.val {col_name}}")
                    }
                    
-                   tbl_id(tbl_name = tbl_name,
+                   tbl_id(name = tbl_name,
                           id_base = id_base,
                           hostname = hostname,
                           email = email,
                           password = password,
                           api_token = api_token) |>
-                     tbl_col_id(col_name = col_name,
+                     tbl_col_id(name = col_name,
                                 hostname = hostname,
                                 email = email,
                                 password = password,

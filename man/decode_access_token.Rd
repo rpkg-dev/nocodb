@@ -19,6 +19,10 @@ They are \href{https://datatracker.ietf.org/doc/html/rfc7519#section-4.1}{regist
 Decodes an access token that adheres to the \href{https://de.wikipedia.org/wiki/JSON_Web_Token}{JSON Web Token (JWT)} standard and returns the payload as a
 \link[tibble:tbl_df-class]{tibble}. The JWT's cryptographic signature is simply ignored.
 }
+\examples{
+\dontrun{
+nocodb:::access_token() |> nocodb:::decode_access_token()}
+}
 \seealso{
 Other access_token: 
 \code{\link{access_token}()},

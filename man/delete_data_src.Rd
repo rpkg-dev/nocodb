@@ -38,8 +38,10 @@ Deletes the specified data source from the specified base on a NocoDB server via
 \seealso{
 Other functions to manage NocoDB base data sources:
 \code{\link{create_data_src}()},
+\code{\link{create_data_src_tbl}()},
 \code{\link{data_src}()},
 \code{\link{data_src_id}()},
+\code{\link{data_src_tbls}()},
 \code{\link{data_srcs}()},
 \code{\link{test_data_src}()},
 \code{\link{update_data_src}()}
