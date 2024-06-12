@@ -1537,6 +1537,50 @@ data_src_diff <- function(id_data_src,
 }
 ```
 
+#### `has_data_src_diff`
+
+```{r}
+#' Test if data source has schema changes pending
+#'
+#' Tests whether [data_src_diff()] detects any pending schema changes.
+#'
+#' @inheritParams data_src
+#'
+#' @return A logical scalar.
+#' @family data_src
+#' @export
+has_data_src_diff <- function(id_data_src,
+                              id_base = base_id(hostname = hostname,
+                                                email = email,
+                                                password = password,
+                                                api_token = api_token),
+                              hostname = pal::pkg_config_val(key = "hostname",
+                                                             pkg = this_pkg),
+                              email = pal::pkg_config_val(key = "email",
+                                                          pkg = this_pkg),
+                              password = pal::pkg_config_val(key = "password",
+                                                             pkg = this_pkg),
+                              api_token = pal::pkg_config_val(key = "api_token",
+                                                              pkg = this_pkg)) {
+  diff <- data_src_diff(id_data_src = id_data_src,
+                        id_base = id_base,
+                        hostname = hostname,
+                        email = email,
+                        password = password,
+                        api_token = api_token)
+  
+  if (nrow(diff) == 0L) {
+    return(FALSE)
+  }
+  
+  diff |>
+    dplyr::pull("detectedChanges") |>
+    unlist() |>
+    length() |>
+    magrittr::is_greater_than(0L)
+}
+```
+
 #### `sync_data_src`
 
 ```{r}

@@ -45,6 +45,7 @@ Other functions to manage NocoDB base data sources:
 \code{\link{data_src_tbls}()},
 \code{\link{data_srcs}()},
 \code{\link{delete_data_src}()},
+\code{\link{has_data_src_diff}()},
 \code{\link{test_data_src}()},
 \code{\link{update_data_src}()}
 }

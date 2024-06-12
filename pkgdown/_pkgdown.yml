@@ -33,6 +33,7 @@ reference:
   - data_src
   - test_data_src
   - data_src_diff
+  - has_data_src_diff
   - sync_data_src
   - create_data_src
   - update_data_src
