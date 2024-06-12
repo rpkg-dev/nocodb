@@ -49,7 +49,7 @@ To add a new table to a specific (external) data source, use create_data_src_tbl
 <span>  hostname <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"hostname"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
 <span>  email <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"email"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
 <span>  password <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"password"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
-<span>api_token <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"api_token"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span></span>
+<span>  api_token <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"api_token"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
     <div class="section level2">
@@ -103,7 +103,7 @@ provided.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="co"># create new table with a single PK column</span></span></span>
 <span class="r-in"><span><span class="fu">nocodb</span><span class="fu">::</span><span class="fu">create_tbl</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"my_new_table"</span>,</span></span>
 <span class="r-in"><span>                   title <span class="op">=</span> <span class="st">"MyNewTable"</span>,</span></span>
@@ -117,7 +117,7 @@ provided.</p></dd>
 <span class="r-in"><span>                                    pk <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>                                    un <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>                                    ai <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>                                    uidt <span class="op">=</span> <span class="st">"LongText"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">}</span></span></span>
+<span class="r-in"><span>                                    uidt <span class="op">=</span> <span class="st">"LongText"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

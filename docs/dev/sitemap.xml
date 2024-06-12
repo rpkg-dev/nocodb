@@ -19,6 +19,7 @@
 <url><loc>https://nocodb.rpkg.dev/dev/reference/create_data_src_tbl.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/create_tbl.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/data_src.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/data_src_diff.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/data_src_id.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/data_src_tbls.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/data_srcs.html</loc></url>
@@ -53,6 +54,7 @@
 <url><loc>https://nocodb.rpkg.dev/dev/reference/sign_out.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/sign_up_user.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/store_access_token.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/sync_data_src.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/tbl.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/tbl_col.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/tbl_col_id.html</loc></url>

@@ -1218,6 +1218,77 @@ test_data_src <- function(connection,
   result
 }
 
+#' List data source schema changes
+#'
+#' Returns a [tibble][tibble::tbl_df] listing detected differences between the specified data source's external and its NocoDB-internal state via the
+#' [`GET /api/v2/meta/bases/{id_base}/meta-diff/{id_data_src}`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-meta-diff-get) API endpoint.
+#'
+#' @inheritParams data_src
+#'
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about detected schema changes in the data source")`
+#' @family data_src
+#' @export
+data_src_diff <- function(id_data_src,
+                          id_base = base_id(hostname = hostname,
+                                            email = email,
+                                            password = password,
+                                            api_token = api_token),
+                          hostname = pal::pkg_config_val(key = "hostname",
+                                                         pkg = this_pkg),
+                          email = pal::pkg_config_val(key = "email",
+                                                      pkg = this_pkg),
+                          password = pal::pkg_config_val(key = "password",
+                                                         pkg = this_pkg),
+                          api_token = pal::pkg_config_val(key = "api_token",
+                                                          pkg = this_pkg)) {
+  checkmate::assert_string(id_data_src)
+  checkmate::assert_string(id_base)
+  
+  api(path = glue::glue("api/v2/meta/bases/{id_base}/meta-diff/{id_data_src}"),
+      method = "GET",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token) |>
+    tibble::as_tibble()
+}
+
+#' Synchronize data source schema
+#'
+#' Synchronizes the specified data source's schema between its external and its NocoDB-internal state via the
+#' [`POST /api/v2/meta/bases/{id_base}/meta-diff/{id_data_src}`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-meta-diff-sync) API endpoint.
+#'
+#' @inheritParams data_src
+#'
+#' @return `id_data_src`, invisibly.
+#' @family data_src
+#' @export
+sync_data_src <- function(id_data_src,
+                          id_base = base_id(hostname = hostname,
+                                            email = email,
+                                            password = password,
+                                            api_token = api_token),
+                          hostname = pal::pkg_config_val(key = "hostname",
+                                                         pkg = this_pkg),
+                          email = pal::pkg_config_val(key = "email",
+                                                      pkg = this_pkg),
+                          password = pal::pkg_config_val(key = "password",
+                                                         pkg = this_pkg),
+                          api_token = pal::pkg_config_val(key = "api_token",
+                                                          pkg = this_pkg)) {
+  checkmate::assert_string(id_data_src)
+  checkmate::assert_string(id_base)
+  
+  api(path = glue::glue("api/v2/meta/bases/{id_base}/meta-diff/{id_data_src}"),
+      method = "POST",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token)
+  
+  invisible(id_data_src)
+}
+
 #' Create NocoDB data source
 #'
 #' Adds a data source to the specified base on a NocoDB server via its
