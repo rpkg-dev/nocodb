@@ -2144,9 +2144,10 @@ set_display_vals <- function(data,
   
   checkmate::assert_data_frame(data,
                                min.cols = 2L)
-  checkmate::assert_names(data,
+  checkmate::assert_names(colnames(data),
                           must.include = c("name", "display_col"),
-                          what = "colnames")
+                          what = "colnames",
+                          .var.name = "data")
   checkmate::assert_flag(quiet)
   
   data |>
