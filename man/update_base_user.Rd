@@ -21,7 +21,8 @@ update_base_user(
 \arguments{
 \item{user_email}{E-mail address of the user. A character scalar.}
 
-\item{role}{Base role to assign to the user. One of \code{"no-access"}, \code{"viewer"}, \code{"commenter"}, \code{"editor"} or \code{"creator"}.}
+\item{role}{\href{https://docs.nocodb.com/collaboration/oss-specific-details/#base-level-permissions}{Base role} to assign to the user. One of
+\code{"no-access"}, \code{"viewer"}, \code{"commenter"}, \code{"editor"} or \code{"creator"}.}
 
 \item{id_user}{NocoDB user identifier as returned by \code{\link[=user_id]{user_id()}}. A character scalar.}
 

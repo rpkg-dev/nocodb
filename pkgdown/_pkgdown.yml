@@ -35,6 +35,7 @@ reference:
   - data_src_diff
   - has_data_src_diff
   - sync_data_src
+  - sync_data_src_eagerly
   - create_data_src
   - update_data_src
   - delete_data_src

@@ -2,7 +2,7 @@
 % Please edit documentation in R/nocodb.gen.R
 \name{sync_data_src}
 \alias{sync_data_src}
-\title{Synchronize data source schema}
+\title{Synchronize NocoDB data source schema}
 \usage{
 sync_data_src(
   id_data_src,

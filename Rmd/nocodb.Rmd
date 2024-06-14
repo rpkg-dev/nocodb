@@ -1501,7 +1501,7 @@ test_data_src <- function(connection,
 #### `data_src_diff`
 
 ```{r}
-#' List data source schema changes
+#' List NocoDB data source schema changes
 #'
 #' Returns a [tibble][tibble::tbl_df] listing detected differences between the specified data source's external and its NocoDB-internal state via the
 #' [`GET /api/v2/meta/bases/{id_base}/meta-diff/{id_data_src}`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-meta-diff-get) API endpoint.
@@ -1540,7 +1540,7 @@ data_src_diff <- function(id_data_src,
 #### `has_data_src_diff`
 
 ```{r}
-#' Test if data source has schema changes pending
+#' Test if NocoDB data source has schema changes pending
 #'
 #' Tests whether [data_src_diff()] detects any pending schema changes.
 #'
@@ -1584,7 +1584,7 @@ has_data_src_diff <- function(id_data_src,
 #### `sync_data_src`
 
 ```{r}
-#' Synchronize data source schema
+#' Synchronize NocoDB data source schema
 #'
 #' Synchronizes the specified data source's schema between its external and its NocoDB-internal state via the
 #' [`POST /api/v2/meta/bases/{id_base}/meta-diff/{id_data_src}`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-meta-diff-sync) API endpoint.
@@ -1616,6 +1616,82 @@ sync_data_src <- function(id_data_src,
       email = email,
       password = password,
       api_token = api_token)
+  
+  invisible(id_data_src)
+}
+```
+
+#### `sync_data_src_eagerly`
+
+```{r}
+#' Synchronize NocoDB data source schema eagerly
+#'
+#' Synchronizes the specified data source's schema between its external and its NocoDB-internal state by repeatedly calling [sync_data_src()] until
+#' [has_data_src_diff()] doesn't detect any more changes.
+#'
+#' @inheritParams sync_data_src
+#' @param wait_max Maximum time in seconds to wait for schema synchronization to finish. An error is thrown if there are still schema changes pending when the
+#'   timeout is reached. An integerish scalar.
+#' @param wait_resync Interval in seconds to repeat calling [sync_data_src()]. A number `>= 1` and `< wait_max`.
+#'
+#' @return `id_data_src`, invisibly.
+#' @family nocodb
+#' @family admin
+#' @export
+sync_data_src_eagerly <- function(id_data_src,
+                                  id_base = base_id(hostname = hostname,
+                                                    email = email,
+                                                    password = password,
+                                                    api_token = api_token),
+                                  hostname = pal::pkg_config_val(key = "hostname",
+                                                                 pkg = this_pkg),
+                                  email = pal::pkg_config_val(key = "email",
+                                                              pkg = this_pkg),
+                                  password = pal::pkg_config_val(key = "password",
+                                                                 pkg = this_pkg),
+                                  api_token = pal::pkg_config_val(key = "api_token",
+                                                                  pkg = this_pkg),
+                                  wait_max = 30L,
+                                  wait_resync = 7.0) {
+  
+  checkmate::assert_count(wait_max)
+  checkmate::assert_number(wait_resync,
+                           lower = 1L,
+                           upper = wait_max - 1L)
+  
+  sync_data_src(id_data_src = id_data_src,
+                id_base = id_base,
+                hostname = hostname,
+                email = email,
+                password = password)
+  
+  for (i in pal::safe_seq_len(wait_max)) {
+    
+    # resync if interval is reached
+    if (i %% wait_resync < 1L) {
+      sync_data_src(id_data_src = id_data_src,
+                    id_base = id_base,
+                    hostname = hostname,
+                    email = email,
+                    password = password)
+    }
+    
+    Sys.sleep(1L)
+    
+    # continue if sync has finished
+    if (!has_data_src_diff(id_data_src = id_data_src,
+                           id_base = id_base,
+                           hostname = hostname,
+                           email = email,
+                           password = password)) {
+      break
+    }
+    
+    # abort if not finished within max wait time
+    if (i == wait_max) {
+      cli::cli_abort("NocoDB data source schema sync hasn't finished/succeeded within {wait_max} second{?s}.")
+    }
+  }
   
   invisible(id_data_src)
 }
@@ -3361,8 +3437,11 @@ NOTES:
 -   Although the API docs state a `"guest"` role, the API responds with HTTP 400 Bad Request and message `Invalid role` when tried to set it, hence we ignore
     that role for the time being. It was [asked upstream about the purpose of this role](https://github.com/nocodb/nocodb/discussions/8642).
 
--   Although the API docs state an `"owner"` role, the API responds with HTTP 400 Bad Request and message `Owner cannot be updated` when tried to set it, hence
-    we ignore that role for the time being.
+-   Although the API docs state an `"owner"` role, the API responds with HTTP 400 Bad Request and message `Owner cannot be updated` when tried to set it. The
+    response is actually in line with the [docs on base-level permissions](https://docs.nocodb.com/collaboration/oss-specific-details/#base-level-permissions)
+    that state:
+
+    > The owner persists until the project exists and the role is non-transferable.
 
 ```{r}
 #' Update NocoDB base user
@@ -3374,7 +3453,8 @@ NOTES:
 #'
 #' @inheritParams user_id
 #' @inheritParams set_tbl_metadata
-#' @param role Base role to assign to the user. One of `r pal::enum_fn_param_defaults(param = "role", fn = "update_base_user")`.
+#' @param role [Base role](https://docs.nocodb.com/collaboration/oss-specific-details/#base-level-permissions) to assign to the user. One of
+#'   `r pal::enum_fn_param_defaults(param = "role", fn = "update_base_user")`.
 #' @param id_user NocoDB user identifier as returned by [user_id()]. A character scalar.
 #'
 #' @return `id_user`, invisibly.

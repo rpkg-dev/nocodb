@@ -2,7 +2,7 @@
 % Please edit documentation in R/nocodb.gen.R
 \name{has_data_src_diff}
 \alias{has_data_src_diff}
-\title{Test if data source has schema changes pending}
+\title{Test if NocoDB data source has schema changes pending}
 \usage{
 has_data_src_diff(
   id_data_src,
