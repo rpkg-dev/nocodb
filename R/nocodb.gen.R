@@ -2370,17 +2370,23 @@ set_display_vals <- function(data,
 #' object storage bucket (if one is set up) or directly on the server's filesystem.
 #'
 #' @inheritParams api
-#' @param paths Path(s) to the file(s) to be uploaded. A character vector.
-#' @param names File name(s) to assign to the uploaded file(s). A character vector. Note that a random string like `_NnW3C` is always appended to the resulting
-#'   file name before its file type suffix, so `name = "some-pic.jpg"` will result in something like `some-pic_NnW3C.jpg`, for example.
-#' @param types [Media type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types)(s) of the uploaded files. A character vector.
+#' @param paths Paths to the files to be uploaded. A character vector.
+#' @param types [Media type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types)(s) of the uploaded files. A character vector of the
+#'   same length as `paths`.
+#' @param names File names to assign to the uploaded files. A character vector of the same length as `paths` or `NULL`. If `NULL`, the original file names from
+#'   `paths` are used. Note that a random string like `_NnW3C` is always appended to the resulting file name before its file type suffix, so
+#'   `names = "some-pic.jpg"` will result in a file name like `some-pic_NnW3C.jpg`, for example.
+#' @param upload_path Destination path to store the uploaded file(s) at. Always interpreted relative to the directory `/nc/uploads/` (which [is hardcoded in
+#'   NocoDB's source code](https://github.com/search?q=repo%3Anocodb%2Fnocodb+nc+uploads+language%3ATypeScript&type=code&l=TypeScript)). A character scalar.
+#'   Note that the characters `.` and `?` are replaced with `_` by the API.
 #'
 #' @return A [tibble][tibble::tbl_df] containing metadata about the uploaded attachments.
 #' @family attachments
 #' @export
 upload_attachments <- function(paths,
-                               names = fs::path_file(paths),
                                types = mime::guess_type(paths),
+                               names = NULL,
+                               upload_path = "r",
                                hostname = pal::pkg_config_val(key = "hostname",
                                                               pkg = this_pkg),
                                email = pal::pkg_config_val(key = "email",
@@ -2396,19 +2402,32 @@ upload_attachments <- function(paths,
                                                  access = "r",
                                                  .var.name = "paths"))
   checkmate::assert_character(names,
-                              any.missing = FALSE)
-  checkmate::assert_subset(types,
-                           choices = mime::mimemap)
+                              any.missing = FALSE,
+                              null.ok = TRUE)
+  types <- rlang::arg_match(types,
+                            values = mime::mimemap,
+                            multiple = TRUE)
+  checkmate::assert_string(upload_path)
   
-  if (length(unique(c(length(paths), length(names), length(types)))) > 1L) {
-    cli::cli_abort("Arguments {.arg {c('paths', 'names', 'types')}} must all have the same length.")
+  if (list(paths, names, types) |>
+      purrr::compact() |>
+      lengths() |>
+      unique() |>
+      length() |>
+      magrittr::is_greater_than(1L)) {
+    cli::cli_abort("Arguments {.arg {c('paths', 'names'[!is.null(names)], 'types')}} must all have the same length.")
   }
   
   # assemble multipart req body
-  files <- purrr::pmap(list(paths, names, types),
-                       \(path, name, type) curl::form_file(path = path,
+  files <-
+    list(path = paths,
+         name = names,
+         type = types) |>
+    purrr::compact() |>
+    purrr::pmap(\(path, type, name = NULL) curl::form_file(path = path,
                                                            name = name,
                                                            type = type))
+  
   # NOTE: the object names don't matter; we just chose `file#` for clarity
   names(files) <- paste0("file", seq_along(paths))
   
@@ -2416,6 +2435,7 @@ upload_attachments <- function(paths,
             method = "POST",
             hostname = hostname,
             max_tries = max_tries) |>
+    httr2::req_url_query(path = upload_path) |>
     req_auth(email = email,
              password = password,
              api_token = api_token) |>

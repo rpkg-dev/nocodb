@@ -5,12 +5,19 @@ object storage bucket (if one is set up) or directly on the server's filesystem.
 POST /api/v2/storage/upload API endpoint. Uploaded files are stored under /nc/uploads/ in the configured
 object storage bucket (if one is set up) or directly on the server's filesystem."><meta name="twitter:card" content="summary"><meta name="twitter:creator" content="@2BSalim"><meta name="twitter:site" content="@2BSalim"><meta name="robots" content="noindex"><script src="https://rpkg.dev/counter-dev.min.js" data-id="4c4963fe-9fcf-4d81-95bb-2135e114b85b" data-utcoffset="1"></script></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">nocodb</a>
+
     <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.9000</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -23,25 +30,31 @@ object storage bucket (if one is set up) or directly on the server's filesystem.
     <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
   </ul></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
+
       <h1>Upload NocoDB attachments</h1>
       <small class="dont-index">Source: <a href="https://gitlab.com/rpkg.dev/nocodb/blob/HEAD/R/nocodb.gen.R" class="external-link"><code>R/nocodb.gen.R</code></a></small>
       <div class="d-none name"><code>upload_attachments.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>Uploads the specified files to a NocoDB server as <a href="https://docs.nocodb.com/fields/field-types/custom-types/attachment/" class="external-link">attachments</a> via its
 <a href="https://meta-apis-v2.nocodb.com/#tag/Storage" class="external-link"><code>POST /api/v2/storage/upload</code></a> API endpoint. Uploaded files are stored under <code>/nc/uploads/</code> in the configured
 object storage bucket (if one is set up) or directly on the server's filesystem.</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">upload_attachments</span><span class="op">(</span></span>
 <span>  <span class="va">paths</span>,</span>
-<span>  names <span class="op">=</span> <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/path_file.html" class="external-link">path_file</a></span><span class="op">(</span><span class="va">paths</span><span class="op">)</span>,</span>
 <span>  types <span class="op">=</span> <span class="fu">mime</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/mime/man/guess_type.html" class="external-link">guess_type</a></span><span class="op">(</span><span class="va">paths</span><span class="op">)</span>,</span>
+<span>  names <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  upload_path <span class="op">=</span> <span class="st">"r"</span>,</span>
 <span>  hostname <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"hostname"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
 <span>  email <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"email"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
 <span>  password <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"password"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span><span class="op">)</span>,</span>
@@ -50,26 +63,52 @@ object storage bucket (if one is set up) or directly on the server's filesystem.
 <span>  verbosity <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
+
+
 <dl><dt id="arg-paths">paths<a class="anchor" aria-label="anchor" href="#arg-paths"></a></dt>
-<dd><p>Path(s) to the file(s) to be uploaded. A character vector.</p></dd>
-<dt id="arg-names">names<a class="anchor" aria-label="anchor" href="#arg-names"></a></dt>
-<dd><p>File name(s) to assign to the uploaded file(s). A character vector. Note that a random string like <code>_NnW3C</code> is always appended to the resulting
-file name before its file type suffix, so <code>name = "some-pic.jpg"</code> will result in something like <code>some-pic_NnW3C.jpg</code>, for example.</p></dd>
+<dd><p>Paths to the files to be uploaded. A character vector.</p></dd>
+
+
 <dt id="arg-types">types<a class="anchor" aria-label="anchor" href="#arg-types"></a></dt>
-<dd><p><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types" class="external-link">Media type</a>(s) of the uploaded files. A character vector.</p></dd>
+<dd><p><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types" class="external-link">Media type</a>(s) of the uploaded files. A character vector of the
+same length as <code>paths</code>.</p></dd>
+
+
+<dt id="arg-names">names<a class="anchor" aria-label="anchor" href="#arg-names"></a></dt>
+<dd><p>File names to assign to the uploaded files. A character vector of the same length as <code>paths</code> or <code>NULL</code>. If <code>NULL</code>, the original file names from
+<code>paths</code> are used. Note that a random string like <code>_NnW3C</code> is always appended to the resulting file name before its file type suffix, so
+<code>names = "some-pic.jpg"</code> will result in a file name like <code>some-pic_NnW3C.jpg</code>, for example.</p></dd>
+
+
+<dt id="arg-upload-path">upload_path<a class="anchor" aria-label="anchor" href="#arg-upload-path"></a></dt>
+<dd><p>Destination path to store the uploaded file(s) at. Always interpreted relative to the directory <code>/nc/uploads/</code> (which <a href="https://github.com/search?q=repo%3Anocodb%2Fnocodb+nc+uploads+language%3ATypeScript&amp;type=code&amp;l=TypeScript" class="external-link">is hardcoded in NocoDB's source code</a>). A character scalar.
+Note that the characters <code>.</code> and <code>?</code> are replaced with <code>_</code> by the API.</p></dd>
+
+
 <dt id="arg-hostname">hostname<a class="anchor" aria-label="anchor" href="#arg-hostname"></a></dt>
 <dd><p>NocoDB server <a href="https://en.wikipedia.org/wiki/Hostname" class="external-link">hostname</a>. A character scalar.</p></dd>
+
+
 <dt id="arg-email">email<a class="anchor" aria-label="anchor" href="#arg-email"></a></dt>
 <dd><p>E-mail address of the NocoDB user to authenticate with.</p></dd>
+
+
 <dt id="arg-password">password<a class="anchor" aria-label="anchor" href="#arg-password"></a></dt>
 <dd><p>Password of the NocoDB user to authenticate with.</p></dd>
+
+
 <dt id="arg-api-token">api_token<a class="anchor" aria-label="anchor" href="#arg-api-token"></a></dt>
 <dd><p>NocoDB <a href="https://docs.nocodb.com/account-settings/api-tokens/" class="external-link">API token</a>. Takes precedence over <code>email</code> and <code>password</code> if
 provided.</p></dd>
+
+
 <dt id="arg-max-tries">max_tries<a class="anchor" aria-label="anchor" href="#arg-max-tries"></a></dt>
 <dd><p>Maximum number of attempts to retry in case of an HTTP error. An integerish scalar.</p></dd>
+
+
 <dt id="arg-verbosity">verbosity<a class="anchor" aria-label="anchor" href="#arg-verbosity"></a></dt>
 <dd><p>How much information to print? This is a wrapper
 around <code>req_verbose()</code> that uses an integer to control verbosity:</p><ul><li><p>0: no output</p></li>
@@ -78,19 +117,30 @@ around <code>req_verbose()</code> that uses an integer to control verbosity:</p>
 <li><p>3: show headers, bodies, and curl status messages.</p></li>
 </ul><p>Use <code><a href="https://httr2.r-lib.org/reference/with_verbosity.html" class="external-link">with_verbosity()</a></code> to control the verbosity of requests that
 you can't affect directly.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A <a href="https://tibble.tidyverse.org/reference/tbl_df-class.html" class="external-link">tibble</a> containing metadata about the uploaded attachments.</p>
     </div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Salim Brüggemann.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

@@ -6,8 +6,9 @@
 \usage{
 upload_attachments(
   paths,
-  names = fs::path_file(paths),
   types = mime::guess_type(paths),
+  names = NULL,
+  upload_path = "r",
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
   email = pal::pkg_config_val(key = "email", pkg = this_pkg),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg),
@@ -17,12 +18,17 @@ upload_attachments(
 )
 }
 \arguments{
-\item{paths}{Path(s) to the file(s) to be uploaded. A character vector.}
+\item{paths}{Paths to the files to be uploaded. A character vector.}
 
-\item{names}{File name(s) to assign to the uploaded file(s). A character vector. Note that a random string like \verb{_NnW3C} is always appended to the resulting
-file name before its file type suffix, so \code{name = "some-pic.jpg"} will result in something like \code{some-pic_NnW3C.jpg}, for example.}
+\item{types}{\href{https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types}{Media type}(s) of the uploaded files. A character vector of the
+same length as \code{paths}.}
 
-\item{types}{\href{https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types}{Media type}(s) of the uploaded files. A character vector.}
+\item{names}{File names to assign to the uploaded files. A character vector of the same length as \code{paths} or \code{NULL}. If \code{NULL}, the original file names from
+\code{paths} are used. Note that a random string like \verb{_NnW3C} is always appended to the resulting file name before its file type suffix, so
+\code{names = "some-pic.jpg"} will result in a file name like \code{some-pic_NnW3C.jpg}, for example.}
+
+\item{upload_path}{Destination path to store the uploaded file(s) at. Always interpreted relative to the directory \verb{/nc/uploads/} (which \href{https://github.com/search?q=repo\%3Anocodb\%2Fnocodb+nc+uploads+language\%3ATypeScript&type=code&l=TypeScript}{is hardcoded in NocoDB's source code}). A character scalar.
+Note that the characters \code{.} and \verb{?} are replaced with \verb{_} by the API.}
 
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
 

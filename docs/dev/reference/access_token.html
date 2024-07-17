@@ -3,12 +3,19 @@
 the user has signed in or refreshed their access token during the current R session."><meta property="og:description" content="Retrieves the access token belonging to the user with the specified email from the corresponding package environment. An access token is only available if
 the user has signed in or refreshed their access token during the current R session."><meta name="twitter:card" content="summary"><meta name="twitter:creator" content="@2BSalim"><meta name="twitter:site" content="@2BSalim"><meta name="robots" content="noindex"><script src="https://rpkg.dev/counter-dev.min.js" data-id="4c4963fe-9fcf-4d81-95bb-2135e114b85b" data-utcoffset="1"></script></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">nocodb</a>
+
     <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.9000</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -21,18 +28,23 @@ the user has signed in or refreshed their access token during the current R sess
     <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
   </ul></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
+
       <h1>Get user's current access token</h1>
       <small class="dont-index">Source: <a href="https://gitlab.com/rpkg.dev/nocodb/blob/HEAD/R/nocodb.gen.R" class="external-link"><code>R/nocodb.gen.R</code></a></small>
       <div class="d-none name"><code>access_token.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>Retrieves the access token belonging to the user with the specified <code>email</code> from the corresponding package environment. An access token is only available if
 the user has <a href="sign_in.html">signed in</a> or <a href="refresh_sign_in.html">refreshed their access token</a> during the current <span style="R">R</span> session.</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">access_token</span><span class="op">(</span></span>
@@ -40,12 +52,18 @@ the user has <a href="sign_in.html">signed in</a> or <a href="refresh_sign_in.ht
 <span>  email <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span>key <span class="op">=</span> <span class="st">"email"</span>, pkg <span class="op">=</span> <span class="va">this_pkg</span>, require <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
+
+
 <dl><dt id="arg-hostname">hostname<a class="anchor" aria-label="anchor" href="#arg-hostname"></a></dt>
 <dd><p>NocoDB server <a href="https://en.wikipedia.org/wiki/Hostname" class="external-link">hostname</a>. A character scalar.</p></dd>
+
+
 <dt id="arg-email">email<a class="anchor" aria-label="anchor" href="#arg-email"></a></dt>
 <dd><p>E-mail address of the NocoDB user to authenticate with.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -58,14 +76,24 @@ the user has <a href="sign_in.html">signed in</a> or <a href="refresh_sign_in.ht
 <code><a href="is_access_token_expired.html">is_access_token_expired</a>()</code>,
 <code><a href="store_access_token.html">store_access_token</a>()</code></p></div>
     </div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Salim Brüggemann.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 
