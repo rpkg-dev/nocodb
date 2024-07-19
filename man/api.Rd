@@ -51,12 +51,12 @@ provided.}
 \item{max_tries}{Maximum number of attempts to retry in case of an HTTP error. An integerish scalar.}
 
 \item{verbosity}{How much information to print? This is a wrapper
-around \code{req_verbose()} that uses an integer to control verbosity:
+around \code{\link[httr2:req_verbose]{req_verbose()}} that uses an integer to control verbosity:
 \itemize{
-\item 0: no output
-\item 1: show headers
-\item 2: show headers and bodies
-\item 3: show headers, bodies, and curl status messages.
+\item \code{0}: no output
+\item \code{1}: show headers
+\item \code{2}: show headers and bodies
+\item \code{3}: show headers, bodies, and curl status messages.
 }
 
 Use \code{\link[httr2:with_verbosity]{with_verbosity()}} to control the verbosity of requests that

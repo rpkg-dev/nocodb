@@ -405,7 +405,7 @@ req_auth <- function(req,
     token <- tryCatch(expr = refresh_sign_in(hostname = hostname,
                                              email = email),
                       httr2_http_400 = \(cnd) {
-                        # properly handle missing token (resulting from sign-in via `api-Token`) or expired token (which is simply reported as "invalid")
+                        # properly handle missing token (resulting from sign-in via `api_token`) or expired token (which is simply reported as "invalid")
                         if (stringr::str_detect(string = cnd$message,
                                                 pattern = "(?i)(invalid|missing) refresh token")) {
                           return(NULL)
