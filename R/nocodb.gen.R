@@ -309,7 +309,8 @@ req_basic <- function(path,
   checkmate::assert_string(path)
   method <- rlang::arg_match(method)
   checkmate::assert_string(hostname)
-  checkmate::assert_int(max_tries)
+  checkmate::assert_count(max_tries,
+                          positive = TRUE)
   
   httr2::request(base_url = assemble_url(path,
                                          .hostname = hostname)) |>
