@@ -1130,7 +1130,7 @@ NOTES:
 #'   treated alike.
 #' @inheritParams api
 #'
-#' @return A [tibble][tibble::tbl_df] containing metadata about the newly created NocoDB base.
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created NocoDB base, invisibly")`
 #' @family bases
 #' @export
 create_base <- function(title = pal::pkg_config_val(key = "base_title",
@@ -1826,7 +1826,7 @@ create_data_src <- function(connection,
 #' @inheritParams data_src
 #' @inheritParams create_data_src
 #'
-#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the updated data source")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the updated NocoDB data source, invisibly")`
 #' @family data_src
 #' @export
 update_data_src <- function(id_data_src,
@@ -1883,7 +1883,8 @@ update_data_src <- function(id_data_src,
                                       inflection_column = inflection_column,
                                       inflection_table = inflection_table,
                                       enabled = enabled))) |>
-    tidy_resp_data()
+    tidy_resp_data() |>
+    invisible()
 }
 ```
 
@@ -1984,7 +1985,7 @@ data_src_tbls <- function(id_data_src,
 #' @param title NocoDB-specific table title. A character scalar.
 #' @param meta NocoDB-specific table metadata. A list.
 #'
-#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created table")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created NocoDB table, invisibly")`
 #' @family data_src
 #' @family tbls
 #' @export
@@ -2048,7 +2049,8 @@ create_data_src_tbl <- function(id_data_src,
                                       title = title,
                                       meta = meta,
                                       order = order))) |>
-    tidy_resp_data()
+    tidy_resp_data() |>
+    invisible()
 }
 ```
 
@@ -2205,7 +2207,7 @@ tbl <- function(id_tbl,
 #'
 #' @inheritParams create_data_src_tbl
 #'
-#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created table")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created NocoDB table, invisibly")`
 #' @family tbls
 #' @export
 #'
@@ -2265,7 +2267,8 @@ create_tbl <- function(name,
                                       title = title,
                                       meta = meta,
                                       order = order))) |>
-    tidy_resp_data()
+    tidy_resp_data() |>
+    invisible()
 }
 ```
 
@@ -3157,7 +3160,7 @@ add_user <- function(user_email,
 #' @inheritParams api
 #' @param display_name Name to be displayed for the user in NocoDB.
 #'
-#' @return `r pkgsnip::return_lbl("tibble")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the updated NocoDB user, invisibly")`
 #' @family users
 #' @export
 update_user <- function(display_name = NULL,
@@ -3171,7 +3174,6 @@ update_user <- function(display_name = NULL,
   
   checkmate::assert_string(display_name,
                            null.ok = TRUE)
-  
   result <-
     api(path = "api/v1/user/profile",
         method = "PATCH",
@@ -3196,7 +3198,7 @@ update_user <- function(display_name = NULL,
     }
   }
   
-  result
+  invisible(result)
 }
 ```
 
@@ -3931,7 +3933,7 @@ NOTES:
 #' @param config Plugin configuration. A list or `NULL`. If `NULL`, the plugin's configuration is left untouched.
 #' @param activate Whether or not to activate the plugin. If `NULL`, the plugin's activation status is left untouched.
 #'
-#' @return `r pkgsnip::return_lbl("tibble")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the updated NocoDB plugin, invisibly")`
 #' @family plugins
 #' @export
 #'
@@ -3974,7 +3976,8 @@ update_plugin <- function(id_plugin,
       api_token = api_token,
       body_json = purrr::compact(list(input = config,
                                       active = activate))) |>
-    tidy_resp_data()
+    tidy_resp_data() |>
+    invisible()
 }
 ```
 
