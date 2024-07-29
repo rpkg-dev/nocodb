@@ -33,7 +33,7 @@ add_user(
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }
 \value{
-A \link[tibble:tbl_df-class]{tibble}.
+A \link[tibble:tbl_df-class]{tibble} with metadata about the updated NocoDB user, invisibly.
 }
 \description{
 Adds a NocoDB user account on a NocoDB server without any user interaction. E-mail invitation is bypassed and the user's e-mail address is automatically

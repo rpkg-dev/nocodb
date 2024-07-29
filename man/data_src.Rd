@@ -29,7 +29,7 @@ data_src(
 provided.}
 }
 \value{
-A \link[tibble:tbl_df-class]{tibble}.
+A \link[tibble:tbl_df-class]{tibble} with metadata about the specified NocoDB data source.
 }
 \description{
 Returns a \link[tibble:tbl_df-class]{tibble} with metadata about the specified data source in the specified base on a NocoDB server from its

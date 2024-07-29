@@ -26,7 +26,7 @@ base(
 provided.}
 }
 \value{
-A \link[tibble:tbl_df-class]{tibble}.
+A \link[tibble:tbl_df-class]{tibble} with metadata about the specified NocoDB base.
 }
 \description{
 Returns a \link[tibble:tbl_df-class]{tibble} with metadata about the specified base on a NocoDB server from its

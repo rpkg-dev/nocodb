@@ -44,7 +44,7 @@ create_data_src_tbl(
 provided.}
 }
 \value{
-A \link[tibble:tbl_df-class]{tibble} with metadata about the newly created table.
+A \link[tibble:tbl_df-class]{tibble} with metadata about the newly created NocoDB table, invisibly.
 }
 \description{
 Adds a new table in the specified data source of the specified base on a NocoDB server via its

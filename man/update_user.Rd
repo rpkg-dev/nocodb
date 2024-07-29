@@ -25,7 +25,7 @@ update_user(
 provided.}
 }
 \value{
-A \link[tibble:tbl_df-class]{tibble}.
+A \link[tibble:tbl_df-class]{tibble} with metadata about the updated NocoDB user, invisibly.
 }
 \description{
 Updates the metadata of the specified user on a NocoDB server via its \code{PATCH /api/v1/user/profile} API endpoint.

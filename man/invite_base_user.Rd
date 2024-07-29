@@ -41,6 +41,9 @@ provided.}
 Invites a new user to the specified base on a NocoDB server via its
 \href{https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-add}{\code{POST /api/v2/meta/bases/{id_base}/users}} API endpoint.
 }
+\details{
+Note that an invitation e-mail is sent if the specified user does not yet exist on the NocoDB server.
+}
 \seealso{
 Other functions to manage NocoDB users:
 \code{\link{add_user}()},

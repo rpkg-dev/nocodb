@@ -25,7 +25,7 @@ provided.}
 \item{auth}{Whether or not to include an \link[=req_auth]{authentication header} in the HTTP request.}
 }
 \value{
-A \link[tibble:tbl_df-class]{tibble}.
+A \link[tibble:tbl_df-class]{tibble} with metadata about the specified NocoDB user.
 }
 \description{
 Returns a \link[tibble:tbl_df-class]{tibble} with metadata about the specified user from a NocoDB server via its

@@ -35,7 +35,7 @@ treated alike.}
 provided.}
 }
 \value{
-A \link[tibble:tbl_df-class]{tibble} containing metadata about the newly created NocoDB base.
+A \link[tibble:tbl_df-class]{tibble} with metadata about the newly created NocoDB base, invisibly.
 }
 \description{
 Adds a new base on a NocoDB server via its

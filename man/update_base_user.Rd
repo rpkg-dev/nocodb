@@ -15,6 +15,7 @@ update_base_user(
   email = pal::pkg_config_val(key = "email", pkg = this_pkg),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg),
   api_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg),
+  api_version = c("v2", "v1"),
   quiet = FALSE
 )
 }
@@ -37,6 +38,12 @@ update_base_user(
 \item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
 provided.}
 
+\item{api_version}{API endpoint version to use. Either
+\itemize{
+\item \code{"v2"} for \href{https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis}{\code{PATCH /api/v1/db/meta/projects/{id_base}/users/{id_user}}}, or
+\item \code{"v1"} for \href{https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis}{\code{PATCH /api/v1/db/meta/projects/{id_base}/users/{id_user}}}.
+}}
+
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }
 \value{
@@ -44,10 +51,15 @@ provided.}
 }
 \description{
 Updates the specified user in regard to the specified base on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-update}{\code{PATCH /api/v2/meta/bases/{id_base}/users/{id_user}}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-update}{\code{PATCH /api/v2/meta/bases/{id_base}/users/{id_user}}} or
+\href{https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis}{\code{PATCH /api/v1/db/meta/projects/{id_base}/users/{id_user}}} API endpoint,
+depending on \code{api_version}.
 }
 \details{
 Only the super admin user is allowed to use this API endpoint, i.e. the provided credentials must belong to them.
+
+Note that for the sake of convenience, this function automatically falls back to \code{\link[=invite_base_user]{invite_base_user()}} if necessary (i.e. the specified user hasn't yet been
+invited to the specified base).
 }
 \seealso{
 Other functions to manage NocoDB users:

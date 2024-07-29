@@ -29,7 +29,7 @@ data_src_diff(
 provided.}
 }
 \value{
-A \link[tibble:tbl_df-class]{tibble} with metadata about detected schema changes in the data source.
+A \link[tibble:tbl_df-class]{tibble} with metadata about detected schema changes in the NocoDB data source.
 }
 \description{
 Returns a \link[tibble:tbl_df-class]{tibble} listing detected differences between the specified data source's external and its NocoDB-internal state via the

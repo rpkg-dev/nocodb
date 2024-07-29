@@ -6,8 +6,9 @@
 \usage{
 update_tbl_col(
   id_col,
-  body_json,
-  auto_unbox = TRUE,
+  title = NULL,
+  column_name = NULL,
+  uidt = NULL,
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
   email = pal::pkg_config_val(key = "email", pkg = this_pkg),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg),
@@ -17,9 +18,54 @@ update_tbl_col(
 \arguments{
 \item{id_col}{NocoDB column identifier as returned by \code{\link[=tbl_col_id]{tbl_col_id()}}. A character scalar.}
 
-\item{body_json}{Data to include as JSON in the HTTP request body. Either a list or \code{NULL} for an empty body.}
+\item{title}{NocoDB column title. Either \code{NULL} to omit or a character scalar.}
 
-\item{auto_unbox}{Whether or not to automatically "unbox" length-1 vectors in \code{body_json} to JSON scalars.}
+\item{column_name}{Column name. Either \code{NULL} to omit or a character scalar.}
+
+\item{uidt}{NocoDB \strong{u}ser \strong{i}nterface \strong{d}ata \strong{t}ype. Either \code{NULL} to omit or one of
+\itemize{
+\item \code{"Attachment"}
+\item \code{"AutoNumber"}
+\item \code{"Barcode"}
+\item \code{"Button"}
+\item \code{"Checkbox"}
+\item \code{"Collaborator"}
+\item \code{"Count"}
+\item \code{"CreatedBy"}
+\item \code{"CreatedTime"}
+\item \code{"Currency"}
+\item \code{"Date"}
+\item \code{"DateTime"}
+\item \code{"Decimal"}
+\item \code{"Duration"}
+\item \code{"Email"}
+\item \code{"ForeignKey"}
+\item \code{"Formula"}
+\item \code{"GeoData"}
+\item \code{"Geometry"}
+\item \code{"ID"}
+\item \code{"JSON"}
+\item \code{"LastModifiedBy"}
+\item \code{"LastModifiedTime"}
+\item \code{"Links"}
+\item \code{"LinkToAnotherRecord"}
+\item \code{"LongText"}
+\item \code{"Lookup"}
+\item \code{"MultiSelect"}
+\item \code{"Number"}
+\item \code{"Percent"}
+\item \code{"PhoneNumber"}
+\item \code{"QrCode"}
+\item \code{"Rating"}
+\item \code{"Rollup"}
+\item \code{"SingleLineText"}
+\item \code{"SingleSelect"}
+\item \code{"SpecificDBType"}
+\item \code{"Time"}
+\item \code{"URL"}
+\item \code{"User"}
+\item \code{"Year"} .
+}}
 
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
 
@@ -31,13 +77,13 @@ update_tbl_col(
 provided.}
 }
 \value{
-TODO
+A \link[tibble:tbl_df-class]{tibble} with metadata about the NocoDB table to which the updated column belongs, invisibly.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-
 Updates the metadata of the specified table column on a NocoDB server via its
 \href{https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-update}{\code{PATCH /api/v2/meta/columns/{id_col}}} API endpoint.
+
+Beware that this API endpoint alters the schema of the underlying table, which might be undesirable, especially if the table is from an external \href{https://docs.nocodb.com/category/data-sources}{data source}.
 }
 \seealso{
 Other functions to manage NocoDB table columns:

@@ -49,7 +49,7 @@ update_data_src(
 provided.}
 }
 \value{
-A \link[tibble:tbl_df-class]{tibble} with metadata about the updated data source.
+A \link[tibble:tbl_df-class]{tibble} with metadata about the updated NocoDB data source, invisibly.
 }
 \description{
 Updates the specified data source of the specified base on a NocoDB server via its

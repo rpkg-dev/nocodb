@@ -31,7 +31,7 @@ update_plugin(
 provided.}
 }
 \value{
-A \link[tibble:tbl_df-class]{tibble}.
+A \link[tibble:tbl_df-class]{tibble} with metadata about the updated NocoDB plugin, invisibly.
 }
 \description{
 Updates the configuration of the specified plugin on a NocoDB server via its

@@ -25,7 +25,7 @@ plugin(
 provided.}
 }
 \value{
-A \link[tibble:tbl_df-class]{tibble}.
+A \link[tibble:tbl_df-class]{tibble} with metadata about the specified NocoDB plugin.
 }
 \description{
 Returns a \link[tibble:tbl_df-class]{tibble} with metadata about the specified plugin on a NocoDB server from its

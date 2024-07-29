@@ -147,7 +147,7 @@ store_access_token <- function(x,
 #'
 #' @param x Access token to be decoded.
 #'
-#' @return `r pkgsnip::return_lbl("tibble")`
+#' @return The decoded access token as a [tibble][tibble::tbl_df].
 #' 
 #'   Column `iat` gives the time at which the JWT was issued and column `exp` gives the expiration time on or after which the JWT must not be accepted anymore.
 #'   They are [registered claim names in the JWT standard](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1).
@@ -194,6 +194,48 @@ this_pkg <- utils::packageName()
 md_text_no_api_token_support <- "This API endpoint does not support authentication via [API tokens](https://docs.nocodb.com/account-settings/api-tokens/)."
 md_text_super_admin_required <- "Only the super admin user is allowed to use this API endpoint, i.e. the provided credentials must belong to them."
 md_text_user_from_auth <- "The user is determined based on `api_token` or `email` and `password` (the former takes precedence)."
+
+uidts <- c("Attachment",
+           "AutoNumber",
+           "Barcode",
+           "Button",
+           "Checkbox",
+           "Collaborator",
+           "Count",
+           "CreatedBy",
+           "CreatedTime",
+           "Currency",
+           "Date",
+           "DateTime",
+           "Decimal",
+           "Duration",
+           "Email",
+           "ForeignKey",
+           "Formula",
+           "GeoData",
+           "Geometry",
+           "ID",
+           "JSON",
+           "LastModifiedBy",
+           "LastModifiedTime",
+           "Links",
+           "LinkToAnotherRecord",
+           "LongText",
+           "Lookup",
+           "MultiSelect",
+           "Number",
+           "Percent",
+           "PhoneNumber",
+           "QrCode",
+           "Rating",
+           "Rollup",
+           "SingleLineText",
+           "SingleSelect",
+           "SpecificDBType",
+           "Time",
+           "URL",
+           "User",
+           "Year")
 
 stateful <- new.env(parent = emptyenv())
 stateful$access_token <- list()
@@ -869,7 +911,7 @@ base_id <- function(title = pal::pkg_config_val(key = "base_title",
 #' @inheritParams api
 #' @param id_base NocoDB base identifier as returned by [base_id()]. A character scalar.
 #'
-#' @return `r pkgsnip::return_lbl("tibble")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the specified NocoDB base")`
 #' @family bases
 #' @export
 base <- function(id_base = base_id(hostname = hostname,
@@ -907,7 +949,7 @@ base <- function(id_base = base_id(hostname = hostname,
 #'   treated alike.
 #' @inheritParams api
 #'
-#' @return A [tibble][tibble::tbl_df] containing metadata about the newly created NocoDB base.
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created NocoDB base, invisibly")`
 #' @family bases
 #' @export
 create_base <- function(title = pal::pkg_config_val(key = "base_title",
@@ -1131,7 +1173,7 @@ data_src_id <- function(alias,
 #' @inheritParams base
 #' @param id_data_src NocoDB data source identifier as returned by [data_src_id()]. A character scalar.
 #'
-#' @return `r pkgsnip::return_lbl("tibble")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the specified NocoDB data source")`
 #' @family data_src
 #' @export
 data_src <- function(id_data_src,
@@ -1226,7 +1268,7 @@ test_data_src <- function(connection,
 #'
 #' @inheritParams data_src
 #'
-#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about detected schema changes in the data source")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about detected schema changes in the NocoDB data source")`
 #' @family data_src
 #' @export
 data_src_diff <- function(id_data_src,
@@ -1487,7 +1529,7 @@ create_data_src <- function(connection,
 #' @inheritParams data_src
 #' @inheritParams create_data_src
 #'
-#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the updated data source")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the updated NocoDB data source, invisibly")`
 #' @family data_src
 #' @export
 update_data_src <- function(id_data_src,
@@ -1544,7 +1586,8 @@ update_data_src <- function(id_data_src,
                                       inflection_column = inflection_column,
                                       inflection_table = inflection_table,
                                       enabled = enabled))) |>
-    tidy_resp_data()
+    tidy_resp_data() |>
+    invisible()
 }
 
 #' Delete NocoDB data source
@@ -1633,7 +1676,7 @@ data_src_tbls <- function(id_data_src,
 #' @param title NocoDB-specific table title. A character scalar.
 #' @param meta NocoDB-specific table metadata. A list.
 #'
-#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created table")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created NocoDB table, invisibly")`
 #' @family data_src
 #' @family tbls
 #' @export
@@ -1697,7 +1740,8 @@ create_data_src_tbl <- function(id_data_src,
                                       title = title,
                                       meta = meta,
                                       order = order))) |>
-    tidy_resp_data()
+    tidy_resp_data() |>
+    invisible()
 }
 
 #' List NocoDB tables
@@ -1832,7 +1876,7 @@ tbl <- function(id_tbl,
 #'
 #' @inheritParams create_data_src_tbl
 #'
-#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created table")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created NocoDB table, invisibly")`
 #' @family tbls
 #' @export
 #'
@@ -1892,7 +1936,8 @@ create_tbl <- function(name,
                                       title = title,
                                       meta = meta,
                                       order = order))) |>
-    tidy_resp_data()
+    tidy_resp_data() |>
+    invisible()
 }
 
 #' Update NocoDB table
@@ -2233,20 +2278,26 @@ tbl_col <- function(id_col,
 #' Update NocoDB table column
 #'
 #' @description
-#' `r lifecycle::badge("experimental")`
-#'
 #' Updates the metadata of the specified table column on a NocoDB server via its
 #' [`PATCH /api/v2/meta/columns/{id_col}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-update) API endpoint.
 #'
+#' Beware that this API endpoint alters the schema of the underlying table, which might be undesirable, especially if the table is from an external [data
+#' source](https://docs.nocodb.com/category/data-sources).
+#'
 #' @inheritParams tbl_col
 #' @inheritParams api
+#' @param title NocoDB column title. Either `NULL` to omit or a character scalar.
+#' @param column_name Column name. Either `NULL` to omit or a character scalar.
+#' @param uidt NocoDB **u**ser **i**nterface **d**ata **t**ype. Either `NULL` to omit or one of
+#'   `r pal::as_md_val_list(uidts)`.
 #'
-#' @return TODO
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the NocoDB table to which the updated column belongs, invisibly")`
 #' @family cols
 #' @export
 update_tbl_col <- function(id_col,
-                           body_json,
-                           auto_unbox = TRUE,
+                           title = NULL,
+                           column_name = NULL,
+                           uidt = NULL,
                            hostname = pal::pkg_config_val(key = "hostname",
                                                           pkg = this_pkg),
                            email = pal::pkg_config_val(key = "email",
@@ -2256,15 +2307,51 @@ update_tbl_col <- function(id_col,
                            api_token = pal::pkg_config_val(key = "api_token",
                                                            pkg = this_pkg)) {
   checkmate::assert_string(id_col)
+  checkmate::assert_string(title,
+                           null.ok = TRUE)
+  checkmate::assert_string(column_name,
+                           null.ok = TRUE)
+  
+  data_col <- tbl_col(id_col = id_col,
+                      hostname = hostname,
+                      email = email,
+                      password = password,
+                      api_token = api_token)
+  
+  # complement mandatory fields if necessary
+  if (is.null(title)) {
+    title <- data_col$title
+  }
+  if (is.null(column_name)) {
+    column_name <- data_col$column_name
+  }
+  
+  # dissallow cross-column-type UIDT changes
+  if (!is.null(uidt)) {
+    
+    uidt <- rlang::arg_match(arg = uidt,
+                             values = uidts)
+    uidt_current <- data_col$uidt
+    uidt_allowed <- ifelse(uidt_current %in% c("Formula", "LinkToAnotherRecord", "Links", "Lookup", "Rollup"),
+                           uidt_current,
+                           uidt)
+    
+    if (uidt != uidt_allowed) {
+      cli::cli_abort("Switching the {.arg uidt} between NocoDB's column super types is not supported.")
+    }
+  }
   
   api(path = glue::glue("api/v2/meta/columns/{id_col}"),
       method = "PATCH",
-      auto_unbox = auto_unbox,
       hostname = hostname,
       email = email,
       password = password,
       api_token = api_token,
-      body_json = body_json)
+      body_json = purrr::compact(list(column_name = column_name,
+                                      title = title,
+                                      uidt = uidt))) |>
+    tidy_resp_data() |>
+    invisible()
 }
 
 #' Set display value column for NocoDB table
@@ -2459,7 +2546,7 @@ upload_attachments <- function(paths,
 #'
 #' @inheritParams api
 #'
-#' @return `r pkgsnip::return_lbl("tibble")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the specified NocoDB user")`
 #' @family users
 #' @export
 whoami <- function(hostname = pal::pkg_config_val(key = "hostname",
@@ -2661,7 +2748,7 @@ add_user <- function(user_email,
 #' @inheritParams api
 #' @param display_name Name to be displayed for the user in NocoDB.
 #'
-#' @return `r pkgsnip::return_lbl("tibble")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the updated NocoDB user, invisibly")`
 #' @family users
 #' @export
 update_user <- function(display_name = NULL,
@@ -2675,7 +2762,6 @@ update_user <- function(display_name = NULL,
   
   checkmate::assert_string(display_name,
                            null.ok = TRUE)
-  
   result <-
     api(path = "api/v1/user/profile",
         method = "PATCH",
@@ -2700,7 +2786,7 @@ update_user <- function(display_name = NULL,
     }
   }
   
-  result
+  invisible(result)
 }
 
 #' Delete NocoDB user
@@ -2922,15 +3008,23 @@ base_users <- function(id_base = base_id(hostname = hostname,
 #' Update NocoDB base user
 #'
 #' Updates the specified user in regard to the specified base on a NocoDB server via its
-#' [`PATCH /api/v2/meta/bases/{id_base}/users/{id_user}`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-update) API endpoint.
+#' [`PATCH /api/v2/meta/bases/{id_base}/users/{id_user}`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-update) or
+#' [`PATCH /api/v1/db/meta/projects/{id_base}/users/{id_user}`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis) API endpoint,
+#' depending on `api_version`.
 #'
 #' `r md_text_super_admin_required`
+#' 
+#' Note that for the sake of convenience, this function automatically falls back to [invite_base_user()] if necessary (i.e. the specified user hasn't yet been
+#' invited to the specified base).
 #'
 #' @inheritParams user_id
 #' @inheritParams set_tbl_metadata
 #' @param role [Base role](https://docs.nocodb.com/collaboration/oss-specific-details/#base-level-permissions) to assign to the user. One of
 #'   `r pal::enum_fn_param_defaults(param = "role", fn = "update_base_user")`.
 #' @param id_user NocoDB user identifier as returned by [user_id()]. A character scalar.
+#' @param api_version API endpoint version to use. Either
+#'   - `"v2"` for [`PATCH /api/v1/db/meta/projects/{id_base}/users/{id_user}`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis), or
+#'   - `"v1"` for [`PATCH /api/v1/db/meta/projects/{id_base}/users/{id_user}`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis).
 #'
 #' @return `id_user`, invisibly.
 #' @family users
@@ -2956,11 +3050,13 @@ update_base_user <- function(user_email,
                                                             pkg = this_pkg),
                              api_token = pal::pkg_config_val(key = "api_token",
                                                              pkg = this_pkg),
+                             api_version = c("v2", "v1"),
                              quiet = FALSE) {
 
   role <- rlang::arg_match(role)
   checkmate::assert_string(id_user)
   checkmate::assert_string(id_base)
+  api_version <- rlang::arg_match(api_version)
   checkmate::assert_flag(quiet)
   
   assert_super_admin(hostname = hostname,
@@ -2968,16 +3064,47 @@ update_base_user <- function(user_email,
                      password = password,
                      api_token = api_token)
   
-  result <- api(path = glue::glue("api/v2/meta/bases/{id_base}/users/{id_user}"),
-                method = "PATCH",
-                hostname = hostname,
-                email = email,
-                password = password,
-                api_token = api_token,
-                body_json = list(email = user_email,
-                                 roles = role))
-  if (!quiet) {
-    cli_alert_status(msg = result$msg)
+  # NOTE: since NocoDB v0.250+, a user must always first be invited to a base, only then they can be updated via this endpoint
+  invite <-
+    base_users(id_base = id_base,
+             hostname = hostname,
+             email = email,
+             password = password,
+             api_token = api_token) |>
+    dplyr::filter(email == !!user_email) |>
+    dplyr::pull("roles") |>
+    is.na()
+  
+  if (invite) {
+    invite_base_user(user_email = user_email,
+                     role = role,
+                     id_base = id_base,
+                     hostname = hostname,
+                     email = email,
+                     password = password,
+                     api_token = api_token,
+                     quiet = quiet)
+  } else {
+    result <- switch(EXPR = api_version,
+                     v2 = api(path = glue::glue("api/v2/meta/bases/{id_base}/users/{id_user}"),
+                              method = "PATCH",
+                              hostname = hostname,
+                              email = email,
+                              password = password,
+                              api_token = api_token,
+                              body_json = list(email = user_email,
+                                               roles = role)),
+                     v1 = api(path = glue::glue("api/v1/db/meta/projects/{id_base}/users/{id_user}"),
+                              method = "PATCH",
+                              hostname = hostname,
+                              email = email,
+                              password = password,
+                              api_token = api_token,
+                              body_json = list(email = user_email,
+                                               roles = role)))
+    if (!quiet) {
+      cli_alert_status(msg = result$msg)
+    }
   }
   
   invisible(id_user)
@@ -3037,6 +3164,8 @@ delete_base_user <- function(id_user,
 #'
 #' Invites a new user to the specified base on a NocoDB server via its
 #' [`POST /api/v2/meta/bases/{id_base}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-add) API endpoint.
+#'
+#' Note that an invitation e-mail is sent if the specified user does not yet exist on the NocoDB server.
 #'
 #' @inheritParams set_tbl_metadata
 #' @param user_email E-mail address of the user to invite. A character scalar.
@@ -3236,7 +3365,7 @@ plugin_category <- function(id_plugin,
 #' @inheritParams api
 #' @param id_plugin NocoDB plugin identifier as returned by [plugin_id()]. A character scalar.
 #'
-#' @return `r pkgsnip::return_lbl("tibble")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the specified NocoDB plugin")`
 #' @family plugins
 #' @export
 plugin <- function(id_plugin,
@@ -3329,7 +3458,7 @@ test_plugin <- function(title,
 #' @param config Plugin configuration. A list or `NULL`. If `NULL`, the plugin's configuration is left untouched.
 #' @param activate Whether or not to activate the plugin. If `NULL`, the plugin's activation status is left untouched.
 #'
-#' @return `r pkgsnip::return_lbl("tibble")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the updated NocoDB plugin, invisibly")`
 #' @family plugins
 #' @export
 #'
@@ -3372,7 +3501,8 @@ update_plugin <- function(id_plugin,
       api_token = api_token,
       body_json = purrr::compact(list(input = config,
                                       active = activate))) |>
-    tidy_resp_data()
+    tidy_resp_data() |>
+    invisible()
 }
 
 #' Test if plugin is active
@@ -3410,12 +3540,12 @@ is_plugin_active <- function(title,
 
 #' List NocoDB app settings
 #'
-#' Returns a [tibble][tibble::tbl_df] with metadata about the application settings of a NocoDB server via its
+#' Returns a [tibble][tibble::tbl_df] with (meta)data about the application settings of a NocoDB server via its
 #' [`GET /api/v2/meta/nocodb/info`](https://meta-apis-v2.nocodb.com/#tag/Utils/operation/utils-app-info) API endpoint.
 #'
 #' @inheritParams api
 #'
-#' @return `r pkgsnip::return_lbl("tibble")`
+#' @return The application settings of the specified NocoDB server as a [tibble][tibble::tbl_df].
 #' @family app_settings
 #' @export
 app_settings <- function(hostname = pal::pkg_config_val(key = "hostname",

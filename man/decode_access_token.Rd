@@ -10,7 +10,7 @@ decode_access_token(x)
 \item{x}{Access token to be decoded.}
 }
 \value{
-A \link[tibble:tbl_df-class]{tibble}.
+The decoded access token as a \link[tibble:tbl_df-class]{tibble}.
 
 Column \code{iat} gives the time at which the JWT was issued and column \code{exp} gives the expiration time on or after which the JWT must not be accepted anymore.
 They are \href{https://datatracker.ietf.org/doc/html/rfc7519#section-4.1}{registered claim names in the JWT standard}.
