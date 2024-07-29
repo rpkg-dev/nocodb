@@ -219,7 +219,7 @@ NOTES:
 #'
 #' @param x Access token to be decoded.
 #'
-#' @return `r pkgsnip::return_lbl("tibble")`
+#' @return The decoded access token as a [tibble][tibble::tbl_df].
 #' 
 #'   Column `iat` gives the time at which the JWT was issued and column `exp` gives the expiration time on or after which the JWT must not be accepted anymore.
 #'   They are [registered claim names in the JWT standard](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1).
@@ -1129,7 +1129,7 @@ NOTES:
 #' @inheritParams api
 #' @param id_base NocoDB base identifier as returned by [base_id()]. A character scalar.
 #'
-#' @return `r pkgsnip::return_lbl("tibble")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the specified NocoDB base")`
 #' @family bases
 #' @export
 base <- function(id_base = base_id(hostname = hostname,
@@ -1452,7 +1452,7 @@ data_src_id <- function(alias,
 #' @inheritParams base
 #' @param id_data_src NocoDB data source identifier as returned by [data_src_id()]. A character scalar.
 #'
-#' @return `r pkgsnip::return_lbl("tibble")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the specified NocoDB data source")`
 #' @family data_src
 #' @export
 data_src <- function(id_data_src,
@@ -1555,7 +1555,7 @@ test_data_src <- function(connection,
 #'
 #' @inheritParams data_src
 #'
-#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about detected schema changes in the data source")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about detected schema changes in the NocoDB data source")`
 #' @family data_src
 #' @export
 data_src_diff <- function(id_data_src,
@@ -3044,7 +3044,7 @@ NOTES:
 #'
 #' @inheritParams api
 #'
-#' @return `r pkgsnip::return_lbl("tibble")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the specified NocoDB user")`
 #' @family users
 #' @export
 whoami <- function(hostname = pal::pkg_config_val(key = "hostname",
@@ -3741,6 +3741,8 @@ NOTES:
 #' Invites a new user to the specified base on a NocoDB server via its
 #' [`POST /api/v2/meta/bases/{id_base}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-add) API endpoint.
 #'
+#' Note that an invitation e-mail is sent if the specified user does not yet exist on the NocoDB server.
+#'
 #' @inheritParams set_tbl_metadata
 #' @param user_email E-mail address of the user to invite. A character scalar.
 #' @param role Base role to assign to the user. One of `r pal::enum_fn_param_defaults(param = "role", fn = "invite_base_user")`.
@@ -3965,7 +3967,7 @@ plugin_category <- function(id_plugin,
 #' @inheritParams api
 #' @param id_plugin NocoDB plugin identifier as returned by [plugin_id()]. A character scalar.
 #'
-#' @return `r pkgsnip::return_lbl("tibble")`
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the specified NocoDB plugin")`
 #' @family plugins
 #' @export
 plugin <- function(id_plugin,
@@ -4175,12 +4177,12 @@ Functions to manage NocoDB's [application settings](https://docs.nocodb.com/acco
 ```{r}
 #' List NocoDB app settings
 #'
-#' Returns a [tibble][tibble::tbl_df] with metadata about the application settings of a NocoDB server via its
+#' Returns a [tibble][tibble::tbl_df] with (meta)data about the application settings of a NocoDB server via its
 #' [`GET /api/v2/meta/nocodb/info`](https://meta-apis-v2.nocodb.com/#tag/Utils/operation/utils-app-info) API endpoint.
 #'
 #' @inheritParams api
 #'
-#' @return `r pkgsnip::return_lbl("tibble")`
+#' @return The application settings of the specified NocoDB server as a [tibble][tibble::tbl_df].
 #' @family app_settings
 #' @export
 app_settings <- function(hostname = pal::pkg_config_val(key = "hostname",
