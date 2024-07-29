@@ -3459,19 +3459,30 @@ NOTES:
 
     > The owner persists until the project exists and the role is non-transferable.
 
+-   The request body for the v1 endpoint also supports a `base_roles` key besides the `roles` key (to set base-level permissions) and the `main_roles` key (to
+    set org-level permissions). It's unclear what `base_roles` is intended for, so we ignore it for now.
+
 ```{r}
 #' Update NocoDB base user
 #'
 #' Updates the specified user in regard to the specified base on a NocoDB server via its
-#' [`PATCH /api/v2/meta/bases/{id_base}/users/{id_user}`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-update) API endpoint.
+#' [`PATCH /api/v2/meta/bases/{id_base}/users/{id_user}`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-update) or
+#' [`PATCH /api/v1/db/meta/projects/{id_base}/users/{id_user}`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis) API endpoint,
+#' depending on `api_version`.
 #'
 #' `r md_text_super_admin_required`
+#' 
+#' Note that for the sake of convenience, this function automatically falls back to [invite_base_user()] if necessary (i.e. the specified user hasn't yet been
+#' invited to the specified base).
 #'
 #' @inheritParams user_id
 #' @inheritParams set_tbl_metadata
 #' @param role [Base role](https://docs.nocodb.com/collaboration/oss-specific-details/#base-level-permissions) to assign to the user. One of
 #'   `r pal::enum_fn_param_defaults(param = "role", fn = "update_base_user")`.
 #' @param id_user NocoDB user identifier as returned by [user_id()]. A character scalar.
+#' @param api_version API endpoint version to use. Either
+#'   - `"v2"` for [`PATCH /api/v1/db/meta/projects/{id_base}/users/{id_user}`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis), or
+#'   - `"v1"` for [`PATCH /api/v1/db/meta/projects/{id_base}/users/{id_user}`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis).
 #'
 #' @return `id_user`, invisibly.
 #' @family users
@@ -3497,11 +3508,13 @@ update_base_user <- function(user_email,
                                                             pkg = this_pkg),
                              api_token = pal::pkg_config_val(key = "api_token",
                                                              pkg = this_pkg),
+                             api_version = c("v2", "v1"),
                              quiet = FALSE) {
 
   role <- rlang::arg_match(role)
   checkmate::assert_string(id_user)
   checkmate::assert_string(id_base)
+  api_version <- rlang::arg_match(api_version)
   checkmate::assert_flag(quiet)
   
   assert_super_admin(hostname = hostname,
@@ -3509,16 +3522,47 @@ update_base_user <- function(user_email,
                      password = password,
                      api_token = api_token)
   
-  result <- api(path = glue::glue("api/v2/meta/bases/{id_base}/users/{id_user}"),
-                method = "PATCH",
-                hostname = hostname,
-                email = email,
-                password = password,
-                api_token = api_token,
-                body_json = list(email = user_email,
-                                 roles = role))
-  if (!quiet) {
-    cli_alert_status(msg = result$msg)
+  # NOTE: since NocoDB v0.250+, a user must always first be invited to a base, only then they can be updated via this endpoint
+  invite <-
+    base_users(id_base = id_base,
+             hostname = hostname,
+             email = email,
+             password = password,
+             api_token = api_token) |>
+    dplyr::filter(email == !!user_email) |>
+    dplyr::pull("roles") |>
+    is.na()
+  
+  if (invite) {
+    invite_base_user(user_email = user_email,
+                     role = role,
+                     id_base = id_base,
+                     hostname = hostname,
+                     email = email,
+                     password = password,
+                     api_token = api_token,
+                     quiet = quiet)
+  } else {
+    result <- switch(EXPR = api_version,
+                     v2 = api(path = glue::glue("api/v2/meta/bases/{id_base}/users/{id_user}"),
+                              method = "PATCH",
+                              hostname = hostname,
+                              email = email,
+                              password = password,
+                              api_token = api_token,
+                              body_json = list(email = user_email,
+                                               roles = role)),
+                     v1 = api(path = glue::glue("api/v1/db/meta/projects/{id_base}/users/{id_user}"),
+                              method = "PATCH",
+                              hostname = hostname,
+                              email = email,
+                              password = password,
+                              api_token = api_token,
+                              body_json = list(email = user_email,
+                                               roles = role)))
+    if (!quiet) {
+      cli_alert_status(msg = result$msg)
+    }
   }
   
   invisible(id_user)
