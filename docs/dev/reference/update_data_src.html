@@ -54,6 +54,8 @@ PATCH /api/v2/meta/bases/{id_base}/sources/{id_data_src} API endpoint."><meta na
 <span>  alias <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  inflection_column <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  inflection_table <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  is_schema_readonly <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  is_data_readonly <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  enabled <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  id_base <span class="op">=</span> <span class="fu"><a href="base_id.html">base_id</a></span><span class="op">(</span>hostname <span class="op">=</span> <span class="va">hostname</span>, email <span class="op">=</span> <span class="va">email</span>, password <span class="op">=</span> <span class="va">password</span>, api_token <span class="op">=</span></span>
 <span>    <span class="va">api_token</span><span class="op">)</span>,</span>
@@ -92,6 +94,14 @@ PATCH /api/v2/meta/bases/{id_base}/sources/{id_data_src} API endpoint."><meta na
 <dt id="arg-inflection-table">inflection_table<a class="anchor" aria-label="anchor" href="#arg-inflection-table"></a></dt>
 <dd><p>Type of inflection to apply for table names in the data source. One of
 <code>"none"</code> or <code>"camelize"</code>.</p></dd>
+
+
+<dt id="arg-is-schema-readonly">is_schema_readonly<a class="anchor" aria-label="anchor" href="#arg-is-schema-readonly"></a></dt>
+<dd><p>Whether or not to <a href="https://docs.nocodb.com/data-sources/connect-to-data-source/#allow-schema-edit" class="external-link">forbid alterations of the data source's <strong>schema</strong> from NocoDB</a>.</p></dd>
+
+
+<dt id="arg-is-data-readonly">is_data_readonly<a class="anchor" aria-label="anchor" href="#arg-is-data-readonly"></a></dt>
+<dd><p>Whether or not to <a href="https://docs.nocodb.com/data-sources/connect-to-data-source/#allow-data-edit" class="external-link">forbid alterations of the data source's <strong>data</strong> from NocoDB</a>.</p></dd>
 
 
 <dt id="arg-enabled">enabled<a class="anchor" aria-label="anchor" href="#arg-enabled"></a></dt>

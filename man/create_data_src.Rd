@@ -10,6 +10,8 @@ create_data_src(
   alias = NULL,
   inflection_column = c("none", "camelize"),
   inflection_table = c("none", "camelize"),
+  is_schema_readonly = FALSE,
+  is_data_readonly = FALSE,
   enabled = TRUE,
   id_base = base_id(hostname = hostname, email = email, password = password, api_token =
     api_token),
@@ -31,6 +33,10 @@ create_data_src(
 
 \item{inflection_table}{Type of inflection to apply for table names in the data source. One of
 \code{"none"} or \code{"camelize"}.}
+
+\item{is_schema_readonly}{Whether or not to \href{https://docs.nocodb.com/data-sources/connect-to-data-source/#allow-schema-edit}{forbid alterations of the data source's \strong{schema} from NocoDB}.}
+
+\item{is_data_readonly}{Whether or not to \href{https://docs.nocodb.com/data-sources/connect-to-data-source/#allow-data-edit}{forbid alterations of the data source's \strong{data} from NocoDB}.}
 
 \item{enabled}{Whether the added data source is enabled or disabled.}
 

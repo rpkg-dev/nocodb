@@ -1456,6 +1456,10 @@ sync_data_src_eagerly <- function(id_data_src,
 #'   `r pal::enum_fn_param_defaults(param = "inflection_column", fn = "create_data_src")`.
 #' @param inflection_table Type of inflection to apply for table names in the data source. One of
 #'   `r pal::enum_fn_param_defaults(param = "inflection_column", fn = "create_data_src")`.
+#' @param is_schema_readonly Whether or not to [forbid alterations of the data source's **schema** from
+#'   NocoDB](https://docs.nocodb.com/data-sources/connect-to-data-source/#allow-schema-edit).
+#' @param is_data_readonly Whether or not to [forbid alterations of the data source's **data** from
+#'   NocoDB](https://docs.nocodb.com/data-sources/connect-to-data-source/#allow-data-edit).
 #' @param enabled Whether the added data source is enabled or disabled.
 #'
 #' @return `alias`, invisibly.
@@ -1482,6 +1486,8 @@ create_data_src <- function(connection,
                             alias = NULL,
                             inflection_column = c("none", "camelize"),
                             inflection_table = c("none", "camelize"),
+                            is_schema_readonly = FALSE,
+                            is_data_readonly = FALSE,
                             enabled = TRUE,
                             id_base = base_id(hostname = hostname,
                                               email = email,
@@ -1502,6 +1508,8 @@ create_data_src <- function(connection,
                          any.missing = FALSE)
   inflection_column <- rlang::arg_match(inflection_column)
   inflection_table <- rlang::arg_match(inflection_table)
+  checkmate::assert_flag(is_schema_readonly)
+  checkmate::assert_flag(is_data_readonly)
   checkmate::assert_flag(enabled)
   checkmate::assert_string(id_base)
   
@@ -1517,6 +1525,8 @@ create_data_src <- function(connection,
                                                     connection = connection),
                                       inflection_column = inflection_column,
                                       inflection_table = inflection_table,
+                                      is_schema_readonly = is_schema_readonly,
+                                      is_data_readonly = is_data_readonly,
                                       enabled = enabled)))
   invisible(alias)
 }
@@ -1538,6 +1548,8 @@ update_data_src <- function(id_data_src,
                             alias = NULL,
                             inflection_column = NULL,
                             inflection_table = NULL,
+                            is_schema_readonly = NULL,
+                            is_data_readonly = NULL,
                             enabled = NULL,
                             id_base = base_id(hostname = hostname,
                                               email = email,
@@ -1571,6 +1583,10 @@ update_data_src <- function(id_data_src,
   }
   checkmate::assert_flag(enabled,
                          null.ok = TRUE)
+  checkmate::assert_flag(is_schema_readonly,
+                         null.ok = TRUE)
+  checkmate::assert_flag(is_data_readonly,
+                         null.ok = TRUE)
   checkmate::assert_string(id_base)
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}/sources/{id_data_src}"),
@@ -1585,6 +1601,8 @@ update_data_src <- function(id_data_src,
                                                                    connection = connection)),
                                       inflection_column = inflection_column,
                                       inflection_table = inflection_table,
+                                      is_schema_readonly = is_schema_readonly,
+                                      is_data_readonly = is_data_readonly,
                                       enabled = enabled))) |>
     tidy_resp_data() |>
     invisible()
