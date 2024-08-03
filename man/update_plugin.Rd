@@ -40,10 +40,19 @@ Updates the configuration of the specified plugin on a NocoDB server via its
 \examples{
 \dontrun{
 nocodb::update_plugin(id_plugin = nocodb::plugin_id(title = "Backblaze B2"),
-                      config = list(bucket = "REPLACE-ME",
-                                    region = "REPLACE-ME",
+                      config = list(region = "REPLACE-ME",
+                                    bucket = "REPLACE-ME",
                                     access_key = "REPLACE-ME",
                                     access_secret = "REPLACE-ME"),
+                      activate = TRUE)
+                      
+nocodb::update_plugin(id_plugin = nocodb::plugin_id(title = "S3"),
+                      config = list(endpoint = "https://s3.REPLACE-ME.backblazeb2.com",
+                                    region = "REPLACE-ME",
+                                    bucket = "REPLACE-ME",
+                                    access_key = "REPLACE-ME",
+                                    access_secret = "REPLACE-ME",
+                                    acl = "public-read"),
                       activate = TRUE)}
 }
 \seealso{

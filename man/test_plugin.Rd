@@ -45,7 +45,15 @@ nocodb::test_plugin(title = "Backblaze B2",
                     config = list(bucket = "REPLACE-ME",
                                   region = "REPLACE-ME",
                                   access_key = "REPLACE-ME",
-                                  access_secret = "REPLACE-ME"))}
+                                  access_secret = "REPLACE-ME"))
+
+nocodb::test_plugin(title = "S3",
+                    config = list(endpoint = "https://s3.REPLACE-ME.backblazeb2.com",
+                                  region = "REPLACE-ME",
+                                  bucket = "REPLACE-ME",
+                                  access_key = "REPLACE-ME",
+                                  access_secret = "REPLACE-ME",
+                                  acl = "public-read"))}
 }
 \seealso{
 Other functions to manage NocoDB plugins:
