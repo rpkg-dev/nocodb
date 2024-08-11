@@ -2115,12 +2115,8 @@ set_tbl_metadata <- function(data,
                                                              pkg = this_pkg),
                              quiet = FALSE) {
   
-  checkmate::assert_data_frame(data,
-                               min.cols = 3L)
-  checkmate::assert_names(colnames(data),
-                          must.include = c("name", "meta.icon"),
-                          what = "colnames",
-                          .var.name = "data")
+  pal::assert_cols(data = data,
+                   cols = c("name", "meta.icon"))
   checkmate::assert_flag(quiet)
   
   nrow(data) |>
@@ -2431,12 +2427,8 @@ set_display_vals <- function(data,
                                                              pkg = this_pkg),
                              quiet = FALSE) {
   
-  checkmate::assert_data_frame(data,
-                               min.cols = 2L)
-  checkmate::assert_names(colnames(data),
-                          must.include = c("name", "display_col"),
-                          what = "colnames",
-                          .var.name = "data")
+  pal::assert_cols(data = data,
+                   cols = c("name", "display_col"))
   checkmate::assert_flag(quiet)
   
   data |>
