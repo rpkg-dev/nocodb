@@ -24,7 +24,7 @@ create_data_src_tbl(
 
 \item{name}{Table name. A character scalar.}
 
-\item{cols}{Table columns specification as a list or something coercible to like a dataframe.}
+\item{cols}{Table columns specification as a list or something coercible to like a data frame.}
 
 \item{title}{NocoDB-specific table title. A character scalar.}
 

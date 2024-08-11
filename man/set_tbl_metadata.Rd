@@ -16,7 +16,7 @@ set_tbl_metadata(
 )
 }
 \arguments{
-\item{data}{Dataframe with the columns \code{name}, \code{meta.icon} that defines the table-name-and-metadata-value mapping to be applied. Additional columns are
+\item{data}{Data frame with the columns \code{name}, \code{meta.icon} that defines the table-name-and-metadata-value mapping to be applied. Additional columns are
 ignored.}
 
 \item{id_base}{NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}. A character scalar.}

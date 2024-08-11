@@ -1690,7 +1690,7 @@ data_src_tbls <- function(id_data_src,
 #' @inheritParams data_src
 #' @inheritParams reorder_tbl
 #' @param name Table name. A character scalar.
-#' @param cols Table columns specification as a list or something coercible to like a dataframe.
+#' @param cols Table columns specification as a list or something coercible to like a data frame.
 #' @param title NocoDB-specific table title. A character scalar.
 #' @param meta NocoDB-specific table metadata. A list.
 #'
@@ -2093,7 +2093,7 @@ reorder_tbl <- function(id_tbl,
 #' - Setting the [table icons](https://docs.nocodb.com/tables/actions-on-table/#change-table-icon) (emojis) using [update_tbl()] according to `data$meta.icon`.
 #'
 #' @inheritParams base
-#' @param data Dataframe with the columns `name`, `meta.icon` that defines the table-name-and-metadata-value mapping to be applied. Additional columns are
+#' @param data Data frame with the columns `name`, `meta.icon` that defines the table-name-and-metadata-value mapping to be applied. Additional columns are
 #'   ignored.
 #' @param quiet `r pkgsnip::param_lbl("quiet")`
 #'
