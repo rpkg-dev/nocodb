@@ -2119,12 +2119,10 @@ set_tbl_metadata <- function(data,
                    cols = c("name", "meta.icon"))
   checkmate::assert_flag(quiet)
   
-  nrow(data) |>
-    pal::safe_seq_len() |>
-    purrr::walk(\(i) {
+  data |>
+    tibble::rowid_to_column() |>
+    purrr::pwalk(\(name, meta.icon, rowid, ...) {
       
-      name <- data$name[i]
-      icon <- data$meta.icon[i]
       id <- tbl_id(name = name,
                    id_base = id_base,
                    hostname = hostname,
@@ -2133,23 +2131,23 @@ set_tbl_metadata <- function(data,
                    api_token = api_token)
       
       if (!quiet) {
-        pal::cli_progress_step_quick(msg = "Setting order for NocoDB table {.field {name}} to {.val {i}}")
+        pal::cli_progress_step_quick(msg = "Setting order for NocoDB table {.field {name}} to {.val {rowid}}")
       }
       
       reorder_tbl(id_tbl = id,
-                  order = i,
+                  order = rowid,
                   hostname = hostname,
                   email = email,
                   password = password,
                   api_token = api_token)
       
       if (!quiet) {
-        pal::cli_progress_step_quick(msg = "Setting icon for NocoDB table {.field {name}} to {.val {icon}}")
+        pal::cli_progress_step_quick(msg = "Setting icon for NocoDB table {.field {name}} to {.val {meta.icon}}")
       }
       
-      if (!is.na(icon)) {
+      if (!is.na(meta.icon)) {
         update_tbl(id_tbl = id,
-                   meta = list(icon = icon),
+                   meta = list(icon = meta.icon),
                    hostname = hostname,
                    email = email,
                    password = password,
