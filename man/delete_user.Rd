@@ -24,7 +24,7 @@ delete_user(
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }
 \value{
-\code{NULL}, invisibly.
+\code{id_user}, invisibly.
 }
 \description{
 Deletes the specified user on a NocoDB server via its

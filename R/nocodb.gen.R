@@ -3040,7 +3040,7 @@ update_user <- function(display_name = NULL,
 #'
 #' @inheritParams update_base_user
 #'
-#' @return `NULL`, invisibly.
+#' @return `id_user`, invisibly.
 #' @family users
 #' @export
 delete_user <- function(id_user,
@@ -3064,7 +3064,7 @@ delete_user <- function(id_user,
     cli_alert_status(msg = result$msg)
   }
   
-  invisible(NULL)
+  invisible(id_user)
 }
 
 #' Invite NocoDB user
