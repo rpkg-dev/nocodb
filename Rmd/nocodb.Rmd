@@ -2946,6 +2946,64 @@ tbl_col <- function(id_col,
 }
 ```
 
+#### `create_tbl_col`
+
+```{r}
+#' Create NocoDB table column
+#'
+#' Creates the specified table column on a NocoDB server via its
+#' [`POST /api/v2/meta/tables/{id_tbl}/columns`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-create) API endpoint.
+#'
+#' @inheritParams tbl
+#' @inheritParams update_tbl_col
+#' @param column_name Column name. A character scalar.
+#' @param title NocoDB column title. A character scalar.
+#'
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created NocoDB table column, invisibly")`
+#' @family cols
+#' @export
+create_tbl_col <- function(id_tbl,
+                           column_name,
+                           title = column_name,
+                           uidt = NULL,
+                           dt = NULL,
+                           cdf = NULL,
+                           hostname = pal::pkg_config_val(key = "hostname",
+                                                          pkg = this_pkg),
+                           email = pal::pkg_config_val(key = "email",
+                                                       pkg = this_pkg),
+                           password = pal::pkg_config_val(key = "password",
+                                                          pkg = this_pkg),
+                           api_token = pal::pkg_config_val(key = "api_token",
+                                                           pkg = this_pkg)) {
+  checkmate::assert_string(id_tbl)
+  checkmate::assert_string(column_name)
+  checkmate::assert_string(title)
+  if (!is.null(uidt)) {
+    uidt <- rlang::arg_match(arg = uidt,
+                             values = uidts)
+  }
+  checkmate::assert_string(dt,
+                           null.ok = TRUE)
+  checkmate::assert_string(cdf,
+                           null.ok = TRUE)
+  
+  api(path = glue::glue("api/v2/meta/tables/{id_tbl}/columns"),
+      method = "POST",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token,
+      body_json = purrr::compact(list(column_name = column_name,
+                                      title = title,
+                                      uidt = uidt,
+                                      dt = dt,
+                                      cdf = cdf))) |>
+    tidy_resp_data() |>
+    invisible()
+}
+```
+
 #### `update_tbl_col`
 
 TODO:
@@ -3073,6 +3131,41 @@ update_tbl_col <- function(id_col,
                                       uidt = uidt))) |>
     tidy_resp_data() |>
     invisible()
+}
+```
+
+#### `delete_tbl_col`
+
+```{r}
+#' Delete NocoDB table column
+#'
+#' Deletes the specified table column on a NocoDB server via its
+#' [`DELETE /api/v2/meta/columns/{id_col}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-delete) API endpoint.
+#'
+#' @inheritParams tbl_col
+#'
+#' @return `id_col`, invisibly.
+#' @family cols
+#' @export
+delete_tbl_col <- function(id_col,
+                           hostname = pal::pkg_config_val(key = "hostname",
+                                                          pkg = this_pkg),
+                           email = pal::pkg_config_val(key = "email",
+                                                       pkg = this_pkg),
+                           password = pal::pkg_config_val(key = "password",
+                                                          pkg = this_pkg),
+                           api_token = pal::pkg_config_val(key = "api_token",
+                                                           pkg = this_pkg)) {
+  checkmate::assert_string(id_col)
+  
+  api(path = glue::glue("api/v2/meta/columns/{id_col}"),
+      method = "DELETE",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token)
+  
+  invisible(id_col)
 }
 ```
 

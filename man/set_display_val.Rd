@@ -34,6 +34,8 @@ endpoint.
 }
 \seealso{
 Other functions to manage NocoDB table columns:
+\code{\link{create_tbl_col}()},
+\code{\link{delete_tbl_col}()},
 \code{\link{set_display_vals}()},
 \code{\link{tbl_col}()},
 \code{\link{tbl_col_id}()},

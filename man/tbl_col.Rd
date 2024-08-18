@@ -33,6 +33,8 @@ Returns a \link[tibble:tbl_df-class]{tibble} with metadata about the specified c
 }
 \seealso{
 Other functions to manage NocoDB table columns:
+\code{\link{create_tbl_col}()},
+\code{\link{delete_tbl_col}()},
 \code{\link{set_display_val}()},
 \code{\link{set_display_vals}()},
 \code{\link{tbl_col_id}()},

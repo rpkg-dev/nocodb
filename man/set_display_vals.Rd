@@ -41,6 +41,8 @@ combines several of the other functions found in this package.
 }
 \seealso{
 Other functions to manage NocoDB table columns:
+\code{\link{create_tbl_col}()},
+\code{\link{delete_tbl_col}()},
 \code{\link{set_display_val}()},
 \code{\link{tbl_col}()},
 \code{\link{tbl_col_id}()},

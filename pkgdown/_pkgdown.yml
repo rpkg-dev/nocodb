@@ -66,7 +66,9 @@ reference:
   - tbl_cols
   - tbl_col_id
   - tbl_col
+  - create_tbl_col
   - update_tbl_col
+  - delete_tbl_col
   - set_display_val
   - set_display_vals
 - subtitle: Attachments
