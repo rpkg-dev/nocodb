@@ -2238,7 +2238,7 @@ set_tbl_metadata <- function(data,
   
   data |>
     tibble::rowid_to_column() |>
-    purrr::pwalk(\(name, meta.icon, rowid, ...) {
+    purrr::pwalk(\(name, meta.icon, rowid, ...) { # nolint: object_name_linter
       
       id <- tbl_id(name = name,
                    id_base = id_base,
