@@ -88,8 +88,9 @@ refresh an expired access token using <code><a href="refresh_sign_in.html">refre
     <p>The generated access token expires after a certain amount of time, configured by the NocoDB server via
 <a href="https://docs.nocodb.com/getting-started/self-hosted/environment-variables/" class="external-link"><code>NC_JWT_EXPIRES_IN</code></a> (defaults to 10 hours). To allow for a frictionless user
 experience, a separate refresh token is cached to disk in a cookie file (unless <code>cache_refresh_token = FALSE</code>). <code><a href="refresh_sign_in.html">refresh_sign_in()</a></code> can then be used to
-generate a new access token if necessary. Taken together, this allows for a user to remain authenticated across <span style="R">R</span> session restarts (unless the refresh token
-has expired or been invalidated by <code><a href="sign_out.html">sign_out()</a></code> in the meantime).</p>
+generate a new access token if necessary. Taken together, this allows for users to sign in once and remain authenticated across <span style="R">R</span> session restarts without
+having to provide their password again (unless the refresh token has expired or been invalidated by <code><a href="sign_out.html">sign_out()</a></code> in the meantime). <code><a href="req_auth.html">req_auth()</a></code> implements
+this functionality.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

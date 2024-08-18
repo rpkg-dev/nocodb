@@ -63,6 +63,7 @@ Other functions to manage NocoDB users:
 Other functions to manage NocoDB bases:
 \code{\link{base}()},
 \code{\link{base_id}()},
+\code{\link{base_ui_acl}()},
 \code{\link{base_users}()},
 \code{\link{bases}()},
 \code{\link{create_base}()},
@@ -70,6 +71,7 @@ Other functions to manage NocoDB bases:
 \code{\link{delete_base_user}()},
 \code{\link{resend_base_user_invitation}()},
 \code{\link{update_base}()},
+\code{\link{update_base_ui_acl}()},
 \code{\link{update_base_user}()}
 }
 \concept{bases}

@@ -11,6 +11,7 @@
 <url><loc>https://nocodb.rpkg.dev/dev/reference/assert_super_admin.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/base.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/base_id.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/base_ui_acl.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/base_users.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/bases.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/create_api_token.html</loc></url>
@@ -62,11 +63,14 @@
 <url><loc>https://nocodb.rpkg.dev/dev/reference/tbl_col_id.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/tbl_cols.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/tbl_id.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/tbl_view_id.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/tbl_views.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/tbls.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/test_data_src.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/test_plugin.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_app_settings.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_base.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/update_base_ui_acl.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_base_user.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_data_src.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_plugin.html</loc></url>

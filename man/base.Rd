@@ -35,6 +35,7 @@ Returns a \link[tibble:tbl_df-class]{tibble} with metadata about the specified b
 \seealso{
 Other functions to manage NocoDB bases:
 \code{\link{base_id}()},
+\code{\link{base_ui_acl}()},
 \code{\link{base_users}()},
 \code{\link{bases}()},
 \code{\link{create_base}()},
@@ -43,6 +44,7 @@ Other functions to manage NocoDB bases:
 \code{\link{invite_base_user}()},
 \code{\link{resend_base_user_invitation}()},
 \code{\link{update_base}()},
+\code{\link{update_base_ui_acl}()},
 \code{\link{update_base_user}()}
 }
 \concept{bases}

@@ -33,8 +33,9 @@ Authenticates a NocoDB user by \code{email} and \code{password} via the
 The generated access token expires after a certain amount of time, configured by the NocoDB server via
 \href{https://docs.nocodb.com/getting-started/self-hosted/environment-variables/}{\code{NC_JWT_EXPIRES_IN}} (defaults to 10 hours). To allow for a frictionless user
 experience, a separate refresh token is cached to disk in a cookie file (unless \code{cache_refresh_token = FALSE}). \code{\link[=refresh_sign_in]{refresh_sign_in()}} can then be used to
-generate a new access token if necessary. Taken together, this allows for a user to remain authenticated across \R session restarts (unless the refresh token
-has expired or been invalidated by \code{\link[=sign_out]{sign_out()}} in the meantime).
+generate a new access token if necessary. Taken together, this allows for users to sign in once and remain authenticated across \R session restarts without
+having to provide their password again (unless the refresh token has expired or been invalidated by \code{\link[=sign_out]{sign_out()}} in the meantime). \code{\link[=req_auth]{req_auth()}} implements
+this functionality.
 }
 \seealso{
 Other functions to manage NocoDB authentication:

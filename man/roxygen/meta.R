@@ -9,5 +9,7 @@ list(
                          data_src     = "Other functions to manage NocoDB base data sources:",
                          plugins      = "Other functions to manage NocoDB plugins:",
                          tbls         = "Other functions to manage NocoDB tables:",
-                         users        = "Other functions to manage NocoDB users:")
+                         ui_acl       = "Other functions to manage NocoDB base visibility rules (UI ACL):",
+                         users        = "Other functions to manage NocoDB users:",
+                         views        = "Other functions to manage NocoDB table views:")
 )

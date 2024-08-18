@@ -25,6 +25,8 @@ reference:
   - create_base
   - update_base
   - delete_base
+  - base_ui_acl
+  - update_base_ui_acl
 - subtitle: Data sources
   desc: Functions to manage NocoDB [data sources](https://docs.nocodb.com/category/data-sources).
 - contents:
@@ -52,6 +54,11 @@ reference:
   - delete_tbl
   - reorder_tbl
   - set_tbl_metadata
+- subtitle: Table views
+  desc: Functions to manage NocoDB table [views](https://docs.nocodb.com/views/views-overview).
+- contents:
+  - tbl_views
+  - tbl_view_id
 - subtitle: Table columns
   desc: Functions to manage NocoDB table [columns](https://docs.nocodb.com/category/fields)
     (aka "fields").
