@@ -634,8 +634,9 @@ NOTES:
 #' The generated access token expires after a certain amount of time, configured by the NocoDB server via
 #' [`NC_JWT_EXPIRES_IN`](https://docs.nocodb.com/getting-started/self-hosted/environment-variables/) (defaults to 10 hours). To allow for a frictionless user
 #' experience, a separate refresh token is cached to disk in a cookie file (unless `cache_refresh_token = FALSE`). [refresh_sign_in()] can then be used to
-#' generate a new access token if necessary. Taken together, this allows for a user to remain authenticated across \R session restarts (unless the refresh token
-#' has expired or been invalidated by [sign_out()] in the meantime).
+#' generate a new access token if necessary. Taken together, this allows for users to sign in once and remain authenticated across \R session restarts without
+#' having to provide their password again (unless the refresh token has expired or been invalidated by [sign_out()] in the meantime). [req_auth()] implements
+#' this functionality.
 #'
 #' @inheritParams api
 #' @param cache_refresh_token Whether or not to write the refresh token included in the API response to disk (in the OS user cache directory). This allows to
@@ -2849,8 +2850,8 @@ tbl_cols <- function(id_tbl,
 #' Returns the identifier of the column with the specified `name` or `title` in the table with the specified `id_tbl` on a NocoDB server.
 #'
 #' @inheritParams tbl_cols
-#' @param name NocoDB column name. A character scalar.
-#' @param title NocoDB column title. A character scalar.
+#' @param name NocoDB column name. A character scalar, or `NULL` for any name.
+#' @param title NocoDB column title. A character scalar, or `NULL` for any title.
 #'
 #' @return A character scalar.
 #' @family cols
