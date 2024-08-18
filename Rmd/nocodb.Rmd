@@ -2999,19 +2999,22 @@ NOTES:
 #' source](https://docs.nocodb.com/category/data-sources).
 #'
 #' @inheritParams tbl_col
-#' @inheritParams api
-#' @param title NocoDB column title. Either `NULL` to omit or a character scalar.
 #' @param column_name Column name. Either `NULL` to omit or a character scalar.
+#' @param title NocoDB column title. Either `NULL` to omit or a character scalar.
 #' @param uidt NocoDB **u**ser **i**nterface **d**ata **t**ype. Either `NULL` to omit or one of
 #'   `r pal::as_md_val_list(uidts)`.
+#' @param dt Column data type. Either `NULL` to omit or a character scalar.
+#' @param cdf Column default value. Either `NULL` to omit or a character scalar.
 #'
 #' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the NocoDB table to which the updated column belongs, invisibly")`
 #' @family cols
 #' @export
 update_tbl_col <- function(id_col,
-                           title = NULL,
                            column_name = NULL,
+                           title = NULL,
                            uidt = NULL,
+                           dt = NULL,
+                           cdf = NULL,
                            hostname = pal::pkg_config_val(key = "hostname",
                                                           pkg = this_pkg),
                            email = pal::pkg_config_val(key = "email",
@@ -3021,9 +3024,13 @@ update_tbl_col <- function(id_col,
                            api_token = pal::pkg_config_val(key = "api_token",
                                                            pkg = this_pkg)) {
   checkmate::assert_string(id_col)
+  checkmate::assert_string(column_name,
+                           null.ok = TRUE)
   checkmate::assert_string(title,
                            null.ok = TRUE)
-  checkmate::assert_string(column_name,
+  checkmate::assert_string(dt,
+                           null.ok = TRUE)
+  checkmate::assert_string(cdf,
                            null.ok = TRUE)
   
   data_col <- tbl_col(id_col = id_col,

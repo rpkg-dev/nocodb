@@ -6,9 +6,11 @@
 \usage{
 update_tbl_col(
   id_col,
-  title = NULL,
   column_name = NULL,
+  title = NULL,
   uidt = NULL,
+  dt = NULL,
+  cdf = NULL,
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
   email = pal::pkg_config_val(key = "email", pkg = this_pkg),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg),
@@ -18,9 +20,9 @@ update_tbl_col(
 \arguments{
 \item{id_col}{NocoDB column identifier as returned by \code{\link[=tbl_col_id]{tbl_col_id()}}. A character scalar.}
 
-\item{title}{NocoDB column title. Either \code{NULL} to omit or a character scalar.}
-
 \item{column_name}{Column name. Either \code{NULL} to omit or a character scalar.}
+
+\item{title}{NocoDB column title. Either \code{NULL} to omit or a character scalar.}
 
 \item{uidt}{NocoDB \strong{u}ser \strong{i}nterface \strong{d}ata \strong{t}ype. Either \code{NULL} to omit or one of
 \itemize{
@@ -66,6 +68,10 @@ update_tbl_col(
 \item \code{"User"}
 \item \code{"Year"} .
 }}
+
+\item{dt}{Column data type. Either \code{NULL} to omit or a character scalar.}
+
+\item{cdf}{Column default value. Either \code{NULL} to omit or a character scalar.}
 
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
 
