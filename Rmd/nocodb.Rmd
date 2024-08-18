@@ -326,6 +326,20 @@ uidts <- c("Attachment",
            "Year")
 ```
 
+### `view_types`
+
+```{r}
+view_types <- tibble::tribble(
+  ~nr, ~type,
+  1L,  "form",
+  2L,  "gallery",
+  3L,  "grid",
+  4L,  "kanban",
+  5L,  "map",
+  6L,  "calendar"
+)
+```
+
 ## Environments
 
 ```{r}
@@ -1343,6 +1357,122 @@ delete_base <- function(id_base,
       api_token = api_token)
   
   invisible(id_base)
+}
+```
+
+#### Visibility rules
+
+##### `base_ui_acl`
+
+```{r}
+#' List NocoDB base visibility rules
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about visibility rules for the different views in the specified base on a NocoDB server from its
+#' [`GET /api/v2/meta/bases/{id_base}/visibility-rules`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-model-visibility-list) API endpoint.
+#'
+#' @inheritParams base
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family ui_acl
+#' @family views
+#' @family bases
+#' @export
+base_ui_acl <- function(id_base = base_id(hostname = hostname,
+                                          email = email,
+                                          password = password,
+                                          api_token = api_token),
+                        hostname = pal::pkg_config_val(key = "hostname",
+                                                       pkg = this_pkg),
+                        email = pal::pkg_config_val(key = "email",
+                                                    pkg = this_pkg),
+                        password = pal::pkg_config_val(key = "password",
+                                                       pkg = this_pkg),
+                        api_token = pal::pkg_config_val(key = "api_token",
+                                                        pkg = this_pkg)) {
+  
+  api(path = glue::glue("api/v2/meta/bases/{id_base}/visibility-rules"),
+      method = "GET",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token) |>
+    tibble::as_tibble() |>
+    tidy_date_time_cols()
+}
+```
+
+##### `update_base_ui_acl`
+
+```{r}
+#' Update NocoDB base visibility rules
+#'
+#' Updates the visibility rules (UI ACL) of the specified table view on a NocoDB server via its
+#' [`POST /api/v2/meta/bases/{id_base}/visibility-rules`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-model-visibility-set) API endpoint.
+#'
+#' @inheritParams base
+#' @param id_tbl_view Table view identifier as returned by [tbl_view_id()].
+#' @param guest Whether or not to hide the table view for users with role `guest`.
+#' @param viewer Whether or not to hide the table view for users with role `viewer`.
+#' @param commenter Whether or not to hide the table view for users with role `commenter`.
+#' @param editor Whether or not to hide the table view for users with role `editor`.
+#' @param creator Whether or not to hide the table view for users with role `creator`.
+#' @param owner Whether or not to hide the table view for users with role `owner`.
+#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#'
+#' @return `id_tbl_view`, invisibly.
+#' @family ui_acl
+#' @family views
+#' @family bases
+#' @export
+update_base_ui_acl <- function(id_tbl_view,
+                               guest = viewer,
+                               viewer = commenter,
+                               commenter = editor,
+                               editor = creator,
+                               creator = owner,
+                               owner = FALSE,
+                               id_base = base_id(hostname = hostname,
+                                                 email = email,
+                                                 password = password,
+                                                 api_token = api_token),
+                               hostname = pal::pkg_config_val(key = "hostname",
+                                                              pkg = this_pkg),
+                               email = pal::pkg_config_val(key = "email",
+                                                           pkg = this_pkg),
+                               password = pal::pkg_config_val(key = "password",
+                                                              pkg = this_pkg),
+                               api_token = pal::pkg_config_val(key = "api_token",
+                                                               pkg = this_pkg),
+                               quiet = FALSE) {
+  
+  checkmate::assert_flag(guest)
+  checkmate::assert_flag(viewer)
+  checkmate::assert_flag(commenter)
+  checkmate::assert_flag(editor)
+  checkmate::assert_flag(creator)
+  checkmate::assert_flag(owner)
+  checkmate::assert_string(id_tbl_view)
+  checkmate::assert_string(id_base)
+  checkmate::assert_flag(quiet)
+  
+  result <- api(path = glue::glue("api/v2/meta/bases/{id_base}/visibility-rules"),
+                method = "POST",
+                hostname = hostname,
+                email = email,
+                password = password,
+                api_token = api_token,
+                body_json = list(list(id = id_tbl_view,
+                                      disabled = list(owner = owner,
+                                                      creator = creator,
+                                                      viewer = viewer,
+                                                      editor = editor,
+                                                      commenter = commenter,
+                                                      guest = guest))))
+  if (!quiet) {
+    cli_alert_status(msg = result$msg)
+  }
+  
+  invisible(id_tbl_view)
 }
 ```
 
@@ -2550,6 +2680,122 @@ set_tbl_metadata <- function(data,
     })
   
   invisible(NULL)
+}
+```
+
+### Table views
+
+#### DESCRIPTION
+
+Functions to manage NocoDB table [views](https://docs.nocodb.com/views/views-overview).
+
+#### `tbl_views`
+
+```{r}
+#' List NocoDB table views
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about the views of the specified table on a NocoDB server from its
+#' [`GET /api/v2/meta/tables/{id_tbl}/views`](https://meta-apis-v2.nocodb.com/#tag/DB-View/operation/db-view-list) API endpoint.
+#'
+#' @inheritParams tbl
+#'
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about views of specified NocoDB table")`
+#' @family views
+#' @export
+tbl_views <- function(id_tbl,
+                      hostname = pal::pkg_config_val(key = "hostname",
+                                                     pkg = this_pkg),
+                      email = pal::pkg_config_val(key = "email",
+                                                  pkg = this_pkg),
+                      password = pal::pkg_config_val(key = "password",
+                                                     pkg = this_pkg),
+                      api_token = pal::pkg_config_val(key = "api_token",
+                                                      pkg = this_pkg)) {
+  checkmate::assert_string(id_tbl)
+  
+  api(path = glue::glue("api/v2/meta/tables/{id_tbl}/views"),
+      method = "GET",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token) |>
+    _$list |>
+    tibble::as_tibble()
+}
+```
+
+#### `tbl_view_id`
+
+```{r}
+#' Get NocoDB table view ID
+#'
+#' Returns the identifier of the view with the specified `type`, `name` and/or `title` in the table with the specified `id_tbl` on a NocoDB server.
+#'
+#' @inheritParams tbl
+#' @param type NocoDB view type. One of `r c("default", view_types$type) |> pal::as_md_vals() |> pal::enum_str(sep2 = ", ")`, or `NULL` for any type.
+#' @param name NocoDB view name. A character scalar, or `NULL` for any name.
+#' @param title NocoDB view title. A character scalar, or `NULL` for any title.
+#'
+#' @return A character scalar.
+#' @family views
+#' @export
+tbl_view_id <- function(id_tbl,
+                        type = "default",
+                        name = NULL,
+                        title = NULL,
+                        hostname = pal::pkg_config_val(key = "hostname",
+                                                       pkg = this_pkg),
+                        email = pal::pkg_config_val(key = "email",
+                                                    pkg = this_pkg),
+                        password = pal::pkg_config_val(key = "password",
+                                                       pkg = this_pkg),
+                        api_token = pal::pkg_config_val(key = "api_token",
+                                                        pkg = this_pkg)) {
+  checkmate::assert_string(name,
+                           null.ok = TRUE)
+  checkmate::assert_string(title,
+                           null.ok = TRUE)
+  if (!is.null(type)) {
+    type <- rlang::arg_match(arg = type,
+                             values = c("default", view_types$type))
+  }
+  if (is.null(type) && is.null(name) && is.null(title)) {
+    cli::cli_abort("At least one of {.or {.arg {c('type', 'name', 'title')}}} must be provided.")
+  }
+  
+  result <-
+    tbl_views(id_tbl = id_tbl,
+              hostname = hostname,
+              email = email,
+              password = password,
+              api_token = api_token) |>
+    pal::when(is.null(type) ~ .,
+              type == "default" ~ dplyr::filter(., is_default == 1L),
+              ~ dplyr::filter(., type == !!view_types$nr[!!view_types$type == type])) |>
+    pal::when(is.null(name) ~ .,
+              ~ dplyr::filter(., tn == !!name)) |>
+    pal::when(is.null(title) ~ .,
+              ~ dplyr::filter(., title == !!title)) |>
+    dplyr::pull("id")
+  
+  n_result <- length(result)
+  msg_filter_cnds <-
+    c("type"[!is.null(type)],
+      "name"[!is.null(name)],
+      "title"[!is.null(title)]) |>
+    purrr::map_chr(\(var_name) paste0(" ", var_name, " {.val {", var_name, "}}")) |>
+    paste0(collapse = " and")
+  
+  if (n_result > 1L) {
+    result <- result[1L]
+    cli::cli_warn(paste0("{.val {n_result}} views with ", msg_filter_cnds, " present for table with identifier {.val {id_tbl}}. The identifier of the ",
+                         "first view listed in the API response is returned."))
+    
+  } else if (n_result == 0L) {
+    cli::cli_abort(paste0("No view with ", msg_filter_cnds, " present for table with identifier {.val {id_tbl}}."))
+  }
+  
+  result
 }
 ```
 
