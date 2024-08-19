@@ -377,6 +377,8 @@ NOTES:
 #' @inheritParams req_basic
 #' @inheritParams req_auth
 #' @param auth Whether or not to include an [authentication header][req_auth] in the HTTP request.
+#' @param url_params URL parameters added to the [query string](https://en.wikipedia.org/wiki/Query_string). Either `NULL` to omit or a named list of key-value
+#'   pairs that define query parameters. Values must be a scalars, to opt out of escaping, wrap strings in [I()].
 #' @param body_json Data to include as JSON in the HTTP request body. Either a list or `NULL` for an empty body.
 #' @param auto_unbox Whether or not to automatically "unbox" length-1 vectors in `body_json` to JSON scalars.
 #' @param simplify Whether or not to automatically simplify JSON structures in the returned JSON. Enables/disables all `simplify*` arguments of
@@ -400,6 +402,7 @@ api <- function(path,
                 api_token = pal::pkg_config_val(key = "api_token",
                                                 pkg = this_pkg),
                 auth = TRUE,
+                url_params = NULL,
                 body_json = NULL,
                 auto_unbox = TRUE,
                 simplify = TRUE,
@@ -408,6 +411,10 @@ api <- function(path,
                 verbosity = NULL) {
   
   checkmate::assert_flag(auth)
+  checkmate::assert_list(url_params,
+                         null.ok = TRUE,
+                         any.missing = FALSE,
+                         names = "named")
   checkmate::assert_flag(auto_unbox)
   
   req <- req_basic(path = path,
@@ -419,6 +426,10 @@ api <- function(path,
     req %<>% req_auth(email = email,
                       password = password,
                       api_token = api_token)
+  }
+  
+  if (length(url_params) > 0L) {
+    req %<>% httr2::req_url_query(!!!url_params)
   }
   
   if (length(body_json) > 0L) {

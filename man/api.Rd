@@ -13,6 +13,7 @@ api(
   password = pal::pkg_config_val(key = "password", pkg = this_pkg),
   api_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg),
   auth = TRUE,
+  url_params = NULL,
   body_json = NULL,
   auto_unbox = TRUE,
   simplify = TRUE,
@@ -38,6 +39,9 @@ for large responses since it avoids storing the response in memory.}
 provided.}
 
 \item{auth}{Whether or not to include an \link[=req_auth]{authentication header} in the HTTP request.}
+
+\item{url_params}{URL parameters added to the \href{https://en.wikipedia.org/wiki/Query_string}{query string}. Either \code{NULL} to omit or a named list of key-value
+pairs that define query parameters. Values must be a scalars, to opt out of escaping, wrap strings in \code{\link[=I]{I()}}.}
 
 \item{body_json}{Data to include as JSON in the HTTP request body. Either a list or \code{NULL} for an empty body.}
 
