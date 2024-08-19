@@ -2519,9 +2519,7 @@ tbl_col <- function(id_col,
       email = email,
       password = password,
       api_token = api_token) |>
-    purrr::compact() |>
-    tibble::as_tibble() |>
-    tidy_date_time_cols()
+    tidy_resp_data()
 }
 
 #' Create NocoDB table column
