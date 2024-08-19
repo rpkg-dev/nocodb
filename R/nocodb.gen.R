@@ -195,47 +195,50 @@ md_text_no_api_token_support <- "This API endpoint does not support authenticati
 md_text_super_admin_required <- "Only the super admin user is allowed to use this API endpoint, i.e. the provided credentials must belong to them."
 md_text_user_from_auth <- "The user is determined based on `api_token` or `email` and `password` (the former takes precedence)."
 
-uidts <- c("Attachment",
-           "AutoNumber",
-           "Barcode",
-           "Button",
-           "Checkbox",
-           "Collaborator",
-           "Count",
-           "CreatedBy",
-           "CreatedTime",
-           "Currency",
-           "Date",
-           "DateTime",
-           "Decimal",
-           "Duration",
-           "Email",
-           "ForeignKey",
-           "Formula",
-           "GeoData",
-           "Geometry",
-           "ID",
-           "JSON",
-           "LastModifiedBy",
-           "LastModifiedTime",
-           "Links",
-           "LinkToAnotherRecord",
-           "LongText",
-           "Lookup",
-           "MultiSelect",
-           "Number",
-           "Percent",
-           "PhoneNumber",
-           "QrCode",
-           "Rating",
-           "Rollup",
-           "SingleLineText",
-           "SingleSelect",
-           "SpecificDBType",
-           "Time",
-           "URL",
-           "User",
-           "Year")
+uidts <- tibble::tribble(
+  ~uidt,                 ~is_virtual,
+  "Attachment",          FALSE,
+  "AutoNumber",          FALSE,
+  "Barcode",             FALSE,
+  "Button",              FALSE,
+  "Checkbox",            FALSE,
+  "Collaborator",        FALSE,
+  "Count",               FALSE,
+  "CreatedBy",           FALSE,
+  "CreatedTime",         FALSE,
+  "Currency",            FALSE,
+  "Date",                FALSE,
+  "DateTime",            FALSE,
+  "Decimal",             FALSE,
+  "Duration",            FALSE,
+  "Email",               FALSE,
+  "ForeignKey",          FALSE,
+  "Formula",             TRUE,
+  "GeoData",             FALSE,
+  "Geometry",            FALSE,
+  "ID",                  FALSE,
+  "JSON",                FALSE,
+  "LastModifiedBy",      FALSE,
+  "LastModifiedTime",    FALSE,
+  "Links",               TRUE,
+  "LinkToAnotherRecord", TRUE,
+  "LongText",            FALSE,
+  "Lookup",              TRUE,
+  "MultiSelect",         FALSE,
+  "Number",              FALSE,
+  "Percent",             FALSE,
+  "PhoneNumber",         FALSE,
+  "QrCode",              FALSE,
+  "Rating",              FALSE,
+  "Rollup",              TRUE,
+  "SingleLineText",      FALSE,
+  "SingleSelect",        FALSE,
+  "SpecificDBType",      FALSE,
+  "Time",                FALSE,
+  "URL",                 FALSE,
+  "User",                FALSE,
+  "Year",                FALSE
+)
 
 view_types <- tibble::tribble(
   ~nr, ~type,
@@ -2554,7 +2557,7 @@ create_tbl_col <- function(id_tbl,
   checkmate::assert_string(title)
   if (!is.null(uidt)) {
     uidt <- rlang::arg_match(arg = uidt,
-                             values = uidts)
+                             values = uidts$uidt)
   }
   checkmate::assert_string(dt,
                            null.ok = TRUE)
@@ -2589,7 +2592,7 @@ create_tbl_col <- function(id_tbl,
 #' @param column_name Column name. Either `NULL` to omit or a character scalar.
 #' @param title NocoDB column title. Either `NULL` to omit or a character scalar.
 #' @param uidt NocoDB **u**ser **i**nterface **d**ata **t**ype. Either `NULL` to omit or one of
-#'   `r pal::as_md_val_list(uidts)`.
+#'   `r pal::as_md_val_list(uidts$uidt)`.
 #' @param dt Column data type. Either `NULL` to omit or a character scalar.
 #' @param cdf Column default value. Either `NULL` to omit or a character scalar.
 #'
@@ -2630,7 +2633,7 @@ update_tbl_col <- function(id_col,
   if (is.null(title)) {
     title <- data_col$title
   }
-  if (is.null(column_name)) {
+  if (is.null(column_name) && data_col$uidt %in% uidts$uidt[!uidts$is_virtual]) {
     column_name <- data_col$column_name
   }
   
@@ -2638,9 +2641,9 @@ update_tbl_col <- function(id_col,
   if (!is.null(uidt)) {
     
     uidt <- rlang::arg_match(arg = uidt,
-                             values = uidts)
+                             values = uidts$uidt)
     uidt_current <- data_col$uidt
-    uidt_allowed <- ifelse(uidt_current %in% c("Formula", "LinkToAnotherRecord", "Links", "Lookup", "Rollup"),
+    uidt_allowed <- ifelse(uidt_current %in% uidts$uidt[uidts$is_virtual],
                            uidt_current,
                            uidt)
     
@@ -2649,15 +2652,28 @@ update_tbl_col <- function(id_col,
     }
   }
   
+  body_json <- purrr::compact(list(column_name = column_name,
+                                   title = title,
+                                   uidt = uidt))
+  
+  # complement required fields for virtual UIDTs
+  body_json %<>% c(switch(EXPR = data_col$uidt,
+                          Formula = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
+                          Links = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
+                          LinkToAnotherRecord = list(uidt = data_col$uidt,
+                                                     # NOTE: it's unclear whether this mapping is really correct
+                                                     childViewId = data_col$colOptions$fk_target_view_id),
+                          Lookup = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
+                          Rollup = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
+                          NULL))
+  
   api(path = glue::glue("api/v2/meta/columns/{id_col}"),
       method = "PATCH",
       hostname = hostname,
       email = email,
       password = password,
       api_token = api_token,
-      body_json = purrr::compact(list(column_name = column_name,
-                                      title = title,
-                                      uidt = uidt))) |>
+      body_json = body_json) |>
     tidy_resp_data() |>
     invisible()
 }
