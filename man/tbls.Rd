@@ -7,6 +7,7 @@
 tbls(
   id_base = base_id(hostname = hostname, email = email, password = password, api_token =
     api_token),
+  include_m2m = TRUE,
   hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
   email = pal::pkg_config_val(key = "email", pkg = this_pkg),
   password = pal::pkg_config_val(key = "password", pkg = this_pkg),
@@ -15,6 +16,8 @@ tbls(
 }
 \arguments{
 \item{id_base}{NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}. A character scalar.}
+
+\item{include_m2m}{Whether or not to include many-to-many junction tables in the result.}
 
 \item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
 

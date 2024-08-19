@@ -2277,6 +2277,7 @@ Functions to manage NocoDB [tables](https://docs.nocodb.com/category/tables).
 #' [`GET /api/v2/meta/bases/{id_base}/tables`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-list) API endpoint.
 #'
 #' @inheritParams base
+#' @param include_m2m Whether or not to include many-to-many junction tables in the result.
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family tbls
@@ -2285,6 +2286,7 @@ tbls <- function(id_base = base_id(hostname = hostname,
                                    email = email,
                                    password = password,
                                    api_token = api_token),
+                 include_m2m = TRUE,
                  hostname = pal::pkg_config_val(key = "hostname",
                                                 pkg = this_pkg),
                  email = pal::pkg_config_val(key = "email",
@@ -2293,6 +2295,7 @@ tbls <- function(id_base = base_id(hostname = hostname,
                                                 pkg = this_pkg),
                  api_token = pal::pkg_config_val(key = "api_token",
                                                  pkg = this_pkg)) {
+  checkmate::assert_flag(include_m2m)
   checkmate::assert_string(id_base)
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}/tables"),
@@ -2300,7 +2303,9 @@ tbls <- function(id_base = base_id(hostname = hostname,
       hostname = hostname,
       email = email,
       password = password,
-      api_token = api_token) |>
+      api_token = api_token,
+      url_params = list(includeM2M = jsonlite::toJSON(include_m2m,
+                                                      auto_unbox = TRUE))) |>
     _$list |>
     tibble::as_tibble() |>
     tidy_date_time_cols()
