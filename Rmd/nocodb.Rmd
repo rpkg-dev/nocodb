@@ -2337,7 +2337,7 @@ tbl_id <- function(name,
     result <- result[1L]
     cli::cli_warn("{.val {n_result}} tables with name {.val {name}} present. The identifier of the first one listed in the API response is returned.")
   } else if (n_result == 0L) {
-    cli::cli_abort("No table with name {.val {name}} present in base with ID {}.")
+    cli::cli_abort("No table with name {.val {name}} present in base with ID {id_base}.")
   }
   
   result
