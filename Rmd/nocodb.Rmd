@@ -3065,6 +3065,9 @@ NOTES:
     We implement it very cautiously/restrictive for now and don't allow stuff we're uncertain about. For example, we don't allow switching the `uidt` between
     the above column types. It can always be extended in the future.
 
+-   As of NocoDB v0.255.0, altering a column label via the UI result in changing both `column_name` and `title`. Using the API OTOH, it's possible to only
+    change one of both.
+
 ```{r}
 #' Update NocoDB table column
 #'
@@ -4231,7 +4234,7 @@ resend_base_user_invitation <- function(id_user,
 
 #### DESCRIPTION
 
-Functions to manage NocoDB [plugins](https://docs.nocodb.com/account-settings/oss-specific-details/#app-store) (aka "integrations").
+Functions to manage NocoDB [plugins](https://docs.nocodb.com/account-settings/oss-specific-details/#app-store).
 
 #### `plugins`
 

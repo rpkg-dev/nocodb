@@ -92,8 +92,7 @@ reference:
   - invite_base_user
   - resend_base_user_invitation
 - subtitle: Plugins
-  desc: Functions to manage NocoDB [plugins](https://docs.nocodb.com/account-settings/oss-specific-details/#app-store)
-    (aka "integrations").
+  desc: Functions to manage NocoDB [plugins](https://docs.nocodb.com/account-settings/oss-specific-details/#app-store).
 - contents:
   - plugins
   - plugin_id
