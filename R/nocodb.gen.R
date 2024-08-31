@@ -261,10 +261,10 @@ stateful$access_token <- list()
 #' 
 #' For full control over the performed HTTP request, resort to the lower-level [req_basic()].
 #'
-#' @inheritParams httr2::req_perform
-#' @inheritParams httr2::req_body_json
 #' @inheritParams req_basic
 #' @inheritParams req_auth
+#' @inheritParams httr2::req_perform
+#' @inheritParams httr2::req_body_json
 #' @param auth Whether or not to include an [authentication header][req_auth] in the HTTP request.
 #' @param url_params URL parameters added to the [query string](https://en.wikipedia.org/wiki/Query_string). Either `NULL` to omit or a named list of key-value
 #'   pairs that define query parameters. Values must be a scalars, to opt out of escaping, wrap strings in [I()].
