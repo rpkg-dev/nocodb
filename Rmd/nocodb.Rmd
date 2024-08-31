@@ -4230,6 +4230,366 @@ resend_base_user_invitation <- function(id_user,
 }
 ```
 
+### Integrations {#integrations}
+
+#### DESCRIPTION
+
+Functions to manage NocoDB [integrations](https://docs.nocodb.com/integrations/overview/).
+
+#### `integrations`
+
+NOTES
+
+-   The integrations endpoints are not (yet) documented on <https://meta-apis-v2.nocodb.com>.
+
+```{r}
+#' List NocoDB integrations
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about all configured integrations on a NocoDB server from its `GET /api/v2/meta/integrations` API endpoint.
+#'
+#' @inheritParams api
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family integrations
+#' @export
+integrations <- function(hostname = pal::pkg_config_val(key = "hostname",
+                                                        pkg = this_pkg),
+                         email = pal::pkg_config_val(key = "email",
+                                                     pkg = this_pkg),
+                         password = pal::pkg_config_val(key = "password",
+                                                        pkg = this_pkg),
+                         api_token = pal::pkg_config_val(key = "api_token",
+                                                         pkg = this_pkg)) {
+  api(path = "api/v2/meta/integrations",
+      method = "GET",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token) |>
+    _$list |>
+    tibble::as_tibble() |>
+    tidy_date_time_cols()
+}
+```
+
+#### `integration_id`
+
+```{r}
+#' Get NocoDB integration ID
+#'
+#' Returns the identifier of the integration with the specified `type`, `sub_type` and/or `title` on a NocoDB server.
+#'
+#' Note that NocoDB allows to create multiple integrations with the same `title`, `type` and `sub_type`, so `integration_id()` cannot discern such cases and
+#' just returns the identifier of the *first* integration listed in the API response (with a suitable warning).
+#'
+#' @inheritParams api
+#' @param title `pkgsnip::type("chr")`
+#'   NocoDB integration title. `NULL` means any title.
+#' @param type `pkgsnip::type("chr")`
+#'   NocoDB integration type. One of `r pal::enum_fn_param_defaults(param = "type", fn = "integration_id")`, or `NULL` for any type.
+#' @param sub_type `pkgsnip::type("chr")`
+#'   NocoDB integration subtype. One of `r pal::enum_fn_param_defaults(param = "sub_type", fn = "integration_id")`, or `NULL` for any subtype.
+#'
+#' @return A character scalar.
+#' @family integrations
+#' @export
+integration_id <- function(title = NULL,
+                           type = "database",
+                           sub_type = c("mysql2", "pg", "sqlite3"),
+                           hostname = pal::pkg_config_val(key = "hostname",
+                                                          pkg = this_pkg),
+                           email = pal::pkg_config_val(key = "email",
+                                                       pkg = this_pkg),
+                           password = pal::pkg_config_val(key = "password",
+                                                          pkg = this_pkg),
+                           api_token = pal::pkg_config_val(key = "api_token",
+                                                           pkg = this_pkg)) {
+  checkmate::assert_string(title,
+                           null.ok = TRUE)
+  if (!is.null(type)) {
+    type <- rlang::arg_match(type)
+  }
+  if (!is.null(sub_type)) {
+    sub_type <- rlang::arg_match(sub_type)
+  }
+  if (is.null(type) && is.null(sub_type) && is.null(title)) {
+    cli::cli_abort("At least one of {.or {.arg {c('type', 'sub_type', 'title')}}} must be provided.")
+  }
+  
+  result <-
+    integrations(hostname = hostname,
+                 email = email,
+                 password = password,
+                 api_token = api_token) |>
+    pal::when(is.null(type) ~ .,
+              ~ dplyr::filter(., type == !!type)) |>
+    pal::when(is.null(sub_type) ~ .,
+              ~ dplyr::filter(., sub_type == !!sub_type)) |>
+    pal::when(is.null(title) ~ .,
+              ~ dplyr::filter(., title == !!title)) |>
+    dplyr::pull("id")
+  
+  n_result <- length(result)
+  msg_filter_cnds <-
+    c("type"[!is.null(type)],
+      "sub_type"[!is.null(sub_type)],
+      "title"[!is.null(title)]) |>
+    purrr::map_chr(\(var_name) paste0(" ", var_name, " {.val {", var_name, "}}")) |>
+    paste0(collapse = " and")
+  
+  if (n_result > 1L) {
+    result <- result[1L]
+    cli::cli_warn(paste0("{.val {n_result}} integrations with ", msg_filter_cnds, " present. The identifier of the first integration listed in the API ",
+                         "response is returned."))
+    
+  } else if (n_result == 0L) {
+    cli::cli_abort(paste0("No integration with ", msg_filter_cnds, " present."))
+  }
+  
+  result
+}
+```
+
+```{r}
+#' Get NocoDB integration
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about the specified integration on a NocoDB server from its `GET /api/v2/meta/integrations/{id_integration}`
+#' API endpoint.
+#'
+#' @inheritParams api
+#' @param id_integration `r pkgsnip::type("chr")`
+#'   NocoDB integration identifier as returned by [integration_id()].
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family integrations
+#' @export
+integration <- function(id_integration,
+                        hostname = pal::pkg_config_val(key = "hostname",
+                                                       pkg = this_pkg),
+                        email = pal::pkg_config_val(key = "email",
+                                                    pkg = this_pkg),
+                        password = pal::pkg_config_val(key = "password",
+                                                       pkg = this_pkg),
+                        api_token = pal::pkg_config_val(key = "api_token",
+                                                        pkg = this_pkg)) {
+  checkmate::assert_string(id_integration)
+  
+  api(path = glue::glue("api/v2/meta/integrations/{id_integration}"),
+      method = "GET",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token) |>
+    tidy_resp_data()
+}
+```
+
+#### `create_integration`
+
+NOTES
+
+-   There's also an optional `is_private` key for the request body JSON. But since its purpose is unclear, we ignore it for now.
+
+-   This fn's signature likely needs to be changed once other integration types are available.
+
+```{r}
+#' Create NocoDB integration
+#'
+#' Adds an integration on a NocoDB server via its `POST /api/v2/meta/integrations` API endpoint.
+#'
+#' Note that for the database sub-type `sqlite3`, NocoDB silently creates a new SQLite database upon first use if none exists under the specified `filename` in
+#' the `connection` list.
+#'
+#' @inheritParams integration_id
+#' @param title `pkgsnip::type("chr")`
+#'   NocoDB integration title.
+#' @param connection Subtype-specific connection details for database integrations. A list.
+#' @param search_paths Database search paths (schemas) to expose for the `"pg"` integration. A character vector.
+#'
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created NocoDB integration, invisibly")`
+#' @family integrations
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # create connection to PostgreSQL DB
+#' nocodb::create_integration(connection = list(host = "REPLACE-ME",
+#'                                              port = 5432,
+#'                                              ssl = TRUE,
+#'                                              sslmode = "verify-full",
+#'                                              user = "REPLACE-ME",
+#'                                              password = "REPLACE-ME",
+#'                                              database = REPLACE-ME),
+#'                            title = "Test PGSQL",
+#'                            type = "database",
+#'                            sub_type = "pg")
+#'
+#' # create connection to local SQLite DB
+#' nocodb::create_integration(connection = list(client = "sqlite3",
+#'                                              database = "",
+#'                                              connection = list(filename = "/test.db"),
+#'                                              useNullAsDefault = TRUE),
+#'                            title = "Test SQLite",
+#'                            type = "database",
+#'                            sub_type = "sqlite3")
+#'
+#' }
+create_integration <- function(connection,
+                               title,
+                               type = "database",
+                               sub_type = c("mysql2", "pg", "sqlite3"),
+                               search_paths = "public",
+                               hostname = pal::pkg_config_val(key = "hostname",
+                                                              pkg = this_pkg),
+                               email = pal::pkg_config_val(key = "email",
+                                                           pkg = this_pkg),
+                               password = pal::pkg_config_val(key = "password",
+                                                              pkg = this_pkg),
+                               api_token = pal::pkg_config_val(key = "api_token",
+                                                               pkg = this_pkg)) {
+  checkmate::assert_list(connection,
+                         any.missing = FALSE)
+  checkmate::assert_string(title)
+  type <- rlang::arg_match(type)
+  sub_type <- rlang::arg_match(sub_type)
+  checkmate::assert_character(search_paths,
+                              any.missing = FALSE)
+  
+  api(path = "api/v2/meta/integrations",
+      method = "POST",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token,
+      body_json = list(title = title,
+                       type = type,
+                       sub_type = sub_type,
+                       config = purrr::compact(list(client = sub_type,
+                                                    connection = connection,
+                                                    searchPath = list(search_paths)[sub_type == "pg"])))) |>
+    tidy_resp_data()
+}
+```
+
+#### `update_integration`
+
+NOTES
+
+-   The API endpoint requires certain fields beyond `id` to be set in the request body, which is annoying. For convenience, we just re-set the existing vals if
+    the args aren't provided.
+
+```{r}
+#' Update NocoDB integration
+#'
+#' Updates an integration on a NocoDB server via its `PATCH /api/v2/meta/integrations` API endpoint.
+#' 
+#' @inheritParams integration
+#' @inheritParams create_integration
+#'
+#' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the updated NocoDB integration, invisibly")`
+#' @family integrations
+#' @export
+update_integration <- function(id_integration,
+                               connection = NULL,
+                               title = NULL,
+                               type = NULL,
+                               sub_type = NULL,
+                               search_paths = NULL,
+                               hostname = pal::pkg_config_val(key = "hostname",
+                                                              pkg = this_pkg),
+                               email = pal::pkg_config_val(key = "email",
+                                                           pkg = this_pkg),
+                               password = pal::pkg_config_val(key = "password",
+                                                              pkg = this_pkg),
+                               api_token = pal::pkg_config_val(key = "api_token",
+                                                               pkg = this_pkg)) {
+  checkmate::assert_string(id_integration)
+  checkmate::assert_list(connection,
+                         any.missing = FALSE,
+                         null.ok = TRUE)
+  checkmate::assert_string(title,
+                           null.ok = TRUE)
+  checkmate::assert_character(search_paths,
+                              any.missing = FALSE,
+                              null.ok = TRUE)
+  
+  # complement mandatory fields if necessary
+  cur_data <- integration(id_integration = id_integration,
+                          hostname = hostname,
+                          email = email,
+                          password = password,
+                          api_token = api_token)
+  
+  if (is.null(title)) {
+    title <- cur_data$title
+  }
+  if (is.null(type)) {
+    type <- cur_data$type
+  } else {
+    type <- rlang::arg_match(arg = type,
+                             values = eval(formals(fun = create_integration)$type))
+  }
+  if (is.null(sub_type)) {
+    sub_type <- cur_data$sub_type
+  } else {
+    sub_type <- rlang::arg_match(arg = type,
+                                 values = eval(formals(fun = create_integration)$type))
+  }
+  
+  api(path = glue::glue("api/v2/meta/integrations/{id_integration}"),
+      method = "PATCH",
+      hostname = hostname,
+      email = email,
+      password = password,
+      api_token = api_token,
+      body_json = purrr::compact(list(title = title,
+                                      type = type,
+                                      sub_type = sub_type,
+                                      config = purrr::compact(list(client = sub_type,
+                                                                   connection = connection,
+                                                                   searchPath = list(search_paths)[sub_type == "pg"]))))) |>
+    tidy_resp_data()
+}
+```
+
+#### `delete_integration`
+
+```{r}
+#' Delete NocoDB integration
+#'
+#' Deletes an integration on a NocoDB server via its `DELETE /api/v2/meta/integrations` API endpoint.
+#'
+#' @inheritParams integration
+#'
+#' @return `id_integration`, invisibly.
+#' @family integrations
+#' @export
+delete_integration <- function(id_integration,
+                               hostname = pal::pkg_config_val(key = "hostname",
+                                                              pkg = this_pkg),
+                               email = pal::pkg_config_val(key = "email",
+                                                           pkg = this_pkg),
+                               password = pal::pkg_config_val(key = "password",
+                                                              pkg = this_pkg),
+                               api_token = pal::pkg_config_val(key = "api_token",
+                                                               pkg = this_pkg)) {
+  checkmate::assert_string(id_integration)
+  
+  result <- api(path = glue::glue("api/v2/meta/integrations/{id_integration}"),
+                method = "DELETE",
+                hostname = hostname,
+                email = email,
+                password = password,
+                api_token = api_token)
+  
+  if (!isTRUE(jsonlite::fromJSON(txt = result))) {
+    cli::cli_alert_warning("API responded with: {result}")
+  }
+  
+  invisible(id_integration)
+}
+```
+
 ### Plugins
 
 #### DESCRIPTION
