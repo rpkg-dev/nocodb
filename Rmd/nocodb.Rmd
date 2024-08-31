@@ -1497,7 +1497,8 @@ update_base_ui_acl <- function(id_tbl_view,
 
 #### DESCRIPTION
 
-Functions to manage NocoDB [data sources](https://docs.nocodb.com/category/data-sources).
+Functions to manage NocoDB [data sources](https://docs.nocodb.com/category/data-sources). Note data sources are conceptually abstracted by database
+[integrations](#integrations).
 
 #### `data_srcs`
 
@@ -1629,6 +1630,11 @@ data_src <- function(id_data_src,
 ```
 
 #### `test_data_src`
+
+NOTES
+
+-   Besides `client` and `connection`, there would also be a `searchPath` key in the request body JSON indicating the DB schema(s) to look for tables. But since
+    `searchPath` has *no* effect for this API endpoint, we don't set or expose it.
 
 ```{r}
 #' Test NocoDB data source
@@ -3025,7 +3031,7 @@ create_tbl_col <- function(id_tbl,
 
 #### `update_tbl_col`
 
-TODO:
+NOTES:
 
 -   The endpoint *triggers an unwanted table alteration in the external PostgreSQL DB*, which requires NocoDB to be the table owner to succeed, cf.
     <https://github.com/nocodb/nocodb/issues/7832#issuecomment-2002197438>.
@@ -3047,8 +3053,6 @@ TODO:
     ; - must be owner of table countries
     ```
 
-NOTES:
-
 -   The API endpoint requires certain fields beyond `id` to be set in the request body, which is annoying. For convenience, we just re-set the existing vals if
     the args aren't provided.
 
@@ -3065,8 +3069,8 @@ NOTES:
     We implement it very cautiously/restrictive for now and don't allow stuff we're uncertain about. For example, we don't allow switching the `uidt` between
     the above column types. It can always be extended in the future.
 
--   As of NocoDB v0.255.0, altering a column label via the UI result in changing both `column_name` and `title`. Using the API OTOH, it's possible to only
-    change one of both.
+-   As of NocoDB v0.255.0, altering a column label via the UI changes both `column_name` and `title`. Using the API OTOH, it's possible to only change one of
+    both.
 
 ```{r}
 #' Update NocoDB table column
