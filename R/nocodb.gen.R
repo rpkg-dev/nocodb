@@ -2591,6 +2591,7 @@ create_tbl_col <- function(id_tbl,
 #' @inheritParams tbl_col
 #' @param column_name Column name. Either `NULL` to omit or a character scalar.
 #' @param title NocoDB column title. Either `NULL` to omit or a character scalar.
+#' @param description NocoDB column description displayed as a tooltip in the column header. Either `NULL` to omit or a character scalar.
 #' @param uidt NocoDB **u**ser **i**nterface **d**ata **t**ype. Either `NULL` to omit or one of
 #'   `r pal::as_md_val_list(uidts$uidt)`.
 #' @param dt Column data type. Either `NULL` to omit or a character scalar.
@@ -2602,6 +2603,7 @@ create_tbl_col <- function(id_tbl,
 update_tbl_col <- function(id_col,
                            column_name = NULL,
                            title = NULL,
+                           description = NULL,
                            uidt = NULL,
                            dt = NULL,
                            cdf = NULL,
@@ -2616,6 +2618,8 @@ update_tbl_col <- function(id_col,
   checkmate::assert_string(id_col)
   checkmate::assert_string(column_name,
                            null.ok = TRUE)
+  checkmate::assert_string(description,
+                           null.ok = TRUE)
   checkmate::assert_string(title,
                            null.ok = TRUE)
   checkmate::assert_string(dt,
@@ -2623,7 +2627,7 @@ update_tbl_col <- function(id_col,
   checkmate::assert_string(cdf,
                            null.ok = TRUE)
   
-  data_col <- tbl_col(id_col = id_col,
+  cur_data <- tbl_col(id_col = id_col,
                       hostname = hostname,
                       email = email,
                       password = password,
@@ -2631,10 +2635,10 @@ update_tbl_col <- function(id_col,
   
   # complement mandatory fields if necessary
   if (is.null(title)) {
-    title <- data_col$title
+    title <- cur_data$title
   }
-  if (is.null(column_name) && data_col$uidt %in% uidts$uidt[!uidts$is_virtual]) {
-    column_name <- data_col$column_name
+  if (is.null(column_name) && cur_data$uidt %in% uidts$uidt[!uidts$is_virtual]) {
+    column_name <- cur_data$column_name
   }
   
   # dissallow cross-column-type UIDT changes
@@ -2642,7 +2646,7 @@ update_tbl_col <- function(id_col,
     
     uidt <- rlang::arg_match(arg = uidt,
                              values = uidts$uidt)
-    uidt_current <- data_col$uidt
+    uidt_current <- cur_data$uidt
     uidt_allowed <- ifelse(uidt_current %in% uidts$uidt[uidts$is_virtual],
                            uidt_current,
                            uidt)
@@ -2654,15 +2658,16 @@ update_tbl_col <- function(id_col,
   
   body_json <- purrr::compact(list(column_name = column_name,
                                    title = title,
+                                   description = description,
                                    uidt = uidt))
   
   # complement required fields for virtual UIDTs
-  body_json %<>% c(switch(EXPR = data_col$uidt,
+  body_json %<>% c(switch(EXPR = cur_data$uidt,
                           Formula = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
                           Links = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
-                          LinkToAnotherRecord = list(uidt = data_col$uidt,
+                          LinkToAnotherRecord = list(uidt = cur_data$uidt,
                                                      # NOTE: it's unclear whether this mapping is really correct
-                                                     childViewId = data_col$colOptions$fk_target_view_id),
+                                                     childViewId = cur_data$colOptions$fk_target_view_id),
                           Lookup = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
                           Rollup = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
                           NULL))
