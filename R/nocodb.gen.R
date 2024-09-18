@@ -1351,12 +1351,11 @@ data_src <- function(id_data_src,
 #' @examples
 #' \dontrun{
 #' nocodb::test_data_src(type = "pg",
-#'                       connection = list(sslmode = "verify-full",
-#'                                         user = "REPLACE-ME",
-#'                                         password = "REPLACE-ME",
-#'                                         host = "REPLACE-ME",
+#'                       connection = list(host = "REPLACE-ME",
 #'                                         port = 5432L,
-#'                                         ssl = list()))}
+#'                                         ssl = TRUE,
+#'                                         user = "REPLACE-ME",
+#'                                         password = "REPLACE-ME"))}
 test_data_src <- function(connection,
                           type = c("mssql", "mysql", "pg", "sqlite3"),
                           hostname = pal::pkg_config_val(key = "hostname",
@@ -1602,15 +1601,15 @@ sync_data_src_eagerly <- function(id_data_src,
 #' @examples
 #' \dontrun{
 #' nocodb::create_data_src(type = "pg",
-#'                         connection = list(sslmode = "verify-full",
-#'                                           user = "REPLACE-ME",
-#'                                           password = "REPLACE-ME",
-#'                                           database = REPLACE-ME,
-#'                                           host = "REPLACE-ME",
+#'                         connection = list(host = "REPLACE-ME",
 #'                                           port = 5432,
 #'                                           ssl = list(ca = "",
 #'                                                      cert = "",
-#'                                                      key = "")),
+#'                                                      key = ""),
+#'                                           sslmode = "verify-full",
+#'                                           user = "REPLACE-ME",
+#'                                           password = "REPLACE-ME",
+#'                                           database = "REPLACE-ME"),
 #'                         alias = "REPLACE-ME",
 #'                         inflection_column = "none",
 #'                         inflection_table = "none")}
