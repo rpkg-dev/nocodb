@@ -8,6 +8,7 @@ update_tbl_col(
   id_col,
   column_name = NULL,
   title = NULL,
+  description = NULL,
   uidt = NULL,
   dt = NULL,
   cdf = NULL,
@@ -23,6 +24,8 @@ update_tbl_col(
 \item{column_name}{Column name. Either \code{NULL} to omit or a character scalar.}
 
 \item{title}{NocoDB column title. Either \code{NULL} to omit or a character scalar.}
+
+\item{description}{NocoDB column description displayed as a tooltip in the column header. Either \code{NULL} to omit or a character scalar.}
 
 \item{uidt}{NocoDB \strong{u}ser \strong{i}nterface \strong{d}ata \strong{t}ype. Either \code{NULL} to omit or one of
 \itemize{

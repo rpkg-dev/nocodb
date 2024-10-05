@@ -18,6 +18,7 @@
 <url><loc>https://nocodb.rpkg.dev/dev/reference/create_base.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/create_data_src.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/create_data_src_tbl.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/create_integration.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/create_tbl.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/create_tbl_col.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/data_src.html</loc></url>
@@ -30,11 +31,15 @@
 <url><loc>https://nocodb.rpkg.dev/dev/reference/delete_base.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/delete_base_user.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/delete_data_src.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/delete_integration.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/delete_tbl.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/delete_tbl_col.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/delete_user.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/has_data_src_diff.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/index.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/integration.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/integration_id.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/integrations.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/invite_base_user.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/invite_user.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/is_access_token_expired.html</loc></url>
@@ -75,6 +80,7 @@
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_base_ui_acl.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_base_user.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_data_src.html</loc></url>
+<url><loc>https://nocodb.rpkg.dev/dev/reference/update_integration.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_plugin.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_tbl.html</loc></url>
 <url><loc>https://nocodb.rpkg.dev/dev/reference/update_tbl_col.html</loc></url>

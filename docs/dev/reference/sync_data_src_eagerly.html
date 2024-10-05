@@ -91,11 +91,11 @@ provided.</p></dd>
 
 <dt id="arg-wait-max">wait_max<a class="anchor" aria-label="anchor" href="#arg-wait-max"></a></dt>
 <dd><p>Maximum time in seconds to wait for schema synchronization to finish. An error is thrown if there are still schema changes pending when the
-timeout is reached. An integerish scalar.</p></dd>
+timeout is reached. An integerish scalar <code>&gt;= wait_resync</code>.</p></dd>
 
 
 <dt id="arg-wait-resync">wait_resync<a class="anchor" aria-label="anchor" href="#arg-wait-resync"></a></dt>
-<dd><p>Interval in seconds to repeat calling <code><a href="sync_data_src.html">sync_data_src()</a></code>. A number <code>&gt;= 1</code> and <code>&lt; wait_max</code>.</p></dd>
+<dd><p>Interval in seconds to repeat calling <code><a href="sync_data_src.html">sync_data_src()</a></code>. A number <code>&gt;= 1</code> and <code>&lt;= wait_max</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -112,7 +112,7 @@ timeout is reached. An integerish scalar.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

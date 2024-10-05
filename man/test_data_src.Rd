@@ -43,12 +43,11 @@ Note that the PostgreSQL \code{connection} parameters \code{sslmode} and \code{d
 \examples{
 \dontrun{
 nocodb::test_data_src(type = "pg",
-                      connection = list(sslmode = "verify-full",
-                                        user = "REPLACE-ME",
-                                        password = "REPLACE-ME",
-                                        host = "REPLACE-ME",
+                      connection = list(host = "REPLACE-ME",
                                         port = 5432L,
-                                        ssl = list()))}
+                                        ssl = TRUE,
+                                        user = "REPLACE-ME",
+                                        password = "REPLACE-ME"))}
 }
 \seealso{
 Other functions to manage NocoDB base data sources:

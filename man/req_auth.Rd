@@ -12,7 +12,7 @@ req_auth(
 )
 }
 \arguments{
-\item{req}{A \link[httr2]{request}.}
+\item{req}{A httr2 \link[httr2]{request} object.}
 
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 

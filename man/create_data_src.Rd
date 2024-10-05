@@ -6,6 +6,7 @@
 \usage{
 create_data_src(
   connection,
+  id_integration = NULL,
   type = c("mssql", "mysql", "pg", "sqlite3"),
   alias = NULL,
   inflection_column = c("none", "camelize"),
@@ -23,6 +24,9 @@ create_data_src(
 }
 \arguments{
 \item{connection}{Type-specific connection details for the data source. A list.}
+
+\item{id_integration}{\code{\link[base:character]{character(1)}}\cr
+Optional identifier of an existing NocoDB database integration as returned by \code{\link[=integration_id]{integration_id()}}, of which to reuse connection details}
 
 \item{type}{Type of the data source. One of \code{"mssql"}, \code{"mysql"}, \code{"pg"} or \code{"sqlite3"}.}
 
@@ -61,15 +65,15 @@ Adds a data source to the specified base on a NocoDB server via its
 \examples{
 \dontrun{
 nocodb::create_data_src(type = "pg",
-                        connection = list(sslmode = "verify-full",
-                                          user = "REPLACE-ME",
-                                          password = "REPLACE-ME",
-                                          database = REPLACE-ME,
-                                          host = "REPLACE-ME",
+                        connection = list(host = "REPLACE-ME",
                                           port = 5432,
                                           ssl = list(ca = "",
                                                      cert = "",
-                                                     key = "")),
+                                                     key = ""),
+                                          sslmode = "verify-full",
+                                          user = "REPLACE-ME",
+                                          password = "REPLACE-ME",
+                                          database = "REPLACE-ME"),
                         alias = "REPLACE-ME",
                         inflection_column = "none",
                         inflection_table = "none")}

@@ -54,6 +54,7 @@ Beware that this API endpoint alters the schema of the underlying table, which m
 <span>  <span class="va">id_col</span>,</span>
 <span>  column_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  description <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  uidt <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dt <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cdf <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -78,6 +79,10 @@ Beware that this API endpoint alters the schema of the underlying table, which m
 
 <dt id="arg-title">title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>
 <dd><p>NocoDB column title. Either <code>NULL</code> to omit or a character scalar.</p></dd>
+
+
+<dt id="arg-description">description<a class="anchor" aria-label="anchor" href="#arg-description"></a></dt>
+<dd><p>NocoDB column description displayed as a tooltip in the column header. Either <code>NULL</code> to omit or a character scalar.</p></dd>
 
 
 <dt id="arg-uidt">uidt<a class="anchor" aria-label="anchor" href="#arg-uidt"></a></dt>
@@ -175,7 +180,7 @@ provided.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

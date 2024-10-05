@@ -31,9 +31,9 @@ sync_data_src_eagerly(
 provided.}
 
 \item{wait_max}{Maximum time in seconds to wait for schema synchronization to finish. An error is thrown if there are still schema changes pending when the
-timeout is reached. An integerish scalar.}
+timeout is reached. An integerish scalar \verb{>= wait_resync}.}
 
-\item{wait_resync}{Interval in seconds to repeat calling \code{\link[=sync_data_src]{sync_data_src()}}. A number \verb{>= 1} and \verb{< wait_max}.}
+\item{wait_resync}{Interval in seconds to repeat calling \code{\link[=sync_data_src]{sync_data_src()}}. A number \verb{>= 1} and \verb{<= wait_max}.}
 }
 \value{
 \code{id_data_src}, invisibly.

@@ -191,6 +191,8 @@ is_access_token_expired <- function(x) {
 
 this_pkg <- utils::packageName()
 
+integration_types <- "database"
+
 md_text_no_api_token_support <- "This API endpoint does not support authentication via [API tokens](https://docs.nocodb.com/account-settings/api-tokens/)."
 md_text_super_admin_required <- "Only the super admin user is allowed to use this API endpoint, i.e. the provided credentials must belong to them."
 md_text_user_from_auth <- "The user is determined based on `api_token` or `email` and `password` (the former takes precedence)."
@@ -318,6 +320,10 @@ api <- function(path,
   }
   
   if (length(url_params) > 0L) {
+    # convert non-chr param vals to JSON for convenience (`httr2::req_url_query()` just forwards everything as chr)
+    url_params %<>% purrr::map_if(.p = \(x) !is.character(x),
+                                  .f = \(x) jsonlite::toJSON(x = x,
+                                                             auto_unbox = TRUE))
     req %<>% httr2::req_url_query(!!!url_params)
   }
   
@@ -1511,8 +1517,8 @@ sync_data_src <- function(id_data_src,
 #'
 #' @inheritParams sync_data_src
 #' @param wait_max Maximum time in seconds to wait for schema synchronization to finish. An error is thrown if there are still schema changes pending when the
-#'   timeout is reached. An integerish scalar.
-#' @param wait_resync Interval in seconds to repeat calling [sync_data_src()]. A number `>= 1` and `< wait_max`.
+#'   timeout is reached. An integerish scalar `>= wait_resync`.
+#' @param wait_resync Interval in seconds to repeat calling [sync_data_src()]. A number `>= 1` and `<= wait_max`.
 #'
 #' @return `id_data_src`, invisibly.
 #' @family nocodb
@@ -1534,10 +1540,13 @@ sync_data_src_eagerly <- function(id_data_src,
                                   wait_max = 30L,
                                   wait_resync = 7.0) {
   
-  checkmate::assert_count(wait_max)
+  checkmate::assert_count(wait_max,
+                          positive = TRUE)
   checkmate::assert_number(wait_resync,
                            lower = 1L,
-                           upper = wait_max - 1L)
+                           upper = wait_max)
+  checkmate::assert_int(wait_max,
+                        lower = ceiling(wait_resync))
   
   sync_data_src(id_data_src = id_data_src,
                 id_base = id_base,
@@ -1583,6 +1592,8 @@ sync_data_src_eagerly <- function(id_data_src,
 #'
 #' @inheritParams data_src_id
 #' @param connection Type-specific connection details for the data source. A list.
+#' @param id_integration `r pkgsnip::type("chr")`
+#'   Optional identifier of an existing NocoDB database integration as returned by [integration_id()], of which to reuse connection details
 #' @param type Type of the data source. One of `r pal::enum_fn_param_defaults(param = "type", fn = "create_data_src")`.
 #' @param inflection_column Type of inflection to apply for column names in the data source. One of
 #'   `r pal::enum_fn_param_defaults(param = "inflection_column", fn = "create_data_src")`.
@@ -1614,6 +1625,7 @@ sync_data_src_eagerly <- function(id_data_src,
 #'                         inflection_column = "none",
 #'                         inflection_table = "none")}
 create_data_src <- function(connection,
+                            id_integration = NULL,
                             type = c("mssql", "mysql", "pg", "sqlite3"),
                             alias = NULL,
                             inflection_column = c("none", "camelize"),
@@ -1633,11 +1645,13 @@ create_data_src <- function(connection,
                                                            pkg = this_pkg),
                             api_token = pal::pkg_config_val(key = "api_token",
                                                             pkg = this_pkg)) {
-  checkmate::assert_string(alias,
-                           null.ok = TRUE)
-  type <- rlang::arg_match(type)
   checkmate::assert_list(connection,
                          any.missing = FALSE)
+  checkmate::assert_string(id_integration,
+                           null.ok = TRUE)
+  type <- rlang::arg_match(type)
+  checkmate::assert_string(alias,
+                           null.ok = TRUE)
   inflection_column <- rlang::arg_match(inflection_column)
   inflection_table <- rlang::arg_match(inflection_table)
   checkmate::assert_flag(is_schema_readonly)
@@ -1651,7 +1665,8 @@ create_data_src <- function(connection,
       email = email,
       password = password,
       api_token = api_token,
-      body_json = purrr::compact(list(alias = alias,
+      body_json = purrr::compact(list(fk_integration_id = id_integration,
+                                      alias = alias,
                                       type = type,
                                       config = list(client = type,
                                                     connection = connection),
@@ -3619,11 +3634,24 @@ resend_base_user_invitation <- function(id_user,
 #' Returns a [tibble][tibble::tbl_df] with metadata about all configured integrations on a NocoDB server from its `GET /api/v2/meta/integrations` API endpoint.
 #'
 #' @inheritParams api
+#' @param type `r pkgsnip::type("chr")`
+#'   Optional integration type to limit the results to. One of `r pal::as_md_vals(integration_types) |> pal::enum_str(sep2 = " or ")`.
+#' @param id_base `r pkgsnip::type("chr")`
+#'   Optional NocoDB base identifier (as returned by [base_id()]) to limit the results to.
+#' @param incl_config `r pkgsnip::type("lgl")`
+#'   Whether or not to include the integration configuration in the result.
+#' @param decode_config `r pkgsnip::type("lgl")`
+#'   Whether or not to decode the integration configuration in the result. If `FALSE`, the whole configuration is returned as a single Base64-encoded and
+#'   encrypted `config` column, otherwise it is returned as multiple clear-text `config.*` columns. Only relevant if `incl_config = TRUE`.
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family integrations
 #' @export
-integrations <- function(hostname = pal::pkg_config_val(key = "hostname",
+integrations <- function(type = NULL,
+                         id_base = NULL,
+                         incl_config = TRUE,
+                         decode_config = TRUE,
+                         hostname = pal::pkg_config_val(key = "hostname",
                                                         pkg = this_pkg),
                          email = pal::pkg_config_val(key = "email",
                                                      pkg = this_pkg),
@@ -3631,12 +3659,24 @@ integrations <- function(hostname = pal::pkg_config_val(key = "hostname",
                                                         pkg = this_pkg),
                          api_token = pal::pkg_config_val(key = "api_token",
                                                          pkg = this_pkg)) {
+  if (!is.null(type)) {
+    type <- rlang::arg_match(arg = type,
+                             values = integration_types)
+  }
+  checkmate::assert_flag(incl_config)
+  checkmate::assert_flag(decode_config)
+  checkmate::assert_string(id_base,
+                           null.ok = TRUE)
+  
   api(path = "api/v2/meta/integrations",
       method = "GET",
       hostname = hostname,
       email = email,
       password = password,
-      api_token = api_token) |>
+      api_token = api_token,
+      url_params = purrr::compact(list(type = type,
+                                       baseId = id_base,
+                                       includeDatabaseInfo = decode_config[incl_config]))) |>
     _$list |>
     tibble::as_tibble() |>
     tidy_date_time_cols()
@@ -3724,11 +3764,13 @@ integration_id <- function(title = NULL,
 #' @inheritParams api
 #' @param id_integration `r pkgsnip::type("chr")`
 #'   NocoDB integration identifier as returned by [integration_id()].
+#' @param incl_config Whether or not to include the integration configuration in the result (as a separate `config` column).
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family integrations
 #' @export
 integration <- function(id_integration,
+                        incl_config = TRUE,
                         hostname = pal::pkg_config_val(key = "hostname",
                                                        pkg = this_pkg),
                         email = pal::pkg_config_val(key = "email",
@@ -3738,13 +3780,15 @@ integration <- function(id_integration,
                         api_token = pal::pkg_config_val(key = "api_token",
                                                         pkg = this_pkg)) {
   checkmate::assert_string(id_integration)
+  checkmate::assert_flag(incl_config)
   
   api(path = glue::glue("api/v2/meta/integrations/{id_integration}"),
       method = "GET",
       hostname = hostname,
       email = email,
       password = password,
-      api_token = api_token) |>
+      api_token = api_token,
+      url_params = list(includeConfig = incl_config)) |>
     tidy_resp_data()
 }
 
@@ -3861,11 +3905,11 @@ update_integration <- function(id_integration,
   
   # complement mandatory fields if necessary
   cur_data <- integration(id_integration = id_integration,
+                          incl_config = TRUE,
                           hostname = hostname,
                           email = email,
                           password = password,
                           api_token = api_token)
-  
   if (is.null(title)) {
     title <- cur_data$title
   }
@@ -3893,7 +3937,7 @@ update_integration <- function(id_integration,
                                       sub_type = sub_type,
                                       config = purrr::compact(list(client = sub_type,
                                                                    connection = connection,
-                                                                   searchPath = list(search_paths)[sub_type == "pg"]))))) |>
+                                                                   searchPath = list(search_paths)[sub_type == "pg"]))[!is.null(connection)]))) |>
     tidy_resp_data()
 }
 

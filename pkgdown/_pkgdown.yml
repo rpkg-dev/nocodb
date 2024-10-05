@@ -28,7 +28,9 @@ reference:
   - base_ui_acl
   - update_base_ui_acl
 - subtitle: Data sources
-  desc: Functions to manage NocoDB [data sources](https://docs.nocodb.com/category/data-sources).
+  desc: |-
+    Functions to manage NocoDB [data sources](https://docs.nocodb.com/category/data-sources). Note data sources are conceptually abstracted by database
+    [integrations](#integrations).
 - contents:
   - data_srcs
   - data_src_id
@@ -91,6 +93,15 @@ reference:
   - delete_base_user
   - invite_base_user
   - resend_base_user_invitation
+- subtitle: Integrations {#integrations}
+  desc: Functions to manage NocoDB [integrations](https://docs.nocodb.com/integrations/overview/).
+- contents:
+  - integrations
+  - integration_id
+  - integration
+  - create_integration
+  - update_integration
+  - delete_integration
 - subtitle: Plugins
   desc: Functions to manage NocoDB [plugins](https://docs.nocodb.com/account-settings/oss-specific-details/#app-store).
 - contents:
