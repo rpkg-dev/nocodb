@@ -1834,8 +1834,8 @@ sync_data_src <- function(id_data_src,
 #'
 #' @inheritParams sync_data_src
 #' @param wait_max Maximum time in seconds to wait for schema synchronization to finish. An error is thrown if there are still schema changes pending when the
-#'   timeout is reached. An integerish scalar.
-#' @param wait_resync Interval in seconds to repeat calling [sync_data_src()]. A number `>= 1` and `< wait_max`.
+#'   timeout is reached. An integerish scalar `>= wait_resync`.
+#' @param wait_resync Interval in seconds to repeat calling [sync_data_src()]. A number `>= 1` and `<= wait_max`.
 #'
 #' @return `id_data_src`, invisibly.
 #' @family nocodb
@@ -1857,10 +1857,13 @@ sync_data_src_eagerly <- function(id_data_src,
                                   wait_max = 30L,
                                   wait_resync = 7.0) {
   
-  checkmate::assert_count(wait_max)
+  checkmate::assert_count(wait_max,
+                          positive = TRUE)
   checkmate::assert_number(wait_resync,
                            lower = 1L,
-                           upper = wait_max - 1L)
+                           upper = wait_max)
+  checkmate::assert_int(wait_max,
+                        lower = ceiling(wait_resync))
   
   sync_data_src(id_data_src = id_data_src,
                 id_base = id_base,
