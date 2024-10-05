@@ -9,9 +9,9 @@ add_user(
   user_password,
   display_name = NULL,
   subscribe_to_newsletter = FALSE,
-  hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
-  email = pal::pkg_config_val(key = "email", pkg = this_pkg, require = TRUE),
-  password = pal::pkg_config_val(key = "password", pkg = this_pkg, require = TRUE),
+  hostname = pal::pkg_config_val("hostname"),
+  email = pal::pkg_config_val("email", require = TRUE),
+  password = pal::pkg_config_val("password", require = TRUE),
   quiet = TRUE
 )
 }

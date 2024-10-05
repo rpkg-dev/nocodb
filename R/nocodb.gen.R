@@ -39,8 +39,7 @@ utils::globalVariables(names = c(".",
 #' nocodb:::assemble_url("api/v2/meta/bases/")}
 assemble_url <- function(...,
                          .scheme = "https",
-                         .hostname = pal::pkg_config_val(key = "hostname",
-                                                         pkg = this_pkg)) {
+                         .hostname = pal::pkg_config_val("hostname")) {
   httr2::url_build(url = list(scheme = .scheme,
                               hostname = .hostname,
                               path = fs::path(...)))
@@ -108,10 +107,8 @@ tidy_date_time_cols <- function(data) {
 #' @return Access token as a character scalar. `NA_character_` if no access token exists for `hostname` and `email`.
 #' @family access_token
 #' @keywords internal
-access_token <- function(hostname = pal::pkg_config_val(key = "hostname",
-                                                        pkg = this_pkg),
-                         email = pal::pkg_config_val(key = "email",
-                                                     pkg = this_pkg,
+access_token <- function(hostname = pal::pkg_config_val("hostname"),
+                         email = pal::pkg_config_val("email",
                                                      require = TRUE)) {
   checkmate::assert_string(hostname)
   checkmate::assert_string(email)
@@ -130,10 +127,8 @@ access_token <- function(hostname = pal::pkg_config_val(key = "hostname",
 #' @family access_token
 #' @keywords internal
 store_access_token <- function(x,
-                               hostname = pal::pkg_config_val(key = "hostname",
-                                                              pkg = this_pkg),
-                               email = pal::pkg_config_val(key = "email",
-                                                           pkg = this_pkg,
+                               hostname = pal::pkg_config_val("hostname"),
+                               email = pal::pkg_config_val("email",
                                                            require = TRUE)) {
   stateful$access_token[[hostname]][[email]] <- x
   
@@ -284,14 +279,10 @@ stateful$access_token <- list()
 #' @export
 api <- function(path,
                 method = c("GET", "CONNECT", "DELETE", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE"),
-                hostname = pal::pkg_config_val(key = "hostname",
-                                               pkg = this_pkg),
-                email = pal::pkg_config_val(key = "email",
-                                            pkg = this_pkg),
-                password = pal::pkg_config_val(key = "password",
-                                               pkg = this_pkg),
-                api_token = pal::pkg_config_val(key = "api_token",
-                                                pkg = this_pkg),
+                hostname = pal::pkg_config_val("hostname"),
+                email = pal::pkg_config_val("email"),
+                password = pal::pkg_config_val("password"),
+                api_token = pal::pkg_config_val("api_token"),
                 auth = TRUE,
                 url_params = NULL,
                 body_json = NULL,
@@ -374,8 +365,7 @@ api <- function(path,
 #' @keywords internal
 req_basic <- function(path,
                       method = c("GET", "CONNECT", "DELETE", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE"),
-                      hostname = pal::pkg_config_val(key = "hostname",
-                                                     pkg = this_pkg),
+                      hostname = pal::pkg_config_val("hostname"),
                       max_tries = 3L) {
   
   checkmate::assert_string(path)
@@ -436,12 +426,10 @@ req_basic <- function(path,
 #' @keywords internal
 # nolint start: cyclocomp_linter
 req_auth <- function(req,
-                     email = pal::pkg_config_val(key = "email",
-                                                 pkg = this_pkg),
-                     password = pal::pkg_config_val(key = "password",
-                                                    pkg = this_pkg),
-                     api_token = pal::pkg_config_val(key = "api_token",
-                                                     pkg = this_pkg)) {
+                     email = pal::pkg_config_val("email"),
+                     password = pal::pkg_config_val("password"),
+                     api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(api_token,
                            null.ok = TRUE)
   
@@ -527,13 +515,10 @@ req_auth <- function(req,
 #' @family auth
 #' @family user
 #' @export
-sign_in <- function(hostname = pal::pkg_config_val(key = "hostname",
-                                                   pkg = this_pkg),
-                    email = pal::pkg_config_val(key = "email",
-                                                pkg = this_pkg,
+sign_in <- function(hostname = pal::pkg_config_val("hostname"),
+                    email = pal::pkg_config_val("email",
                                                 require = TRUE),
-                    password = pal::pkg_config_val(key = "password",
-                                                   pkg = this_pkg,
+                    password = pal::pkg_config_val("password",
                                                    require = TRUE),
                     cache_refresh_token = TRUE) {
   
@@ -577,15 +562,11 @@ sign_in <- function(hostname = pal::pkg_config_val(key = "hostname",
 #' @family auth
 #' @family user
 #' @export
-sign_out <- function(hostname = pal::pkg_config_val(key = "hostname",
-                                                    pkg = this_pkg),
-                     email = pal::pkg_config_val(key = "email",
-                                                 pkg = this_pkg,
+sign_out <- function(hostname = pal::pkg_config_val("hostname"),
+                     email = pal::pkg_config_val("email",
                                                  require = TRUE),
-                     password = pal::pkg_config_val(key = "password",
-                                                    pkg = this_pkg),
-                     api_token = pal::pkg_config_val(key = "api_token",
-                                                     pkg = this_pkg),
+                     password = pal::pkg_config_val("password"),
+                     api_token = pal::pkg_config_val("api_token"),
                      quiet = FALSE) {
   
   checkmate::assert_string(hostname)
@@ -640,10 +621,8 @@ sign_out <- function(hostname = pal::pkg_config_val(key = "hostname",
 #' @family auth
 #' @family user
 #' @keywords internal
-is_signed_in <- function(hostname = pal::pkg_config_val(key = "hostname",
-                                                        pkg = this_pkg),
-                         email = pal::pkg_config_val(key = "email",
-                                                     pkg = this_pkg,
+is_signed_in <- function(hostname = pal::pkg_config_val("hostname"),
+                         email = pal::pkg_config_val("email",
                                                      require = TRUE)) {
   !is.na(access_token(hostname = hostname,
                       email = email))
@@ -663,10 +642,8 @@ is_signed_in <- function(hostname = pal::pkg_config_val(key = "hostname",
 #' @family auth
 #' @family user
 #' @keywords internal
-refresh_sign_in <- function(hostname = pal::pkg_config_val(key = "hostname",
-                                                           pkg = this_pkg),
-                            email = pal::pkg_config_val(key = "email",
-                                                        pkg = this_pkg,
+refresh_sign_in <- function(hostname = pal::pkg_config_val("hostname"),
+                            email = pal::pkg_config_val("email",
                                                         require = TRUE)) {
   req_basic(path = "api/v1/auth/token/refresh",
             method = "POST",
@@ -693,12 +670,9 @@ refresh_sign_in <- function(hostname = pal::pkg_config_val(key = "hostname",
 #' @family auth
 #' @family user
 #' @keywords internal
-is_super_admin <- function(hostname = pal::pkg_config_val(key = "hostname",
-                                                          pkg = this_pkg),
-                           email = pal::pkg_config_val(key = "email",
-                                                       pkg = this_pkg),
-                           password = pal::pkg_config_val(key = "password",
-                                                          pkg = this_pkg),
+is_super_admin <- function(hostname = pal::pkg_config_val("hostname"),
+                           email = pal::pkg_config_val("email"),
+                           password = pal::pkg_config_val("password"),
                            api_token = NULL) {
   
   checkmate::assert_string(api_token,
@@ -739,12 +713,9 @@ is_super_admin <- function(hostname = pal::pkg_config_val(key = "hostname",
 #' @family auth
 #' @family user
 #' @keywords internal
-assert_super_admin <- function(hostname = pal::pkg_config_val(key = "hostname",
-                                                              pkg = this_pkg),
-                               email = pal::pkg_config_val(key = "email",
-                                                           pkg = this_pkg),
-                               password = pal::pkg_config_val(key = "password",
-                                                              pkg = this_pkg),
+assert_super_admin <- function(hostname = pal::pkg_config_val("hostname"),
+                               email = pal::pkg_config_val("email"),
+                               password = pal::pkg_config_val("password"),
                                api_token = NULL) {
   
   result <- is_super_admin(hostname = hostname,
@@ -775,13 +746,10 @@ assert_super_admin <- function(hostname = pal::pkg_config_val(key = "hostname",
 #' @family api_tokens
 #' @family auth
 #' @export
-api_tokens <- function(hostname = pal::pkg_config_val(key = "hostname",
-                                                      pkg = this_pkg),
-                       email = pal::pkg_config_val(key = "email",
-                                                   pkg = this_pkg,
+api_tokens <- function(hostname = pal::pkg_config_val("hostname"),
+                       email = pal::pkg_config_val("email",
                                                    require = TRUE),
-                       password = pal::pkg_config_val(key = "password",
-                                                      pkg = this_pkg,
+                       password = pal::pkg_config_val("password",
                                                       require = TRUE)) {
   api(path = "api/v1/tokens",
       method = "GET",
@@ -809,13 +777,10 @@ api_tokens <- function(hostname = pal::pkg_config_val(key = "hostname",
 #' @family auth
 #' @export
 create_api_token <- function(description,
-                             hostname = pal::pkg_config_val(key = "hostname",
-                                                      pkg = this_pkg),
-                             email = pal::pkg_config_val(key = "email",
-                                                         pkg = this_pkg,
+                             hostname = pal::pkg_config_val("hostname"),
+                             email = pal::pkg_config_val("email",
                                                          require = TRUE),
-                             password = pal::pkg_config_val(key = "password",
-                                                            pkg = this_pkg,
+                             password = pal::pkg_config_val("password",
                                                             require = TRUE)) {
   checkmate::assert_string(description)
   
@@ -844,13 +809,10 @@ create_api_token <- function(description,
 #' @family auth
 #' @export
 delete_api_token <- function(api_token,
-                             hostname = pal::pkg_config_val(key = "hostname",
-                                                            pkg = this_pkg),
-                             email = pal::pkg_config_val(key = "email",
-                                                         pkg = this_pkg,
+                             hostname = pal::pkg_config_val("hostname"),
+                             email = pal::pkg_config_val("email",
                                                          require = TRUE),
-                             password = pal::pkg_config_val(key = "password",
-                                                            pkg = this_pkg,
+                             password = pal::pkg_config_val("password",
                                                             require = TRUE)) {
   
   api(path = fs::path("api/v1/tokens/", utils::URLencode(api_token)),
@@ -873,14 +835,11 @@ delete_api_token <- function(api_token,
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family bases
 #' @export
-bases <- function(hostname = pal::pkg_config_val(key = "hostname",
-                                                 pkg = this_pkg),
-                  email = pal::pkg_config_val(key = "email",
-                                              pkg = this_pkg),
-                  password = pal::pkg_config_val(key = "password",
-                                                 pkg = this_pkg),
-                  api_token = pal::pkg_config_val(key = "api_token",
-                                                  pkg = this_pkg)) {
+bases <- function(hostname = pal::pkg_config_val("hostname"),
+                  email = pal::pkg_config_val("email"),
+                  password = pal::pkg_config_val("password"),
+                  api_token = pal::pkg_config_val("api_token")) {
+  
   api(path = "api/v2/meta/bases",
       method = "GET",
       hostname = hostname,
@@ -902,16 +861,12 @@ bases <- function(hostname = pal::pkg_config_val(key = "hostname",
 #' @return Base identifier as a character scalar.
 #' @family bases
 #' @export
-base_id <- function(title = pal::pkg_config_val(key = "base_title",
-                                                pkg = this_pkg),
-                    hostname = pal::pkg_config_val(key = "hostname",
-                                                   pkg = this_pkg),
-                    email = pal::pkg_config_val(key = "email",
-                                                pkg = this_pkg),
-                    password = pal::pkg_config_val(key = "password",
-                                                   pkg = this_pkg),
-                    api_token = pal::pkg_config_val(key = "api_token",
-                                                    pkg = this_pkg)) {
+base_id <- function(title = pal::pkg_config_val("base_title"),
+                    hostname = pal::pkg_config_val("hostname"),
+                    email = pal::pkg_config_val("email"),
+                    password = pal::pkg_config_val("password"),
+                    api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(title)
   
   result <-
@@ -949,14 +904,11 @@ base <- function(id_base = base_id(hostname = hostname,
                                    email = email,
                                    password = password,
                                    api_token = api_token),
-                 hostname = pal::pkg_config_val(key = "hostname",
-                                                pkg = this_pkg),
-                 email = pal::pkg_config_val(key = "email",
-                                             pkg = this_pkg),
-                 password = pal::pkg_config_val(key = "password",
-                                                pkg = this_pkg),
-                 api_token = pal::pkg_config_val(key = "api_token",
-                                                 pkg = this_pkg)) {
+                 hostname = pal::pkg_config_val("hostname"),
+                 email = pal::pkg_config_val("email"),
+                 password = pal::pkg_config_val("password"),
+                 api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_base)
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}"),
@@ -983,19 +935,15 @@ base <- function(id_base = base_id(hostname = hostname,
 #' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created NocoDB base, invisibly")`
 #' @family bases
 #' @export
-create_base <- function(title = pal::pkg_config_val(key = "base_title",
-                                                    pkg = this_pkg),
+create_base <- function(title = pal::pkg_config_val("base_title"),
                         description = NULL,
                         color = "#36BFFF",
                         show_null_and_empty_in_filter = TRUE,
-                        hostname = pal::pkg_config_val(key = "hostname",
-                                                       pkg = this_pkg),
-                        email = pal::pkg_config_val(key = "email",
-                                                    pkg = this_pkg),
-                        password = pal::pkg_config_val(key = "password",
-                                                       pkg = this_pkg),
-                        api_token = pal::pkg_config_val(key = "api_token",
-                                                        pkg = this_pkg)) {
+                        hostname = pal::pkg_config_val("hostname"),
+                        email = pal::pkg_config_val("email"),
+                        password = pal::pkg_config_val("password"),
+                        api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(title)
   checkmate::assert_string(description,
                            null.ok = TRUE)
@@ -1039,14 +987,11 @@ update_base <- function(title = NULL,
                                           email = email,
                                           password = password,
                                           api_token = api_token),
-                        hostname = pal::pkg_config_val(key = "hostname",
-                                                       pkg = this_pkg),
-                        email = pal::pkg_config_val(key = "email",
-                                                    pkg = this_pkg),
-                        password = pal::pkg_config_val(key = "password",
-                                                       pkg = this_pkg),
-                        api_token = pal::pkg_config_val(key = "api_token",
-                                                        pkg = this_pkg)) {
+                        hostname = pal::pkg_config_val("hostname"),
+                        email = pal::pkg_config_val("email"),
+                        password = pal::pkg_config_val("password"),
+                        api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(title,
                            null.ok = TRUE)
   checkmate::assert_string(description,
@@ -1095,14 +1040,11 @@ update_base <- function(title = NULL,
 #' @family bases
 #' @export
 delete_base <- function(id_base,
-                        hostname = pal::pkg_config_val(key = "hostname",
-                                                       pkg = this_pkg),
-                        email = pal::pkg_config_val(key = "email",
-                                                    pkg = this_pkg),
-                        password = pal::pkg_config_val(key = "password",
-                                                       pkg = this_pkg),
-                        api_token = pal::pkg_config_val(key = "api_token",
-                                                        pkg = this_pkg)) {
+                        hostname = pal::pkg_config_val("hostname"),
+                        email = pal::pkg_config_val("email"),
+                        password = pal::pkg_config_val("password"),
+                        api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_base)
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}"),
@@ -1132,14 +1074,10 @@ base_ui_acl <- function(id_base = base_id(hostname = hostname,
                                           email = email,
                                           password = password,
                                           api_token = api_token),
-                        hostname = pal::pkg_config_val(key = "hostname",
-                                                       pkg = this_pkg),
-                        email = pal::pkg_config_val(key = "email",
-                                                    pkg = this_pkg),
-                        password = pal::pkg_config_val(key = "password",
-                                                       pkg = this_pkg),
-                        api_token = pal::pkg_config_val(key = "api_token",
-                                                        pkg = this_pkg)) {
+                        hostname = pal::pkg_config_val("hostname"),
+                        email = pal::pkg_config_val("email"),
+                        password = pal::pkg_config_val("password"),
+                        api_token = pal::pkg_config_val("api_token")) {
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}/visibility-rules"),
       method = "GET",
@@ -1183,14 +1121,10 @@ update_base_ui_acl <- function(id_tbl_view,
                                                  email = email,
                                                  password = password,
                                                  api_token = api_token),
-                               hostname = pal::pkg_config_val(key = "hostname",
-                                                              pkg = this_pkg),
-                               email = pal::pkg_config_val(key = "email",
-                                                           pkg = this_pkg),
-                               password = pal::pkg_config_val(key = "password",
-                                                              pkg = this_pkg),
-                               api_token = pal::pkg_config_val(key = "api_token",
-                                                               pkg = this_pkg),
+                               hostname = pal::pkg_config_val("hostname"),
+                               email = pal::pkg_config_val("email"),
+                               password = pal::pkg_config_val("password"),
+                               api_token = pal::pkg_config_val("api_token"),
                                quiet = FALSE) {
   
   checkmate::assert_flag(guest)
@@ -1237,14 +1171,11 @@ data_srcs <- function(id_base = base_id(hostname = hostname,
                                         email = email,
                                         password = password,
                                         api_token = api_token),
-                      hostname = pal::pkg_config_val(key = "hostname",
-                                                     pkg = this_pkg),
-                      email = pal::pkg_config_val(key = "email",
-                                                  pkg = this_pkg),
-                      password = pal::pkg_config_val(key = "password",
-                                                     pkg = this_pkg),
-                      api_token = pal::pkg_config_val(key = "api_token",
-                                                      pkg = this_pkg)) {
+                      hostname = pal::pkg_config_val("hostname"),
+                      email = pal::pkg_config_val("email"),
+                      password = pal::pkg_config_val("password"),
+                      api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_base)
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}/sources"),
@@ -1273,14 +1204,11 @@ data_src_id <- function(alias,
                                           email = email,
                                           password = password,
                                           api_token = api_token),
-                        hostname = pal::pkg_config_val(key = "hostname",
-                                                       pkg = this_pkg),
-                        email = pal::pkg_config_val(key = "email",
-                                                    pkg = this_pkg),
-                        password = pal::pkg_config_val(key = "password",
-                                                       pkg = this_pkg),
-                        api_token = pal::pkg_config_val(key = "api_token",
-                                                        pkg = this_pkg)) {
+                        hostname = pal::pkg_config_val("hostname"),
+                        email = pal::pkg_config_val("email"),
+                        password = pal::pkg_config_val("password"),
+                        api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(alias)
   
   result <-
@@ -1320,14 +1248,11 @@ data_src <- function(id_data_src,
                                        email = email,
                                        password = password,
                                        api_token = api_token),
-                     hostname = pal::pkg_config_val(key = "hostname",
-                                                    pkg = this_pkg),
-                     email = pal::pkg_config_val(key = "email",
-                                                 pkg = this_pkg),
-                     password = pal::pkg_config_val(key = "password",
-                                                    pkg = this_pkg),
-                     api_token = pal::pkg_config_val(key = "api_token",
-                                                     pkg = this_pkg)) {
+                     hostname = pal::pkg_config_val("hostname"),
+                     email = pal::pkg_config_val("email"),
+                     password = pal::pkg_config_val("password"),
+                     api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_data_src)
   checkmate::assert_string(id_base)
   
@@ -1364,14 +1289,10 @@ data_src <- function(id_data_src,
 #'                                         password = "REPLACE-ME"))}
 test_data_src <- function(connection,
                           type = c("mssql", "mysql", "pg", "sqlite3"),
-                          hostname = pal::pkg_config_val(key = "hostname",
-                                                         pkg = this_pkg),
-                          email = pal::pkg_config_val(key = "email",
-                                                      pkg = this_pkg),
-                          password = pal::pkg_config_val(key = "password",
-                                                         pkg = this_pkg),
-                          api_token = pal::pkg_config_val(key = "api_token",
-                                                          pkg = this_pkg),
+                          hostname = pal::pkg_config_val("hostname"),
+                          email = pal::pkg_config_val("email"),
+                          password = pal::pkg_config_val("password"),
+                          api_token = pal::pkg_config_val("api_token"),
                           quiet = FALSE) {
   
   checkmate::assert_list(connection,
@@ -1414,14 +1335,11 @@ data_src_diff <- function(id_data_src,
                                             email = email,
                                             password = password,
                                             api_token = api_token),
-                          hostname = pal::pkg_config_val(key = "hostname",
-                                                         pkg = this_pkg),
-                          email = pal::pkg_config_val(key = "email",
-                                                      pkg = this_pkg),
-                          password = pal::pkg_config_val(key = "password",
-                                                         pkg = this_pkg),
-                          api_token = pal::pkg_config_val(key = "api_token",
-                                                          pkg = this_pkg)) {
+                          hostname = pal::pkg_config_val("hostname"),
+                          email = pal::pkg_config_val("email"),
+                          password = pal::pkg_config_val("password"),
+                          api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_data_src)
   checkmate::assert_string(id_base)
   
@@ -1448,14 +1366,11 @@ has_data_src_diff <- function(id_data_src,
                                                 email = email,
                                                 password = password,
                                                 api_token = api_token),
-                              hostname = pal::pkg_config_val(key = "hostname",
-                                                             pkg = this_pkg),
-                              email = pal::pkg_config_val(key = "email",
-                                                          pkg = this_pkg),
-                              password = pal::pkg_config_val(key = "password",
-                                                             pkg = this_pkg),
-                              api_token = pal::pkg_config_val(key = "api_token",
-                                                              pkg = this_pkg)) {
+                              hostname = pal::pkg_config_val("hostname"),
+                              email = pal::pkg_config_val("email"),
+                              password = pal::pkg_config_val("password"),
+                              api_token = pal::pkg_config_val("api_token")) {
+  
   diff <- data_src_diff(id_data_src = id_data_src,
                         id_base = id_base,
                         hostname = hostname,
@@ -1489,14 +1404,11 @@ sync_data_src <- function(id_data_src,
                                             email = email,
                                             password = password,
                                             api_token = api_token),
-                          hostname = pal::pkg_config_val(key = "hostname",
-                                                         pkg = this_pkg),
-                          email = pal::pkg_config_val(key = "email",
-                                                      pkg = this_pkg),
-                          password = pal::pkg_config_val(key = "password",
-                                                         pkg = this_pkg),
-                          api_token = pal::pkg_config_val(key = "api_token",
-                                                          pkg = this_pkg)) {
+                          hostname = pal::pkg_config_val("hostname"),
+                          email = pal::pkg_config_val("email"),
+                          password = pal::pkg_config_val("password"),
+                          api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_data_src)
   checkmate::assert_string(id_base)
   
@@ -1529,14 +1441,10 @@ sync_data_src_eagerly <- function(id_data_src,
                                                     email = email,
                                                     password = password,
                                                     api_token = api_token),
-                                  hostname = pal::pkg_config_val(key = "hostname",
-                                                                 pkg = this_pkg),
-                                  email = pal::pkg_config_val(key = "email",
-                                                              pkg = this_pkg),
-                                  password = pal::pkg_config_val(key = "password",
-                                                                 pkg = this_pkg),
-                                  api_token = pal::pkg_config_val(key = "api_token",
-                                                                  pkg = this_pkg),
+                                  hostname = pal::pkg_config_val("hostname"),
+                                  email = pal::pkg_config_val("email"),
+                                  password = pal::pkg_config_val("password"),
+                                  api_token = pal::pkg_config_val("api_token"),
                                   wait_max = 30L,
                                   wait_resync = 7.0) {
   
@@ -1637,14 +1545,11 @@ create_data_src <- function(connection,
                                               email = email,
                                               password = password,
                                               api_token = api_token),
-                            hostname = pal::pkg_config_val(key = "hostname",
-                                                           pkg = this_pkg),
-                            email = pal::pkg_config_val(key = "email",
-                                                        pkg = this_pkg),
-                            password = pal::pkg_config_val(key = "password",
-                                                           pkg = this_pkg),
-                            api_token = pal::pkg_config_val(key = "api_token",
-                                                            pkg = this_pkg)) {
+                            hostname = pal::pkg_config_val("hostname"),
+                            email = pal::pkg_config_val("email"),
+                            password = pal::pkg_config_val("password"),
+                            api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_list(connection,
                          any.missing = FALSE)
   checkmate::assert_string(id_integration,
@@ -1702,14 +1607,11 @@ update_data_src <- function(id_data_src,
                                               email = email,
                                               password = password,
                                               api_token = api_token),
-                            hostname = pal::pkg_config_val(key = "hostname",
-                                                           pkg = this_pkg),
-                            email = pal::pkg_config_val(key = "email",
-                                                        pkg = this_pkg),
-                            password = pal::pkg_config_val(key = "password",
-                                                           pkg = this_pkg),
-                            api_token = pal::pkg_config_val(key = "api_token",
-                                                            pkg = this_pkg)) {
+                            hostname = pal::pkg_config_val("hostname"),
+                            email = pal::pkg_config_val("email"),
+                            password = pal::pkg_config_val("password"),
+                            api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_data_src)
   checkmate::assert_list(connection,
                          any.missing = FALSE,
@@ -1770,14 +1672,11 @@ delete_data_src <- function(id_data_src,
                                               email = email,
                                               password = password,
                                               api_token = api_token),
-                            hostname = pal::pkg_config_val(key = "hostname",
-                                                           pkg = this_pkg),
-                            email = pal::pkg_config_val(key = "email",
-                                                        pkg = this_pkg),
-                            password = pal::pkg_config_val(key = "password",
-                                                           pkg = this_pkg),
-                            api_token = pal::pkg_config_val(key = "api_token",
-                                                            pkg = this_pkg)) {
+                            hostname = pal::pkg_config_val("hostname"),
+                            email = pal::pkg_config_val("email"),
+                            password = pal::pkg_config_val("password"),
+                            api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_data_src)
   checkmate::assert_string(id_base)
   
@@ -1807,14 +1706,11 @@ data_src_tbls <- function(id_data_src,
                                             email = email,
                                             password = password,
                                             api_token = api_token),
-                          hostname = pal::pkg_config_val(key = "hostname",
-                                                         pkg = this_pkg),
-                          email = pal::pkg_config_val(key = "email",
-                                                      pkg = this_pkg),
-                          password = pal::pkg_config_val(key = "password",
-                                                         pkg = this_pkg),
-                          api_token = pal::pkg_config_val(key = "api_token",
-                                                          pkg = this_pkg)) {
+                          hostname = pal::pkg_config_val("hostname"),
+                          email = pal::pkg_config_val("email"),
+                          password = pal::pkg_config_val("password"),
+                          api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_data_src)
   checkmate::assert_string(id_base)
   
@@ -1873,14 +1769,11 @@ create_data_src_tbl <- function(id_data_src,
                                                   email = email,
                                                   password = password,
                                                   api_token = api_token),
-                                hostname = pal::pkg_config_val(key = "hostname",
-                                                               pkg = this_pkg),
-                                email = pal::pkg_config_val(key = "email",
-                                                            pkg = this_pkg),
-                                password = pal::pkg_config_val(key = "password",
-                                                               pkg = this_pkg),
-                                api_token = pal::pkg_config_val(key = "api_token",
-                                                                pkg = this_pkg)) {
+                                hostname = pal::pkg_config_val("hostname"),
+                                email = pal::pkg_config_val("email"),
+                                password = pal::pkg_config_val("password"),
+                                api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_data_src)
   checkmate::assert_string(name)
   checkmate::assert_list(cols,
@@ -1925,14 +1818,11 @@ tbls <- function(id_base = base_id(hostname = hostname,
                                    password = password,
                                    api_token = api_token),
                  include_m2m = TRUE,
-                 hostname = pal::pkg_config_val(key = "hostname",
-                                                pkg = this_pkg),
-                 email = pal::pkg_config_val(key = "email",
-                                             pkg = this_pkg),
-                 password = pal::pkg_config_val(key = "password",
-                                                pkg = this_pkg),
-                 api_token = pal::pkg_config_val(key = "api_token",
-                                                 pkg = this_pkg)) {
+                 hostname = pal::pkg_config_val("hostname"),
+                 email = pal::pkg_config_val("email"),
+                 password = pal::pkg_config_val("password"),
+                 api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_flag(include_m2m)
   checkmate::assert_string(id_base)
   
@@ -1964,14 +1854,11 @@ tbl_id <- function(name,
                                      email = email,
                                      password = password,
                                      api_token = api_token),
-                   hostname = pal::pkg_config_val(key = "hostname",
-                                                  pkg = this_pkg),
-                   email = pal::pkg_config_val(key = "email",
-                                               pkg = this_pkg),
-                   password = pal::pkg_config_val(key = "password",
-                                                  pkg = this_pkg),
-                   api_token = pal::pkg_config_val(key = "api_token",
-                                                   pkg = this_pkg)) {
+                   hostname = pal::pkg_config_val("hostname"),
+                   email = pal::pkg_config_val("email"),
+                   password = pal::pkg_config_val("password"),
+                   api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(name)
   
   result <-
@@ -2007,14 +1894,11 @@ tbl_id <- function(name,
 #' @family tbls
 #' @export
 tbl <- function(id_tbl,
-                hostname = pal::pkg_config_val(key = "hostname",
-                                               pkg = this_pkg),
-                email = pal::pkg_config_val(key = "email",
-                                            pkg = this_pkg),
-                password = pal::pkg_config_val(key = "password",
-                                               pkg = this_pkg),
-                api_token = pal::pkg_config_val(key = "api_token",
-                                                pkg = this_pkg)) {
+                hostname = pal::pkg_config_val("hostname"),
+                email = pal::pkg_config_val("email"),
+                password = pal::pkg_config_val("password"),
+                api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_tbl)
   
   api(path = glue::glue("api/v2/meta/tables/{id_tbl}"),
@@ -2075,14 +1959,11 @@ create_tbl <- function(name,
                                          email = email,
                                          password = password,
                                          api_token = api_token),
-                       hostname = pal::pkg_config_val(key = "hostname",
-                                                      pkg = this_pkg),
-                       email = pal::pkg_config_val(key = "email",
-                                                   pkg = this_pkg),
-                       password = pal::pkg_config_val(key = "password",
-                                                      pkg = this_pkg),
-                       api_token = pal::pkg_config_val(key = "api_token",
-                                                       pkg = this_pkg)) {
+                       hostname = pal::pkg_config_val("hostname"),
+                       email = pal::pkg_config_val("email"),
+                       password = pal::pkg_config_val("password"),
+                       api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(name)
   checkmate::assert_list(cols,
                          min.len = 1L)
@@ -2128,14 +2009,10 @@ update_tbl <- function(id_tbl,
                        name = NULL,
                        title = NULL,
                        meta = NULL,
-                       hostname = pal::pkg_config_val(key = "hostname",
-                                                      pkg = this_pkg),
-                       email = pal::pkg_config_val(key = "email",
-                                                   pkg = this_pkg),
-                       password = pal::pkg_config_val(key = "password",
-                                                      pkg = this_pkg),
-                       api_token = pal::pkg_config_val(key = "api_token",
-                                                       pkg = this_pkg),
+                       hostname = pal::pkg_config_val("hostname"),
+                       email = pal::pkg_config_val("email"),
+                       password = pal::pkg_config_val("password"),
+                       api_token = pal::pkg_config_val("api_token"),
                        quiet = FALSE) {
   
   checkmate::assert_string(id_tbl)
@@ -2178,14 +2055,10 @@ update_tbl <- function(id_tbl,
 #' @family tbls
 #' @export
 delete_tbl <- function(id_tbl,
-                       hostname = pal::pkg_config_val(key = "hostname",
-                                                      pkg = this_pkg),
-                       email = pal::pkg_config_val(key = "email",
-                                                   pkg = this_pkg),
-                       password = pal::pkg_config_val(key = "password",
-                                                      pkg = this_pkg),
-                       api_token = pal::pkg_config_val(key = "api_token",
-                                                       pkg = this_pkg)) {
+                       hostname = pal::pkg_config_val("hostname"),
+                       email = pal::pkg_config_val("email"),
+                       password = pal::pkg_config_val("password"),
+                       api_token = pal::pkg_config_val("api_token")) {
   
   checkmate::assert_string(id_tbl)
   
@@ -2214,14 +2087,11 @@ delete_tbl <- function(id_tbl,
 #' @export
 reorder_tbl <- function(id_tbl,
                         order = 1L,
-                        hostname = pal::pkg_config_val(key = "hostname",
-                                                       pkg = this_pkg),
-                        email = pal::pkg_config_val(key = "email",
-                                                    pkg = this_pkg),
-                        password = pal::pkg_config_val(key = "password",
-                                                       pkg = this_pkg),
-                        api_token = pal::pkg_config_val(key = "api_token",
-                                                        pkg = this_pkg)) {
+                        hostname = pal::pkg_config_val("hostname"),
+                        email = pal::pkg_config_val("email"),
+                        password = pal::pkg_config_val("password"),
+                        api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_tbl)
   checkmate::assert_number(order)
   
@@ -2257,14 +2127,10 @@ set_tbl_metadata <- function(data,
                                                email = email,
                                                password = password,
                                                api_token = api_token),
-                             hostname = pal::pkg_config_val(key = "hostname",
-                                                            pkg = this_pkg),
-                             email = pal::pkg_config_val(key = "email",
-                                                         pkg = this_pkg),
-                             password = pal::pkg_config_val(key = "password",
-                                                            pkg = this_pkg),
-                             api_token = pal::pkg_config_val(key = "api_token",
-                                                             pkg = this_pkg),
+                             hostname = pal::pkg_config_val("hostname"),
+                             email = pal::pkg_config_val("email"),
+                             password = pal::pkg_config_val("password"),
+                             api_token = pal::pkg_config_val("api_token"),
                              quiet = FALSE) {
   
   pal::assert_cols(data = data,
@@ -2322,14 +2188,11 @@ set_tbl_metadata <- function(data,
 #' @family views
 #' @export
 tbl_views <- function(id_tbl,
-                      hostname = pal::pkg_config_val(key = "hostname",
-                                                     pkg = this_pkg),
-                      email = pal::pkg_config_val(key = "email",
-                                                  pkg = this_pkg),
-                      password = pal::pkg_config_val(key = "password",
-                                                     pkg = this_pkg),
-                      api_token = pal::pkg_config_val(key = "api_token",
-                                                      pkg = this_pkg)) {
+                      hostname = pal::pkg_config_val("hostname"),
+                      email = pal::pkg_config_val("email"),
+                      password = pal::pkg_config_val("password"),
+                      api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_tbl)
   
   api(path = glue::glue("api/v2/meta/tables/{id_tbl}/views"),
@@ -2358,14 +2221,11 @@ tbl_view_id <- function(id_tbl,
                         type = "default",
                         name = NULL,
                         title = NULL,
-                        hostname = pal::pkg_config_val(key = "hostname",
-                                                       pkg = this_pkg),
-                        email = pal::pkg_config_val(key = "email",
-                                                    pkg = this_pkg),
-                        password = pal::pkg_config_val(key = "password",
-                                                       pkg = this_pkg),
-                        api_token = pal::pkg_config_val(key = "api_token",
-                                                        pkg = this_pkg)) {
+                        hostname = pal::pkg_config_val("hostname"),
+                        email = pal::pkg_config_val("email"),
+                        password = pal::pkg_config_val("password"),
+                        api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(name,
                            null.ok = TRUE)
   checkmate::assert_string(title,
@@ -2424,14 +2284,11 @@ tbl_view_id <- function(id_tbl,
 #' @family cols
 #' @export
 tbl_cols <- function(id_tbl,
-                     hostname = pal::pkg_config_val(key = "hostname",
-                                                    pkg = this_pkg),
-                     email = pal::pkg_config_val(key = "email",
-                                                 pkg = this_pkg),
-                     password = pal::pkg_config_val(key = "password",
-                                                    pkg = this_pkg),
-                     api_token = pal::pkg_config_val(key = "api_token",
-                                                     pkg = this_pkg)) {
+                     hostname = pal::pkg_config_val("hostname"),
+                     email = pal::pkg_config_val("email"),
+                     password = pal::pkg_config_val("password"),
+                     api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_tbl)
   
   api(path = glue::glue("api/v2/meta/tables/{id_tbl}"),
@@ -2459,14 +2316,11 @@ tbl_cols <- function(id_tbl,
 tbl_col_id <- function(id_tbl,
                        name = NULL,
                        title = NULL,
-                       hostname = pal::pkg_config_val(key = "hostname",
-                                                      pkg = this_pkg),
-                       email = pal::pkg_config_val(key = "email",
-                                                   pkg = this_pkg),
-                       password = pal::pkg_config_val(key = "password",
-                                                      pkg = this_pkg),
-                       api_token = pal::pkg_config_val(key = "api_token",
-                                                       pkg = this_pkg)) {
+                       hostname = pal::pkg_config_val("hostname"),
+                       email = pal::pkg_config_val("email"),
+                       password = pal::pkg_config_val("password"),
+                       api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(name,
                            null.ok = TRUE)
   checkmate::assert_string(title,
@@ -2520,14 +2374,11 @@ tbl_col_id <- function(id_tbl,
 #' @family cols
 #' @export
 tbl_col <- function(id_col,
-                    hostname = pal::pkg_config_val(key = "hostname",
-                                                   pkg = this_pkg),
-                    email = pal::pkg_config_val(key = "email",
-                                                pkg = this_pkg),
-                    password = pal::pkg_config_val(key = "password",
-                                                   pkg = this_pkg),
-                    api_token = pal::pkg_config_val(key = "api_token",
-                                                    pkg = this_pkg)) {
+                    hostname = pal::pkg_config_val("hostname"),
+                    email = pal::pkg_config_val("email"),
+                    password = pal::pkg_config_val("password"),
+                    api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_col)
   
   api(path = glue::glue("api/v2/meta/columns/{id_col}"),
@@ -2558,14 +2409,11 @@ create_tbl_col <- function(id_tbl,
                            uidt = NULL,
                            dt = NULL,
                            cdf = NULL,
-                           hostname = pal::pkg_config_val(key = "hostname",
-                                                          pkg = this_pkg),
-                           email = pal::pkg_config_val(key = "email",
-                                                       pkg = this_pkg),
-                           password = pal::pkg_config_val(key = "password",
-                                                          pkg = this_pkg),
-                           api_token = pal::pkg_config_val(key = "api_token",
-                                                           pkg = this_pkg)) {
+                           hostname = pal::pkg_config_val("hostname"),
+                           email = pal::pkg_config_val("email"),
+                           password = pal::pkg_config_val("password"),
+                           api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_tbl)
   checkmate::assert_string(column_name)
   checkmate::assert_string(title)
@@ -2621,14 +2469,11 @@ update_tbl_col <- function(id_col,
                            uidt = NULL,
                            dt = NULL,
                            cdf = NULL,
-                           hostname = pal::pkg_config_val(key = "hostname",
-                                                          pkg = this_pkg),
-                           email = pal::pkg_config_val(key = "email",
-                                                       pkg = this_pkg),
-                           password = pal::pkg_config_val(key = "password",
-                                                          pkg = this_pkg),
-                           api_token = pal::pkg_config_val(key = "api_token",
-                                                           pkg = this_pkg)) {
+                           hostname = pal::pkg_config_val("hostname"),
+                           email = pal::pkg_config_val("email"),
+                           password = pal::pkg_config_val("password"),
+                           api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_col)
   checkmate::assert_string(column_name,
                            null.ok = TRUE)
@@ -2708,14 +2553,11 @@ update_tbl_col <- function(id_col,
 #' @family cols
 #' @export
 delete_tbl_col <- function(id_col,
-                           hostname = pal::pkg_config_val(key = "hostname",
-                                                          pkg = this_pkg),
-                           email = pal::pkg_config_val(key = "email",
-                                                       pkg = this_pkg),
-                           password = pal::pkg_config_val(key = "password",
-                                                          pkg = this_pkg),
-                           api_token = pal::pkg_config_val(key = "api_token",
-                                                           pkg = this_pkg)) {
+                           hostname = pal::pkg_config_val("hostname"),
+                           email = pal::pkg_config_val("email"),
+                           password = pal::pkg_config_val("password"),
+                           api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_col)
   
   api(path = glue::glue("api/v2/meta/columns/{id_col}"),
@@ -2740,14 +2582,11 @@ delete_tbl_col <- function(id_col,
 #' @family cols
 #' @export
 set_display_val <- function(id_col,
-                            hostname = pal::pkg_config_val(key = "hostname",
-                                                           pkg = this_pkg),
-                            email = pal::pkg_config_val(key = "email",
-                                                        pkg = this_pkg),
-                            password = pal::pkg_config_val(key = "password",
-                                                           pkg = this_pkg),
-                            api_token = pal::pkg_config_val(key = "api_token",
-                                                            pkg = this_pkg)) {
+                            hostname = pal::pkg_config_val("hostname"),
+                            email = pal::pkg_config_val("email"),
+                            password = pal::pkg_config_val("password"),
+                            api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_col)
   
   api(path = glue::glue("api/v2/meta/columns/{id_col}/primary"),
@@ -2777,14 +2616,10 @@ set_display_vals <- function(data,
                                                email = email,
                                                password = password,
                                                api_token = api_token),
-                             hostname = pal::pkg_config_val(key = "hostname",
-                                                            pkg = this_pkg),
-                             email = pal::pkg_config_val(key = "email",
-                                                         pkg = this_pkg),
-                             password = pal::pkg_config_val(key = "password",
-                                                            pkg = this_pkg),
-                             api_token = pal::pkg_config_val(key = "api_token",
-                                                             pkg = this_pkg),
+                             hostname = pal::pkg_config_val("hostname"),
+                             email = pal::pkg_config_val("email"),
+                             password = pal::pkg_config_val("password"),
+                             api_token = pal::pkg_config_val("api_token"),
                              quiet = FALSE) {
   
   pal::assert_cols(data = data,
@@ -2845,14 +2680,10 @@ upload_attachments <- function(paths,
                                types = mime::guess_type(paths),
                                names = NULL,
                                upload_path = "r",
-                               hostname = pal::pkg_config_val(key = "hostname",
-                                                              pkg = this_pkg),
-                               email = pal::pkg_config_val(key = "email",
-                                                           pkg = this_pkg),
-                               password = pal::pkg_config_val(key = "password",
-                                                              pkg = this_pkg),
-                               api_token = pal::pkg_config_val(key = "api_token",
-                                                               pkg = this_pkg),
+                               hostname = pal::pkg_config_val("hostname"),
+                               email = pal::pkg_config_val("email"),
+                               password = pal::pkg_config_val("password"),
+                               api_token = pal::pkg_config_val("api_token"),
                                max_tries = 5L,
                                verbosity = NULL) {
   purrr::walk(paths,
@@ -2919,12 +2750,9 @@ upload_attachments <- function(paths,
 #' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the specified NocoDB user")`
 #' @family users
 #' @export
-whoami <- function(hostname = pal::pkg_config_val(key = "hostname",
-                                                  pkg = this_pkg),
-                   email = pal::pkg_config_val(key = "email",
-                                               pkg = this_pkg),
-                   password = pal::pkg_config_val(key = "password",
-                                                  pkg = this_pkg),
+whoami <- function(hostname = pal::pkg_config_val("hostname"),
+                   email = pal::pkg_config_val("email"),
+                   password = pal::pkg_config_val("password"),
                    api_token = NULL,
                    auth = TRUE) {
   
@@ -2952,13 +2780,10 @@ whoami <- function(hostname = pal::pkg_config_val(key = "hostname",
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family users
 #' @export
-users <- function(hostname = pal::pkg_config_val(key = "hostname",
-                                                 pkg = this_pkg),
-                  email = pal::pkg_config_val(key = "email",
-                                              pkg = this_pkg,
+users <- function(hostname = pal::pkg_config_val("hostname"),
+                  email = pal::pkg_config_val("email",
                                               require = TRUE),
-                  password = pal::pkg_config_val(key = "password",
-                                                 pkg = this_pkg,
+                  password = pal::pkg_config_val("password",
                                                  require = TRUE)) {
   assert_super_admin(hostname = hostname,
                      email = email,
@@ -2990,14 +2815,11 @@ users <- function(hostname = pal::pkg_config_val(key = "hostname",
 #' @export
 user_id <- function(user_email,
                     id_base = NULL,
-                    hostname = pal::pkg_config_val(key = "hostname",
-                                                   pkg = this_pkg),
-                    email = pal::pkg_config_val(key = "email",
-                                                pkg = this_pkg),
-                    password = pal::pkg_config_val(key = "password",
-                                                   pkg = this_pkg),
-                    api_token = pal::pkg_config_val(key = "api_token",
-                                                    pkg = this_pkg)) {
+                    hostname = pal::pkg_config_val("hostname"),
+                    email = pal::pkg_config_val("email"),
+                    password = pal::pkg_config_val("password"),
+                    api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(user_email)
   
   if (is.null(id_base)) {
@@ -3046,13 +2868,10 @@ add_user <- function(user_email,
                      user_password,
                      display_name = NULL,
                      subscribe_to_newsletter = FALSE,
-                     hostname = pal::pkg_config_val(key = "hostname",
-                                                    pkg = this_pkg),
-                     email = pal::pkg_config_val(key = "email",
-                                                 pkg = this_pkg,
+                     hostname = pal::pkg_config_val("hostname"),
+                     email = pal::pkg_config_val("email",
                                                  require = TRUE),
-                     password = pal::pkg_config_val(key = "password",
-                                                    pkg = this_pkg,
+                     password = pal::pkg_config_val("password",
                                                     require = TRUE),
                      quiet = TRUE) {
   
@@ -3122,12 +2941,9 @@ add_user <- function(user_email,
 #' @family users
 #' @export
 update_user <- function(display_name = NULL,
-                        hostname = pal::pkg_config_val(key = "hostname",
-                                                       pkg = this_pkg),
-                        email = pal::pkg_config_val(key = "email",
-                                                    pkg = this_pkg),
-                        password = pal::pkg_config_val(key = "password",
-                                                       pkg = this_pkg),
+                        hostname = pal::pkg_config_val("hostname"),
+                        email = pal::pkg_config_val("email"),
+                        password = pal::pkg_config_val("password"),
                         api_token = NULL) {
   
   checkmate::assert_string(display_name,
@@ -3180,12 +2996,9 @@ update_user <- function(display_name = NULL,
 #' @family users
 #' @export
 delete_user <- function(id_user,
-                        hostname = pal::pkg_config_val(key = "hostname",
-                                                       pkg = this_pkg),
-                        email = pal::pkg_config_val(key = "email",
-                                                    pkg = this_pkg),
-                        password = pal::pkg_config_val(key = "password",
-                                                       pkg = this_pkg),
+                        hostname = pal::pkg_config_val("hostname"),
+                        email = pal::pkg_config_val("email"),
+                        password = pal::pkg_config_val("password"),
                         quiet = FALSE) {
   
   checkmate::assert_string(id_user)
@@ -3219,13 +3032,10 @@ delete_user <- function(id_user,
 #' @export
 invite_user <- function(user_email,
                         org_role = c("org-level-viewer", "org-level-creator"),
-                        hostname = pal::pkg_config_val(key = "hostname",
-                                                       pkg = this_pkg),
-                        email = pal::pkg_config_val(key = "email",
-                                                    pkg = this_pkg,
+                        hostname = pal::pkg_config_val("hostname"),
+                        email = pal::pkg_config_val("email",
                                                     require = TRUE),
-                        password = pal::pkg_config_val(key = "password",
-                                                       pkg = this_pkg,
+                        password = pal::pkg_config_val("password",
                                                        require = TRUE),
                         quiet = FALSE) {
   
@@ -3282,14 +3092,11 @@ sign_up_user <- function(user_email,
                          user_password,
                          invite_token = NULL,
                          subscribe_to_newsletter = FALSE,
-                         hostname = pal::pkg_config_val(key = "hostname",
-                                                        pkg = this_pkg),
-                         email = pal::pkg_config_val(key = "email",
-                                                     pkg = this_pkg),
-                         password = pal::pkg_config_val(key = "password",
-                                                        pkg = this_pkg),
-                         api_token = pal::pkg_config_val(key = "api_token",
-                                                         pkg = this_pkg)) {
+                         hostname = pal::pkg_config_val("hostname"),
+                         email = pal::pkg_config_val("email"),
+                         password = pal::pkg_config_val("password"),
+                         api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(user_email)
   checkmate::assert_string(user_password)
   checkmate::assert_string(invite_token,
@@ -3325,8 +3132,7 @@ sign_up_user <- function(user_email,
 #' @family users
 #' @export
 validate_user_email <- function(verification_token,
-                                hostname = pal::pkg_config_val(key = "hostname",
-                                                               pkg = this_pkg),
+                                hostname = pal::pkg_config_val("hostname"),
                                 quiet = FALSE) {
   
   result <- api(path = glue::glue("api/v1/auth/email/validate/{verification_token}"),
@@ -3355,14 +3161,11 @@ base_users <- function(id_base = base_id(hostname = hostname,
                                          email = email,
                                          password = password,
                                          api_token = api_token),
-                       hostname = pal::pkg_config_val(key = "hostname",
-                                                      pkg = this_pkg),
-                       email = pal::pkg_config_val(key = "email",
-                                                   pkg = this_pkg),
-                       password = pal::pkg_config_val(key = "password",
-                                                      pkg = this_pkg),
-                       api_token = pal::pkg_config_val(key = "api_token",
-                                                       pkg = this_pkg)) {
+                       hostname = pal::pkg_config_val("hostname"),
+                       email = pal::pkg_config_val("email"),
+                       password = pal::pkg_config_val("password"),
+                       api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_base)
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}/users"),
@@ -3412,14 +3215,10 @@ update_base_user <- function(user_email,
                                                email = email,
                                                password = password,
                                                api_token = api_token),
-                             hostname = pal::pkg_config_val(key = "hostname",
-                                                            pkg = this_pkg),
-                             email = pal::pkg_config_val(key = "email",
-                                                         pkg = this_pkg),
-                             password = pal::pkg_config_val(key = "password",
-                                                            pkg = this_pkg),
-                             api_token = pal::pkg_config_val(key = "api_token",
-                                                             pkg = this_pkg),
+                             hostname = pal::pkg_config_val("hostname"),
+                             email = pal::pkg_config_val("email"),
+                             password = pal::pkg_config_val("password"),
+                             api_token = pal::pkg_config_val("api_token"),
                              api_version = c("v2", "v1"),
                              quiet = FALSE) {
 
@@ -3499,14 +3298,10 @@ delete_base_user <- function(id_user,
                                                email = email,
                                                password = password,
                                                api_token = api_token),
-                             hostname = pal::pkg_config_val(key = "hostname",
-                                                            pkg = this_pkg),
-                             email = pal::pkg_config_val(key = "email",
-                                                         pkg = this_pkg),
-                             password = pal::pkg_config_val(key = "password",
-                                                            pkg = this_pkg),
-                             api_token = pal::pkg_config_val(key = "api_token",
-                                                             pkg = this_pkg),
+                             hostname = pal::pkg_config_val("hostname"),
+                             email = pal::pkg_config_val("email"),
+                             password = pal::pkg_config_val("password"),
+                             api_token = pal::pkg_config_val("api_token"),
                              quiet = FALSE) {
   
   checkmate::assert_string(id_user)
@@ -3551,14 +3346,10 @@ invite_base_user <- function(user_email,
                                                email = email,
                                                password = password,
                                                api_token = api_token),
-                             hostname = pal::pkg_config_val(key = "hostname",
-                                                            pkg = this_pkg),
-                             email = pal::pkg_config_val(key = "email",
-                                                         pkg = this_pkg),
-                             password = pal::pkg_config_val(key = "password",
-                                                            pkg = this_pkg),
-                             api_token = pal::pkg_config_val(key = "api_token",
-                                                             pkg = this_pkg),
+                             hostname = pal::pkg_config_val("hostname"),
+                             email = pal::pkg_config_val("email"),
+                             password = pal::pkg_config_val("password"),
+                             api_token = pal::pkg_config_val("api_token"),
                              quiet = FALSE) {
   
   checkmate::assert_string(user_email)
@@ -3598,14 +3389,10 @@ resend_base_user_invitation <- function(id_user,
                                                           email = email,
                                                           password = password,
                                                           api_token = api_token),
-                                        hostname = pal::pkg_config_val(key = "hostname",
-                                                                       pkg = this_pkg),
-                                        email = pal::pkg_config_val(key = "email",
-                                                                    pkg = this_pkg),
-                                        password = pal::pkg_config_val(key = "password",
-                                                                       pkg = this_pkg),
-                                        api_token = pal::pkg_config_val(key = "api_token",
-                                                                        pkg = this_pkg),
+                                        hostname = pal::pkg_config_val("hostname"),
+                                        email = pal::pkg_config_val("email"),
+                                        password = pal::pkg_config_val("password"),
+                                        api_token = pal::pkg_config_val("api_token"),
                                         quiet = FALSE) {
   checkmate::assert_string(id_user)
   checkmate::assert_string(id_base)
@@ -3651,14 +3438,10 @@ integrations <- function(type = NULL,
                          id_base = NULL,
                          incl_config = TRUE,
                          decode_config = TRUE,
-                         hostname = pal::pkg_config_val(key = "hostname",
-                                                        pkg = this_pkg),
-                         email = pal::pkg_config_val(key = "email",
-                                                     pkg = this_pkg),
-                         password = pal::pkg_config_val(key = "password",
-                                                        pkg = this_pkg),
-                         api_token = pal::pkg_config_val(key = "api_token",
-                                                         pkg = this_pkg)) {
+                         hostname = pal::pkg_config_val("hostname"),
+                         email = pal::pkg_config_val("email"),
+                         password = pal::pkg_config_val("password"),
+                         api_token = pal::pkg_config_val("api_token")) {
   if (!is.null(type)) {
     type <- rlang::arg_match(arg = type,
                              values = integration_types)
@@ -3703,14 +3486,11 @@ integrations <- function(type = NULL,
 integration_id <- function(title = NULL,
                            type = "database",
                            sub_type = c("mysql2", "pg", "sqlite3"),
-                           hostname = pal::pkg_config_val(key = "hostname",
-                                                          pkg = this_pkg),
-                           email = pal::pkg_config_val(key = "email",
-                                                       pkg = this_pkg),
-                           password = pal::pkg_config_val(key = "password",
-                                                          pkg = this_pkg),
-                           api_token = pal::pkg_config_val(key = "api_token",
-                                                           pkg = this_pkg)) {
+                           hostname = pal::pkg_config_val("hostname"),
+                           email = pal::pkg_config_val("email"),
+                           password = pal::pkg_config_val("password"),
+                           api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(title,
                            null.ok = TRUE)
   if (!is.null(type)) {
@@ -3771,14 +3551,11 @@ integration_id <- function(title = NULL,
 #' @export
 integration <- function(id_integration,
                         incl_config = TRUE,
-                        hostname = pal::pkg_config_val(key = "hostname",
-                                                       pkg = this_pkg),
-                        email = pal::pkg_config_val(key = "email",
-                                                    pkg = this_pkg),
-                        password = pal::pkg_config_val(key = "password",
-                                                       pkg = this_pkg),
-                        api_token = pal::pkg_config_val(key = "api_token",
-                                                        pkg = this_pkg)) {
+                        hostname = pal::pkg_config_val("hostname"),
+                        email = pal::pkg_config_val("email"),
+                        password = pal::pkg_config_val("password"),
+                        api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_integration)
   checkmate::assert_flag(incl_config)
   
@@ -3838,14 +3615,11 @@ create_integration <- function(connection,
                                type = "database",
                                sub_type = c("mysql2", "pg", "sqlite3"),
                                search_paths = "public",
-                               hostname = pal::pkg_config_val(key = "hostname",
-                                                              pkg = this_pkg),
-                               email = pal::pkg_config_val(key = "email",
-                                                           pkg = this_pkg),
-                               password = pal::pkg_config_val(key = "password",
-                                                              pkg = this_pkg),
-                               api_token = pal::pkg_config_val(key = "api_token",
-                                                               pkg = this_pkg)) {
+                               hostname = pal::pkg_config_val("hostname"),
+                               email = pal::pkg_config_val("email"),
+                               password = pal::pkg_config_val("password"),
+                               api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_list(connection,
                          any.missing = FALSE)
   checkmate::assert_string(title)
@@ -3885,14 +3659,11 @@ update_integration <- function(id_integration,
                                type = NULL,
                                sub_type = NULL,
                                search_paths = NULL,
-                               hostname = pal::pkg_config_val(key = "hostname",
-                                                              pkg = this_pkg),
-                               email = pal::pkg_config_val(key = "email",
-                                                           pkg = this_pkg),
-                               password = pal::pkg_config_val(key = "password",
-                                                              pkg = this_pkg),
-                               api_token = pal::pkg_config_val(key = "api_token",
-                                                               pkg = this_pkg)) {
+                               hostname = pal::pkg_config_val("hostname"),
+                               email = pal::pkg_config_val("email"),
+                               password = pal::pkg_config_val("password"),
+                               api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_integration)
   checkmate::assert_list(connection,
                          any.missing = FALSE,
@@ -3951,14 +3722,11 @@ update_integration <- function(id_integration,
 #' @family integrations
 #' @export
 delete_integration <- function(id_integration,
-                               hostname = pal::pkg_config_val(key = "hostname",
-                                                              pkg = this_pkg),
-                               email = pal::pkg_config_val(key = "email",
-                                                           pkg = this_pkg),
-                               password = pal::pkg_config_val(key = "password",
-                                                              pkg = this_pkg),
-                               api_token = pal::pkg_config_val(key = "api_token",
-                                                               pkg = this_pkg)) {
+                               hostname = pal::pkg_config_val("hostname"),
+                               email = pal::pkg_config_val("email"),
+                               password = pal::pkg_config_val("password"),
+                               api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_integration)
   
   result <- api(path = glue::glue("api/v2/meta/integrations/{id_integration}"),
@@ -3985,14 +3753,11 @@ delete_integration <- function(id_integration,
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family plugins
 #' @export
-plugins <- function(hostname = pal::pkg_config_val(key = "hostname",
-                                                   pkg = this_pkg),
-                    email = pal::pkg_config_val(key = "email",
-                                                pkg = this_pkg),
-                    password = pal::pkg_config_val(key = "password",
-                                                   pkg = this_pkg),
-                    api_token = pal::pkg_config_val(key = "api_token",
-                                                    pkg = this_pkg)) {
+plugins <- function(hostname = pal::pkg_config_val("hostname"),
+                    email = pal::pkg_config_val("email"),
+                    password = pal::pkg_config_val("password"),
+                    api_token = pal::pkg_config_val("api_token")) {
+  
   api(path = "api/v1/db/meta/plugins",
       method = "GET",
       hostname = hostname,
@@ -4015,14 +3780,11 @@ plugins <- function(hostname = pal::pkg_config_val(key = "hostname",
 #' @family plugins
 #' @export
 plugin_id <- function(title,
-                      hostname = pal::pkg_config_val(key = "hostname",
-                                                     pkg = this_pkg),
-                      email = pal::pkg_config_val(key = "email",
-                                                  pkg = this_pkg),
-                      password = pal::pkg_config_val(key = "password",
-                                                     pkg = this_pkg),
-                      api_token = pal::pkg_config_val(key = "api_token",
-                                                      pkg = this_pkg)) {
+                      hostname = pal::pkg_config_val("hostname"),
+                      email = pal::pkg_config_val("email"),
+                      password = pal::pkg_config_val("password"),
+                      api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(title)
   
   result <-
@@ -4055,14 +3817,11 @@ plugin_id <- function(title,
 #' @family plugins
 #' @export
 plugin_category <- function(id_plugin,
-                            hostname = pal::pkg_config_val(key = "hostname",
-                                                           pkg = this_pkg),
-                            email = pal::pkg_config_val(key = "email",
-                                                        pkg = this_pkg),
-                            password = pal::pkg_config_val(key = "password",
-                                                           pkg = this_pkg),
-                            api_token = pal::pkg_config_val(key = "api_token",
-                                                            pkg = this_pkg)) {
+                            hostname = pal::pkg_config_val("hostname"),
+                            email = pal::pkg_config_val("email"),
+                            password = pal::pkg_config_val("password"),
+                            api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_plugin)
   
   plugins(hostname = hostname,
@@ -4085,14 +3844,11 @@ plugin_category <- function(id_plugin,
 #' @family plugins
 #' @export
 plugin <- function(id_plugin,
-                   hostname = pal::pkg_config_val(key = "hostname",
-                                                  pkg = this_pkg),
-                   email = pal::pkg_config_val(key = "email",
-                                               pkg = this_pkg),
-                   password = pal::pkg_config_val(key = "password",
-                                                  pkg = this_pkg),
-                   api_token = pal::pkg_config_val(key = "api_token",
-                                                   pkg = this_pkg)) {
+                   hostname = pal::pkg_config_val("hostname"),
+                   email = pal::pkg_config_val("email"),
+                   password = pal::pkg_config_val("password"),
+                   api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_plugin)
   
   api(path = glue::glue("api/v1/db/meta/plugins/{id_plugin}"),
@@ -4144,14 +3900,11 @@ test_plugin <- function(title,
                                                    email = email,
                                                    password = password,
                                                    api_token = api_token),
-                        hostname = pal::pkg_config_val(key = "hostname",
-                                                       pkg = this_pkg),
-                        email = pal::pkg_config_val(key = "email",
-                                                    pkg = this_pkg),
-                        password = pal::pkg_config_val(key = "password",
-                                                       pkg = this_pkg),
-                        api_token = pal::pkg_config_val(key = "api_token",
-                                                        pkg = this_pkg)) {
+                        hostname = pal::pkg_config_val("hostname"),
+                        email = pal::pkg_config_val("email"),
+                        password = pal::pkg_config_val("password"),
+                        api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(title)
   checkmate::assert_list(config,
                          min.len = 1L,
@@ -4206,14 +3959,11 @@ test_plugin <- function(title,
 update_plugin <- function(id_plugin,
                           config = NULL,
                           activate = NULL,
-                          hostname = pal::pkg_config_val(key = "hostname",
-                                                         pkg = this_pkg),
-                          email = pal::pkg_config_val(key = "email",
-                                                      pkg = this_pkg),
-                          password = pal::pkg_config_val(key = "password",
-                                                         pkg = this_pkg),
-                          api_token = pal::pkg_config_val(key = "api_token",
-                                                          pkg = this_pkg)) {
+                          hostname = pal::pkg_config_val("hostname"),
+                          email = pal::pkg_config_val("email"),
+                          password = pal::pkg_config_val("password"),
+                          api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(id_plugin)
   checkmate::assert_flag(activate,
                          null.ok = TRUE)
@@ -4251,14 +4001,11 @@ update_plugin <- function(id_plugin,
 #' @family plugins
 #' @export
 is_plugin_active <- function(title,
-                             hostname = pal::pkg_config_val(key = "hostname",
-                                                            pkg = this_pkg),
-                             email = pal::pkg_config_val(key = "email",
-                                                         pkg = this_pkg),
-                             password = pal::pkg_config_val(key = "password",
-                                                            pkg = this_pkg),
-                             api_token = pal::pkg_config_val(key = "api_token",
-                                                             pkg = this_pkg)) {
+                             hostname = pal::pkg_config_val("hostname"),
+                             email = pal::pkg_config_val("email"),
+                             password = pal::pkg_config_val("password"),
+                             api_token = pal::pkg_config_val("api_token")) {
+  
   checkmate::assert_string(title)
   title %<>% utils::URLencode()
   
@@ -4281,14 +4028,11 @@ is_plugin_active <- function(title,
 #' @return The application settings of the specified NocoDB server as a [tibble][tibble::tbl_df].
 #' @family app_settings
 #' @export
-app_settings <- function(hostname = pal::pkg_config_val(key = "hostname",
-                                                        pkg = this_pkg),
-                         email = pal::pkg_config_val(key = "email",
-                                                     pkg = this_pkg),
-                         password = pal::pkg_config_val(key = "password",
-                                                        pkg = this_pkg),
-                         api_token = pal::pkg_config_val(key = "api_token",
-                                                         pkg = this_pkg)) {
+app_settings <- function(hostname = pal::pkg_config_val("hostname"),
+                         email = pal::pkg_config_val("email"),
+                         password = pal::pkg_config_val("password"),
+                         api_token = pal::pkg_config_val("api_token")) {
+  
   api(path = "api/v2/meta/nocodb/info",
       method = "GET",
       hostname = hostname,
@@ -4316,13 +4060,10 @@ app_settings <- function(hostname = pal::pkg_config_val(key = "hostname",
 #' @family app_settings
 #' @export
 update_app_settings <- function(invite_only_signup = NULL,
-                                hostname = pal::pkg_config_val(key = "hostname",
-                                                               pkg = this_pkg),
-                                email = pal::pkg_config_val(key = "email",
-                                                            pkg = this_pkg,
+                                hostname = pal::pkg_config_val("hostname"),
+                                email = pal::pkg_config_val("email",
                                                             require = TRUE),
-                                password = pal::pkg_config_val(key = "password",
-                                                               pkg = this_pkg,
+                                password = pal::pkg_config_val("password",
                                                                require = TRUE),
                                 quiet = FALSE) {
   

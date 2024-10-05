@@ -5,8 +5,8 @@
 \title{Test if user is signed in}
 \usage{
 is_signed_in(
-  hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
-  email = pal::pkg_config_val(key = "email", pkg = this_pkg, require = TRUE)
+  hostname = pal::pkg_config_val("hostname"),
+  email = pal::pkg_config_val("email", require = TRUE)
 )
 }
 \arguments{

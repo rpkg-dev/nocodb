@@ -8,7 +8,7 @@ req_basic(
   path,
   method = c("GET", "CONNECT", "DELETE", "HEAD", "OPTIONS", "PATCH", "POST", "PUT",
     "TRACE"),
-  hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
+  hostname = pal::pkg_config_val("hostname"),
   max_tries = 3L
 )
 }

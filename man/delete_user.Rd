@@ -6,9 +6,9 @@
 \usage{
 delete_user(
   id_user,
-  hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
-  email = pal::pkg_config_val(key = "email", pkg = this_pkg),
-  password = pal::pkg_config_val(key = "password", pkg = this_pkg),
+  hostname = pal::pkg_config_val("hostname"),
+  email = pal::pkg_config_val("email"),
+  password = pal::pkg_config_val("password"),
   quiet = FALSE
 )
 }

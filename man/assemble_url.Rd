@@ -7,7 +7,7 @@
 assemble_url(
   ...,
   .scheme = "https",
-  .hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg)
+  .hostname = pal::pkg_config_val("hostname")
 )
 }
 \arguments{

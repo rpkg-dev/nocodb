@@ -6,7 +6,7 @@
 \usage{
 validate_user_email(
   verification_token,
-  hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
+  hostname = pal::pkg_config_val("hostname"),
   quiet = FALSE
 )
 }

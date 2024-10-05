@@ -8,10 +8,10 @@ integration_id(
   title = NULL,
   type = "database",
   sub_type = c("mysql2", "pg", "sqlite3"),
-  hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
-  email = pal::pkg_config_val(key = "email", pkg = this_pkg),
-  password = pal::pkg_config_val(key = "password", pkg = this_pkg),
-  api_token = pal::pkg_config_val(key = "api_token", pkg = this_pkg)
+  hostname = pal::pkg_config_val("hostname"),
+  email = pal::pkg_config_val("email"),
+  password = pal::pkg_config_val("password"),
+  api_token = pal::pkg_config_val("api_token")
 )
 }
 \arguments{

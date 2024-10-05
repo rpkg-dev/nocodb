@@ -6,9 +6,9 @@
 \usage{
 delete_api_token(
   api_token,
-  hostname = pal::pkg_config_val(key = "hostname", pkg = this_pkg),
-  email = pal::pkg_config_val(key = "email", pkg = this_pkg, require = TRUE),
-  password = pal::pkg_config_val(key = "password", pkg = this_pkg, require = TRUE)
+  hostname = pal::pkg_config_val("hostname"),
+  email = pal::pkg_config_val("email", require = TRUE),
+  password = pal::pkg_config_val("password", require = TRUE)
 )
 }
 \arguments{
