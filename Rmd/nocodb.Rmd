@@ -432,6 +432,10 @@ api <- function(path,
   }
   
   if (length(url_params) > 0L) {
+    # convert non-chr param vals to JSON for convenience (`httr2::req_url_query()` just forwards everything as chr)
+    url_params %<>% purrr::map_if(.p = \(x) !is.character(x),
+                                  .f = \(x) jsonlite::toJSON(x = x,
+                                                             auto_unbox = TRUE))
     req %<>% httr2::req_url_query(!!!url_params)
   }
   
