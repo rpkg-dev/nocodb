@@ -40,6 +40,7 @@ utils::globalVariables(names = c(".",
 assemble_url <- function(...,
                          .scheme = "https",
                          .hostname = pal::pkg_config_val("hostname")) {
+  
   httr2::url_build(url = list(scheme = .scheme,
                               hostname = .hostname,
                               path = fs::path(...)))
@@ -264,7 +265,8 @@ stateful$access_token <- list()
 #' @inheritParams httr2::req_body_json
 #' @param auth Whether or not to include an [authentication header][req_auth] in the HTTP request.
 #' @param url_params URL parameters added to the [query string](https://en.wikipedia.org/wiki/Query_string). Either `NULL` to omit or a named list of key-value
-#'   pairs that define query parameters. Values must be a scalars, to opt out of escaping, wrap strings in [I()].
+#'   pairs that define query parameters. Values must be scalars. To opt out of automatic conversion of non-character values to JSON strings or
+#'   [percent-encoding](https://en.wikipedia.org/wiki/Percent-encoding) values, wrap values in [I()].
 #' @param body_json Data to include as JSON in the HTTP request body. Either a list or `NULL` for an empty body.
 #' @param auto_unbox Whether or not to automatically "unbox" length-1 vectors in `body_json` to JSON scalars.
 #' @param simplify Whether or not to automatically simplify JSON structures in the returned JSON. Enables/disables all `simplify*` arguments of
@@ -303,7 +305,6 @@ api <- function(path,
                    method = method,
                    hostname = hostname,
                    max_tries = max_tries)
-  
   if (auth) {
     req %<>% req_auth(email = email,
                       password = password,
@@ -312,7 +313,7 @@ api <- function(path,
   
   if (length(url_params) > 0L) {
     # convert non-chr param vals to JSON for convenience (`httr2::req_url_query()` just forwards everything as chr)
-    url_params %<>% purrr::map_if(.p = \(x) !is.character(x),
+    url_params %<>% purrr::map_if(.p = \(x) !("AsIs" %in% class(x)) && !is.character(x),
                                   .f = \(x) jsonlite::toJSON(x = x,
                                                              auto_unbox = TRUE))
     req %<>% httr2::req_url_query(!!!url_params)
