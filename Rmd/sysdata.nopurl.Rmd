@@ -36,8 +36,8 @@ pkg_config <-
                  default_value_dynamic = character(),
                  require = logical(),
                  description = character()) |>
-  tibble::add_row(key = "hostname",
-                  description = "[Hostname](https://en.wikipedia.org/wiki/Hostname) of the NocoDB server to work with.",
+  tibble::add_row(key = "origin",
+                  description = "[Origin](https://developer.mozilla.org/docs/Glossary/Origin) of the NocoDB server to work with.",
                   require = TRUE) |>
   tibble::add_row(key = "base_title",
                   description = "Title (name) of the NocoDB [base](https://docs.nocodb.com/category/bases) to work with.",

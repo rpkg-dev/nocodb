@@ -6,14 +6,14 @@
 \usage{
 validate_user_email(
   verification_token,
-  hostname = pal::pkg_config_val("hostname"),
+  origin = pal::pkg_config_val("origin"),
   quiet = FALSE
 )
 }
 \arguments{
 \item{verification_token}{User's e-mail verification token.}
 
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{quiet}{Whether or not to suppress printing status output from internal processing.}
 }

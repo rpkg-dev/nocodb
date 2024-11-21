@@ -5,13 +5,13 @@
 \title{List NocoDB API tokens}
 \usage{
 api_tokens(
-  hostname = pal::pkg_config_val("hostname"),
+  origin = pal::pkg_config_val("origin"),
   email = pal::pkg_config_val("email", require = TRUE),
   password = pal::pkg_config_val("password", require = TRUE)
 )
 }
 \arguments{
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 

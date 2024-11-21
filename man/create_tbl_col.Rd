@@ -11,7 +11,7 @@ create_tbl_col(
   uidt = NULL,
   dt = NULL,
   cdf = NULL,
-  hostname = pal::pkg_config_val("hostname"),
+  origin = pal::pkg_config_val("origin"),
   email = pal::pkg_config_val("email"),
   password = pal::pkg_config_val("password"),
   api_token = pal::pkg_config_val("api_token")
@@ -73,7 +73,7 @@ create_tbl_col(
 
 \item{cdf}{Column default value. Either \code{NULL} to omit or a character scalar.}
 
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 

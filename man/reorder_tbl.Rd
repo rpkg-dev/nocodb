@@ -7,7 +7,7 @@
 reorder_tbl(
   id_tbl,
   order = 1L,
-  hostname = pal::pkg_config_val("hostname"),
+  origin = pal::pkg_config_val("origin"),
   email = pal::pkg_config_val("email"),
   password = pal::pkg_config_val("password"),
   api_token = pal::pkg_config_val("api_token")
@@ -18,7 +18,7 @@ reorder_tbl(
 
 \item{order}{A number to assign as the table's NocoDB-specific order "weight".}
 
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 

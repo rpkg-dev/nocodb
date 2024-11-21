@@ -14,9 +14,9 @@ create_data_src(
   is_schema_readonly = FALSE,
   is_data_readonly = FALSE,
   enabled = TRUE,
-  id_base = base_id(hostname = hostname, email = email, password = password, api_token =
+  id_base = base_id(origin = origin, email = email, password = password, api_token =
     api_token),
-  hostname = pal::pkg_config_val("hostname"),
+  origin = pal::pkg_config_val("origin"),
   email = pal::pkg_config_val("email"),
   password = pal::pkg_config_val("password"),
   api_token = pal::pkg_config_val("api_token")
@@ -46,7 +46,7 @@ Optional identifier of an existing NocoDB database integration as returned by \c
 
 \item{id_base}{NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}. A character scalar.}
 
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 

@@ -35,8 +35,11 @@ cli_alert_status <- function(msg,
   }
 }
 
-path_cookie <- function(hostname,
+path_cookie <- function(origin,
                         email) {
+  
+  hostname <- httr2::url_parse(origin)$hostname
+  checkmate::assert_string(hostname)
   
   tools::R_user_dir(package = this_pkg,
                     which = "cache") |>
@@ -172,7 +175,7 @@ stateful$access_token <- list()
 #' @export
 api <- function(path,
                 method = c("GET", "CONNECT", "DELETE", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE"),
-                hostname = pal::pkg_config_val("hostname"),
+                origin = pal::pkg_config_val("origin"),
                 email = pal::pkg_config_val("email"),
                 password = pal::pkg_config_val("password"),
                 api_token = pal::pkg_config_val("api_token"),
@@ -194,7 +197,7 @@ api <- function(path,
   
   req <- req_basic(path = path,
                    method = method,
-                   hostname = hostname,
+                   origin = origin,
                    max_tries = max_tries)
   if (auth) {
     req %<>% req_auth(email = email,
@@ -242,28 +245,6 @@ api <- function(path,
   result
 }
 
-#' Assemble NocoDB URL
-#'
-#' @param ... Optional path components added to the base URL.
-#' @param .scheme [Scheme](https://en.wikipedia.org/wiki/URL#Syntax) to use in the assembled URL. A character scalar.
-#' @param .hostname [Hostname](https://en.wikipedia.org/wiki/Hostname) to use in the assembled URL. A character scalar.
-#'
-#' @return A character scalar.
-#' @family url_assembly
-#' @keywords internal
-#'
-#' @examples
-#' \dontrun{
-#' nocodb:::assemble_url("api/v2/meta/bases/")}
-assemble_url <- function(...,
-                         .scheme = "https",
-                         .hostname = pal::pkg_config_val("hostname")) {
-  
-  httr2::url_build(url = list(scheme = .scheme,
-                              hostname = .hostname,
-                              path = fs::path(...)))
-}
-
 #' Create basic NocoDB API request
 #'
 #' Assembles the HTTP request structure that is common to *all* NocoDB API requests performed by this package.
@@ -272,24 +253,28 @@ assemble_url <- function(...,
 #' @param path NocoDB API endpoint path. A character scalar.
 #' @param method [HTTP request method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods). One of
 #'   `r pal::enum_fn_param_defaults(param = "method", fn = "api")`.
-#' @param hostname NocoDB server [hostname](https://en.wikipedia.org/wiki/Hostname). A character scalar.
+#' @param origin NocoDB server [origin](https://developer.mozilla.org/docs/Glossary/Origin). A character scalar.
 #'
 #' @inherit httr2::req_method return
 #' @family common
 #' @keywords internal
 req_basic <- function(path,
                       method = c("GET", "CONNECT", "DELETE", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE"),
-                      hostname = pal::pkg_config_val("hostname"),
+                      origin = pal::pkg_config_val("origin"),
                       max_tries = 3L) {
   
   checkmate::assert_string(path)
   method <- rlang::arg_match(method)
-  checkmate::assert_string(hostname)
+  checkmate::assert_string(origin)
   checkmate::assert_count(max_tries,
                           positive = TRUE)
+  # normalize path slashes
+  origin %<>% stringr::str_replace(pattern = "(/+)?$",
+                                   replacement = "/")
+  path %<>% stringr::str_replace(pattern = "^/+",
+                                 replacement = "")
   
-  httr2::request(base_url = assemble_url(path,
-                                         .hostname = hostname)) |>
+  httr2::request(base_url = paste0(origin, path)) |>
     httr2::req_method(method = method) |>
     httr2::req_user_agent(string = "nocodb R package (https://nocodb.rpkg.dev)") |>
     httr2::req_retry(max_tries = max_tries) |>
@@ -355,15 +340,12 @@ req_auth <- function(req,
   }
   
   # 2. priority: re-use last access token
-  hostname <-
-    req |>
-    _$url |>
-    httr2::url_parse() |>
-    _$hostname
+  origin <- stringr::str_extract(string = req$url,
+                                 pattern = "^https?://[^/]+")
   
-  if (!is.null(email) && is_signed_in(hostname = hostname,
+  if (!is.null(email) && is_signed_in(origin = origin,
                                       email = email)) {
-    token <- access_token(hostname = hostname,
+    token <- access_token(origin = origin,
                           email = email)
     
     if (!is.na(token) && !is_access_token_expired(token)) {
@@ -374,10 +356,10 @@ req_auth <- function(req,
   }
   
   # 3. priority: get new access token via refresh token
-  if (!is.null(email) && fs::file_exists(path = path_cookie(hostname = hostname,
+  if (!is.null(email) && fs::file_exists(path = path_cookie(origin = origin,
                                                             email = email))) {
     
-    token <- tryCatch(expr = refresh_sign_in(hostname = hostname,
+    token <- tryCatch(expr = refresh_sign_in(origin = origin,
                                              email = email),
                       httr2_http_400 = \(cnd) {
                         # properly handle missing token (resulting from sign-in via `api_token`) or expired token (which is simply reported as "invalid")
@@ -399,7 +381,7 @@ req_auth <- function(req,
   if (!is.null(email) && !is.null(password)) {
     req %<>% httr2::req_headers(`xc-auth` = sign_in(email = email,
                                                     password = password,
-                                                    hostname = hostname),
+                                                    origin = origin),
                                 .redact = "xc-auth")
     return(req)
   }
@@ -429,7 +411,7 @@ req_auth <- function(req,
 #' @family auth
 #' @family user
 #' @export
-sign_in <- function(hostname = pal::pkg_config_val("hostname"),
+sign_in <- function(origin = pal::pkg_config_val("origin"),
                     email = pal::pkg_config_val("email",
                                                 require = TRUE),
                     password = pal::pkg_config_val("password",
@@ -443,11 +425,11 @@ sign_in <- function(hostname = pal::pkg_config_val("hostname"),
   req <-
     req_basic(path = "api/v1/auth/user/signin",
               method = "POST",
-              hostname = hostname) |>
+              origin = origin) |>
     httr2::req_body_json(data = list(email = email,
                                      password = password))
   if (cache_refresh_token) {
-    path_cookie <- path_cookie(hostname = hostname,
+    path_cookie <- path_cookie(origin = origin,
                                email = email)
     fs::dir_create(path = fs::path_dir(path_cookie))
     req %<>% httr2::req_cookie_preserve(path = path_cookie)
@@ -456,7 +438,7 @@ sign_in <- function(hostname = pal::pkg_config_val("hostname"),
   httr2::req_perform(req = req) |>
     httr2::resp_body_json() |>
     purrr::list_c(ptype = character()) |>
-    store_access_token(hostname = hostname,
+    store_access_token(origin = origin,
                        email = email)
 }
 
@@ -476,25 +458,25 @@ sign_in <- function(hostname = pal::pkg_config_val("hostname"),
 #' @family auth
 #' @family user
 #' @export
-sign_out <- function(hostname = pal::pkg_config_val("hostname"),
+sign_out <- function(origin = pal::pkg_config_val("origin"),
                      email = pal::pkg_config_val("email",
                                                  require = TRUE),
                      password = pal::pkg_config_val("password"),
                      api_token = pal::pkg_config_val("api_token"),
                      quiet = FALSE) {
   
-  checkmate::assert_string(hostname)
+  checkmate::assert_string(origin)
   checkmate::assert_string(email)
   checkmate::assert_flag(quiet)
   
-  path_cookie <- path_cookie(hostname = hostname,
+  path_cookie <- path_cookie(origin = origin,
                              email = email)
   
   # invalidate refresh token
   result <-
     req_basic(path = "api/v1/auth/user/signout",
               method = "POST",
-              hostname = hostname) |>
+              origin = origin) |>
     req_auth(email = email,
              password = password,
              api_token = api_token) |>
@@ -520,7 +502,7 @@ sign_out <- function(hostname = pal::pkg_config_val("hostname"),
   
   # clear pkg state
   store_access_token(x = NULL,
-                     hostname = hostname,
+                     origin = origin,
                      email = email)
   invisible(email)
 }
@@ -535,10 +517,10 @@ sign_out <- function(hostname = pal::pkg_config_val("hostname"),
 #' @family auth
 #' @family user
 #' @keywords internal
-is_signed_in <- function(hostname = pal::pkg_config_val("hostname"),
+is_signed_in <- function(origin = pal::pkg_config_val("origin"),
                          email = pal::pkg_config_val("email",
                                                      require = TRUE)) {
-  !is.na(access_token(hostname = hostname,
+  !is.na(access_token(origin = origin,
                       email = email))
 }
 
@@ -556,18 +538,18 @@ is_signed_in <- function(hostname = pal::pkg_config_val("hostname"),
 #' @family auth
 #' @family user
 #' @keywords internal
-refresh_sign_in <- function(hostname = pal::pkg_config_val("hostname"),
+refresh_sign_in <- function(origin = pal::pkg_config_val("origin"),
                             email = pal::pkg_config_val("email",
                                                         require = TRUE)) {
   req_basic(path = "api/v1/auth/token/refresh",
             method = "POST",
-            hostname = hostname) |>
-    httr2::req_cookie_preserve(path = path_cookie(hostname = hostname,
+            origin = origin) |>
+    httr2::req_cookie_preserve(path = path_cookie(origin = origin,
                                                   email = email)) |>
     httr2::req_perform() |>
     httr2::resp_body_json() |>
     purrr::list_c(ptype = character()) |>
-    store_access_token(hostname = hostname,
+    store_access_token(origin = origin,
                        email = email)
 }
 
@@ -584,7 +566,7 @@ refresh_sign_in <- function(hostname = pal::pkg_config_val("hostname"),
 #' @family auth
 #' @family user
 #' @keywords internal
-is_super_admin <- function(hostname = pal::pkg_config_val("hostname"),
+is_super_admin <- function(origin = pal::pkg_config_val("origin"),
                            email = pal::pkg_config_val("email"),
                            password = pal::pkg_config_val("password"),
                            api_token = NULL) {
@@ -595,16 +577,16 @@ is_super_admin <- function(hostname = pal::pkg_config_val("hostname"),
   if (is.null(api_token)) {
     
     result <-
-      access_token(hostname = hostname,
+      access_token(origin = origin,
                    email = email) %|%
       # sign in if necessary
-      sign_in(hostname = hostname,
+      sign_in(origin = origin,
               email = email,
               password = password) |>
       decode_access_token()
     
   } else {
-    result <- whoami(hostname = hostname,
+    result <- whoami(origin = origin,
                      api_token = api_token)
   }
   
@@ -627,12 +609,12 @@ is_super_admin <- function(hostname = pal::pkg_config_val("hostname"),
 #' @family auth
 #' @family user
 #' @keywords internal
-assert_super_admin <- function(hostname = pal::pkg_config_val("hostname"),
+assert_super_admin <- function(origin = pal::pkg_config_val("origin"),
                                email = pal::pkg_config_val("email"),
                                password = pal::pkg_config_val("password"),
                                api_token = NULL) {
   
-  result <- is_super_admin(hostname = hostname,
+  result <- is_super_admin(origin = origin,
                            email = email,
                            password = password,
                            api_token = api_token)
@@ -654,16 +636,16 @@ assert_super_admin <- function(hostname = pal::pkg_config_val("hostname"),
 #'
 #' @inheritParams sign_in
 #'
-#' @return Access token as a character scalar. `NA_character_` if no access token exists for `hostname` and `email`.
+#' @return Access token as a character scalar. `NA_character_` if no access token exists for `origin` and `email`.
 #' @family access_token
 #' @keywords internal
-access_token <- function(hostname = pal::pkg_config_val("hostname"),
+access_token <- function(origin = pal::pkg_config_val("origin"),
                          email = pal::pkg_config_val("email",
                                                      require = TRUE)) {
-  checkmate::assert_string(hostname)
+  checkmate::assert_string(origin)
   checkmate::assert_string(email)
   
-  stateful$access_token[[hostname]][[email]] %||% NA_character_
+  stateful$access_token[[origin]][[email]] %||% NA_character_
 }
 
 #' Store NocoDB access token
@@ -677,10 +659,10 @@ access_token <- function(hostname = pal::pkg_config_val("hostname"),
 #' @family access_token
 #' @keywords internal
 store_access_token <- function(x,
-                               hostname = pal::pkg_config_val("hostname"),
+                               origin = pal::pkg_config_val("origin"),
                                email = pal::pkg_config_val("email",
                                                            require = TRUE)) {
-  stateful$access_token[[hostname]][[email]] <- x
+  stateful$access_token[[origin]][[email]] <- x
   
   invisible(x)
 }
@@ -747,14 +729,14 @@ is_access_token_expired <- function(x) {
 #' @family api_tokens
 #' @family auth
 #' @export
-api_tokens <- function(hostname = pal::pkg_config_val("hostname"),
+api_tokens <- function(origin = pal::pkg_config_val("origin"),
                        email = pal::pkg_config_val("email",
                                                    require = TRUE),
                        password = pal::pkg_config_val("password",
                                                       require = TRUE)) {
   api(path = "api/v1/tokens",
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = NULL) |>
@@ -778,7 +760,7 @@ api_tokens <- function(hostname = pal::pkg_config_val("hostname"),
 #' @family auth
 #' @export
 create_api_token <- function(description,
-                             hostname = pal::pkg_config_val("hostname"),
+                             origin = pal::pkg_config_val("origin"),
                              email = pal::pkg_config_val("email",
                                                          require = TRUE),
                              password = pal::pkg_config_val("password",
@@ -787,7 +769,7 @@ create_api_token <- function(description,
   
   api(path = "api/v1/tokens",
       method = "POST",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = NULL,
@@ -810,7 +792,7 @@ create_api_token <- function(description,
 #' @family auth
 #' @export
 delete_api_token <- function(api_token,
-                             hostname = pal::pkg_config_val("hostname"),
+                             origin = pal::pkg_config_val("origin"),
                              email = pal::pkg_config_val("email",
                                                          require = TRUE),
                              password = pal::pkg_config_val("password",
@@ -818,7 +800,7 @@ delete_api_token <- function(api_token,
   
   api(path = fs::path("api/v1/tokens/", utils::URLencode(api_token)),
       method = "DELETE",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = NULL)
@@ -836,14 +818,14 @@ delete_api_token <- function(api_token,
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family bases
 #' @export
-bases <- function(hostname = pal::pkg_config_val("hostname"),
+bases <- function(origin = pal::pkg_config_val("origin"),
                   email = pal::pkg_config_val("email"),
                   password = pal::pkg_config_val("password"),
                   api_token = pal::pkg_config_val("api_token")) {
   
   api(path = "api/v2/meta/bases",
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token) |>
@@ -863,7 +845,7 @@ bases <- function(hostname = pal::pkg_config_val("hostname"),
 #' @family bases
 #' @export
 base_id <- function(title = pal::pkg_config_val("base_title"),
-                    hostname = pal::pkg_config_val("hostname"),
+                    origin = pal::pkg_config_val("origin"),
                     email = pal::pkg_config_val("email"),
                     password = pal::pkg_config_val("password"),
                     api_token = pal::pkg_config_val("api_token")) {
@@ -871,7 +853,7 @@ base_id <- function(title = pal::pkg_config_val("base_title"),
   checkmate::assert_string(title)
   
   result <-
-    bases(hostname = hostname,
+    bases(origin = origin,
           email = email,
           password = password,
           api_token = api_token) |>
@@ -884,7 +866,7 @@ base_id <- function(title = pal::pkg_config_val("base_title"),
     result <- result[1L]
     cli::cli_warn("{.val {n_result}} bases with title {.val {title}} present. The identifier of the first one listed in the API response is returned.")
   } else if (n_result == 0L) {
-    cli::cli_abort("No base found with title {.val {title}} on the {.field {hostname}} NocoDB server.")
+    cli::cli_abort("No base found with title {.val {title}} on the {.field {origin}} NocoDB server.")
   }
   
   result
@@ -901,11 +883,11 @@ base_id <- function(title = pal::pkg_config_val("base_title"),
 #' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the specified NocoDB base")`
 #' @family bases
 #' @export
-base <- function(id_base = base_id(hostname = hostname,
+base <- function(id_base = base_id(origin = origin,
                                    email = email,
                                    password = password,
                                    api_token = api_token),
-                 hostname = pal::pkg_config_val("hostname"),
+                 origin = pal::pkg_config_val("origin"),
                  email = pal::pkg_config_val("email"),
                  password = pal::pkg_config_val("password"),
                  api_token = pal::pkg_config_val("api_token")) {
@@ -914,7 +896,7 @@ base <- function(id_base = base_id(hostname = hostname,
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}"),
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token) |>
@@ -940,7 +922,7 @@ create_base <- function(title = pal::pkg_config_val("base_title"),
                         description = NULL,
                         color = "#36BFFF",
                         show_null_and_empty_in_filter = TRUE,
-                        hostname = pal::pkg_config_val("hostname"),
+                        origin = pal::pkg_config_val("origin"),
                         email = pal::pkg_config_val("email"),
                         password = pal::pkg_config_val("password"),
                         api_token = pal::pkg_config_val("api_token")) {
@@ -955,7 +937,7 @@ create_base <- function(title = pal::pkg_config_val("base_title"),
   
   api(path = "api/v2/meta/bases",
       method = "POST",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token,
@@ -984,11 +966,11 @@ update_base <- function(title = NULL,
                         description = NULL,
                         color = NULL,
                         show_null_and_empty_in_filter = NULL,
-                        id_base = base_id(hostname = hostname,
+                        id_base = base_id(origin = origin,
                                           email = email,
                                           password = password,
                                           api_token = api_token),
-                        hostname = pal::pkg_config_val("hostname"),
+                        origin = pal::pkg_config_val("origin"),
                         email = pal::pkg_config_val("email"),
                         password = pal::pkg_config_val("password"),
                         api_token = pal::pkg_config_val("api_token")) {
@@ -1014,7 +996,7 @@ update_base <- function(title = NULL,
     
     api(path = glue::glue("api/v2/meta/bases/{id_base}"),
         method = "PATCH",
-        hostname = hostname,
+        origin = origin,
         email = email,
         password = password,
         api_token = api_token,
@@ -1041,7 +1023,7 @@ update_base <- function(title = NULL,
 #' @family bases
 #' @export
 delete_base <- function(id_base,
-                        hostname = pal::pkg_config_val("hostname"),
+                        origin = pal::pkg_config_val("origin"),
                         email = pal::pkg_config_val("email"),
                         password = pal::pkg_config_val("password"),
                         api_token = pal::pkg_config_val("api_token")) {
@@ -1050,7 +1032,7 @@ delete_base <- function(id_base,
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}"),
       method = "DELETE",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token)
@@ -1071,18 +1053,18 @@ delete_base <- function(id_base,
 #' @family views
 #' @family bases
 #' @export
-base_ui_acl <- function(id_base = base_id(hostname = hostname,
+base_ui_acl <- function(id_base = base_id(origin = origin,
                                           email = email,
                                           password = password,
                                           api_token = api_token),
-                        hostname = pal::pkg_config_val("hostname"),
+                        origin = pal::pkg_config_val("origin"),
                         email = pal::pkg_config_val("email"),
                         password = pal::pkg_config_val("password"),
                         api_token = pal::pkg_config_val("api_token")) {
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}/visibility-rules"),
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token) |>
@@ -1118,11 +1100,11 @@ update_base_ui_acl <- function(id_tbl_view,
                                editor = creator,
                                creator = owner,
                                owner = FALSE,
-                               id_base = base_id(hostname = hostname,
+                               id_base = base_id(origin = origin,
                                                  email = email,
                                                  password = password,
                                                  api_token = api_token),
-                               hostname = pal::pkg_config_val("hostname"),
+                               origin = pal::pkg_config_val("origin"),
                                email = pal::pkg_config_val("email"),
                                password = pal::pkg_config_val("password"),
                                api_token = pal::pkg_config_val("api_token"),
@@ -1140,7 +1122,7 @@ update_base_ui_acl <- function(id_tbl_view,
   
   result <- api(path = glue::glue("api/v2/meta/bases/{id_base}/visibility-rules"),
                 method = "POST",
-                hostname = hostname,
+                origin = origin,
                 email = email,
                 password = password,
                 api_token = api_token,
@@ -1168,11 +1150,11 @@ update_base_ui_acl <- function(id_tbl_view,
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family data_src
 #' @export
-data_srcs <- function(id_base = base_id(hostname = hostname,
+data_srcs <- function(id_base = base_id(origin = origin,
                                         email = email,
                                         password = password,
                                         api_token = api_token),
-                      hostname = pal::pkg_config_val("hostname"),
+                      origin = pal::pkg_config_val("origin"),
                       email = pal::pkg_config_val("email"),
                       password = pal::pkg_config_val("password"),
                       api_token = pal::pkg_config_val("api_token")) {
@@ -1181,7 +1163,7 @@ data_srcs <- function(id_base = base_id(hostname = hostname,
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}/sources"),
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token) |>
@@ -1201,11 +1183,11 @@ data_srcs <- function(id_base = base_id(hostname = hostname,
 #' @family data_src
 #' @export
 data_src_id <- function(alias,
-                        id_base = base_id(hostname = hostname,
+                        id_base = base_id(origin = origin,
                                           email = email,
                                           password = password,
                                           api_token = api_token),
-                        hostname = pal::pkg_config_val("hostname"),
+                        origin = pal::pkg_config_val("origin"),
                         email = pal::pkg_config_val("email"),
                         password = pal::pkg_config_val("password"),
                         api_token = pal::pkg_config_val("api_token")) {
@@ -1214,7 +1196,7 @@ data_src_id <- function(alias,
   
   result <-
     data_srcs(id_base = id_base,
-              hostname = hostname,
+              origin = origin,
               email = email,
               password = password,
               api_token = api_token) |>
@@ -1227,7 +1209,7 @@ data_src_id <- function(alias,
     result <- result[1L]
     cli::cli_warn("{.val {n_result}} data sources with alias {.val {alias}} present. The identifier of the first one listed in the API response is returned.")
   } else if (n_result == 0L) {
-    cli::cli_abort("No data source found with alias {.val {alias}} in the {.val {id_base}} base on the {.field {hostname}} NocoDB server.")
+    cli::cli_abort("No data source found with alias {.val {alias}} in the {.val {id_base}} base on the {.field {origin}} NocoDB server.")
   }
   
   result
@@ -1245,11 +1227,11 @@ data_src_id <- function(alias,
 #' @family data_src
 #' @export
 data_src <- function(id_data_src,
-                     id_base = base_id(hostname = hostname,
+                     id_base = base_id(origin = origin,
                                        email = email,
                                        password = password,
                                        api_token = api_token),
-                     hostname = pal::pkg_config_val("hostname"),
+                     origin = pal::pkg_config_val("origin"),
                      email = pal::pkg_config_val("email"),
                      password = pal::pkg_config_val("password"),
                      api_token = pal::pkg_config_val("api_token")) {
@@ -1259,7 +1241,7 @@ data_src <- function(id_data_src,
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}/sources/{id_data_src}"),
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token) |>
@@ -1290,7 +1272,7 @@ data_src <- function(id_data_src,
 #'                                         password = "REPLACE-ME"))}
 test_data_src <- function(connection,
                           type = c("mssql", "mysql", "pg", "sqlite3"),
-                          hostname = pal::pkg_config_val("hostname"),
+                          origin = pal::pkg_config_val("origin"),
                           email = pal::pkg_config_val("email"),
                           password = pal::pkg_config_val("password"),
                           api_token = pal::pkg_config_val("api_token"),
@@ -1303,7 +1285,7 @@ test_data_src <- function(connection,
   
   result <- api(path = "api/v2/meta/connection/test",
                 method = "POST",
-                hostname = hostname,
+                origin = origin,
                 email = email,
                 password = password,
                 api_token = api_token,
@@ -1332,11 +1314,11 @@ test_data_src <- function(connection,
 #' @family data_src
 #' @export
 data_src_diff <- function(id_data_src,
-                          id_base = base_id(hostname = hostname,
+                          id_base = base_id(origin = origin,
                                             email = email,
                                             password = password,
                                             api_token = api_token),
-                          hostname = pal::pkg_config_val("hostname"),
+                          origin = pal::pkg_config_val("origin"),
                           email = pal::pkg_config_val("email"),
                           password = pal::pkg_config_val("password"),
                           api_token = pal::pkg_config_val("api_token")) {
@@ -1346,7 +1328,7 @@ data_src_diff <- function(id_data_src,
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}/meta-diff/{id_data_src}"),
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token) |>
@@ -1363,18 +1345,18 @@ data_src_diff <- function(id_data_src,
 #' @family data_src
 #' @export
 has_data_src_diff <- function(id_data_src,
-                              id_base = base_id(hostname = hostname,
+                              id_base = base_id(origin = origin,
                                                 email = email,
                                                 password = password,
                                                 api_token = api_token),
-                              hostname = pal::pkg_config_val("hostname"),
+                              origin = pal::pkg_config_val("origin"),
                               email = pal::pkg_config_val("email"),
                               password = pal::pkg_config_val("password"),
                               api_token = pal::pkg_config_val("api_token")) {
   
   diff <- data_src_diff(id_data_src = id_data_src,
                         id_base = id_base,
-                        hostname = hostname,
+                        origin = origin,
                         email = email,
                         password = password,
                         api_token = api_token)
@@ -1401,11 +1383,11 @@ has_data_src_diff <- function(id_data_src,
 #' @family data_src
 #' @export
 sync_data_src <- function(id_data_src,
-                          id_base = base_id(hostname = hostname,
+                          id_base = base_id(origin = origin,
                                             email = email,
                                             password = password,
                                             api_token = api_token),
-                          hostname = pal::pkg_config_val("hostname"),
+                          origin = pal::pkg_config_val("origin"),
                           email = pal::pkg_config_val("email"),
                           password = pal::pkg_config_val("password"),
                           api_token = pal::pkg_config_val("api_token")) {
@@ -1415,7 +1397,7 @@ sync_data_src <- function(id_data_src,
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}/meta-diff/{id_data_src}"),
       method = "POST",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token)
@@ -1438,11 +1420,11 @@ sync_data_src <- function(id_data_src,
 #' @family admin
 #' @export
 sync_data_src_eagerly <- function(id_data_src,
-                                  id_base = base_id(hostname = hostname,
+                                  id_base = base_id(origin = origin,
                                                     email = email,
                                                     password = password,
                                                     api_token = api_token),
-                                  hostname = pal::pkg_config_val("hostname"),
+                                  origin = pal::pkg_config_val("origin"),
                                   email = pal::pkg_config_val("email"),
                                   password = pal::pkg_config_val("password"),
                                   api_token = pal::pkg_config_val("api_token"),
@@ -1459,7 +1441,7 @@ sync_data_src_eagerly <- function(id_data_src,
   
   sync_data_src(id_data_src = id_data_src,
                 id_base = id_base,
-                hostname = hostname,
+                origin = origin,
                 email = email,
                 password = password)
   
@@ -1469,7 +1451,7 @@ sync_data_src_eagerly <- function(id_data_src,
     if (i %% wait_resync < 1L) {
       sync_data_src(id_data_src = id_data_src,
                     id_base = id_base,
-                    hostname = hostname,
+                    origin = origin,
                     email = email,
                     password = password)
     }
@@ -1479,7 +1461,7 @@ sync_data_src_eagerly <- function(id_data_src,
     # continue if sync has finished
     if (!has_data_src_diff(id_data_src = id_data_src,
                            id_base = id_base,
-                           hostname = hostname,
+                           origin = origin,
                            email = email,
                            password = password)) {
       break
@@ -1542,11 +1524,11 @@ create_data_src <- function(connection,
                             is_schema_readonly = FALSE,
                             is_data_readonly = FALSE,
                             enabled = TRUE,
-                            id_base = base_id(hostname = hostname,
+                            id_base = base_id(origin = origin,
                                               email = email,
                                               password = password,
                                               api_token = api_token),
-                            hostname = pal::pkg_config_val("hostname"),
+                            origin = pal::pkg_config_val("origin"),
                             email = pal::pkg_config_val("email"),
                             password = pal::pkg_config_val("password"),
                             api_token = pal::pkg_config_val("api_token")) {
@@ -1567,7 +1549,7 @@ create_data_src <- function(connection,
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}/sources"),
       method = "POST",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token,
@@ -1604,11 +1586,11 @@ update_data_src <- function(id_data_src,
                             is_schema_readonly = NULL,
                             is_data_readonly = NULL,
                             enabled = NULL,
-                            id_base = base_id(hostname = hostname,
+                            id_base = base_id(origin = origin,
                                               email = email,
                                               password = password,
                                               api_token = api_token),
-                            hostname = pal::pkg_config_val("hostname"),
+                            origin = pal::pkg_config_val("origin"),
                             email = pal::pkg_config_val("email"),
                             password = pal::pkg_config_val("password"),
                             api_token = pal::pkg_config_val("api_token")) {
@@ -1641,7 +1623,7 @@ update_data_src <- function(id_data_src,
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}/sources/{id_data_src}"),
       method = "PATCH",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token,
@@ -1669,11 +1651,11 @@ update_data_src <- function(id_data_src,
 #' @family data_src
 #' @export
 delete_data_src <- function(id_data_src,
-                            id_base = base_id(hostname = hostname,
+                            id_base = base_id(origin = origin,
                                               email = email,
                                               password = password,
                                               api_token = api_token),
-                            hostname = pal::pkg_config_val("hostname"),
+                            origin = pal::pkg_config_val("origin"),
                             email = pal::pkg_config_val("email"),
                             password = pal::pkg_config_val("password"),
                             api_token = pal::pkg_config_val("api_token")) {
@@ -1683,7 +1665,7 @@ delete_data_src <- function(id_data_src,
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}/sources/{id_data_src}"),
       method = "DELETE",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token)
@@ -1703,11 +1685,11 @@ delete_data_src <- function(id_data_src,
 #' @family tbls
 #' @export
 data_src_tbls <- function(id_data_src,
-                          id_base = base_id(hostname = hostname,
+                          id_base = base_id(origin = origin,
                                             email = email,
                                             password = password,
                                             api_token = api_token),
-                          hostname = pal::pkg_config_val("hostname"),
+                          origin = pal::pkg_config_val("origin"),
                           email = pal::pkg_config_val("email"),
                           password = pal::pkg_config_val("password"),
                           api_token = pal::pkg_config_val("api_token")) {
@@ -1717,7 +1699,7 @@ data_src_tbls <- function(id_data_src,
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}/{id_data_src}/tables"),
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token) |>
@@ -1766,11 +1748,11 @@ create_data_src_tbl <- function(id_data_src,
                                 title = NULL,
                                 meta = NULL,
                                 order = NULL,
-                                id_base = base_id(hostname = hostname,
+                                id_base = base_id(origin = origin,
                                                   email = email,
                                                   password = password,
                                                   api_token = api_token),
-                                hostname = pal::pkg_config_val("hostname"),
+                                origin = pal::pkg_config_val("origin"),
                                 email = pal::pkg_config_val("email"),
                                 password = pal::pkg_config_val("password"),
                                 api_token = pal::pkg_config_val("api_token")) {
@@ -1790,7 +1772,7 @@ create_data_src_tbl <- function(id_data_src,
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}/{id_data_src}/tables"),
       method = "POST",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token,
@@ -1814,12 +1796,12 @@ create_data_src_tbl <- function(id_data_src,
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family tbls
 #' @export
-tbls <- function(id_base = base_id(hostname = hostname,
+tbls <- function(id_base = base_id(origin = origin,
                                    email = email,
                                    password = password,
                                    api_token = api_token),
                  include_m2m = TRUE,
-                 hostname = pal::pkg_config_val("hostname"),
+                 origin = pal::pkg_config_val("origin"),
                  email = pal::pkg_config_val("email"),
                  password = pal::pkg_config_val("password"),
                  api_token = pal::pkg_config_val("api_token")) {
@@ -1829,7 +1811,7 @@ tbls <- function(id_base = base_id(hostname = hostname,
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}/tables"),
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token,
@@ -1851,11 +1833,11 @@ tbls <- function(id_base = base_id(hostname = hostname,
 #' @family tbls
 #' @export
 tbl_id <- function(name,
-                   id_base = base_id(hostname = hostname,
+                   id_base = base_id(origin = origin,
                                      email = email,
                                      password = password,
                                      api_token = api_token),
-                   hostname = pal::pkg_config_val("hostname"),
+                   origin = pal::pkg_config_val("origin"),
                    email = pal::pkg_config_val("email"),
                    password = pal::pkg_config_val("password"),
                    api_token = pal::pkg_config_val("api_token")) {
@@ -1864,7 +1846,7 @@ tbl_id <- function(name,
   
   result <-
     tbls(id_base = id_base,
-         hostname = hostname,
+         origin = origin,
          email = email,
          password = password,
          api_token = api_token) |>
@@ -1895,7 +1877,7 @@ tbl_id <- function(name,
 #' @family tbls
 #' @export
 tbl <- function(id_tbl,
-                hostname = pal::pkg_config_val("hostname"),
+                origin = pal::pkg_config_val("origin"),
                 email = pal::pkg_config_val("email"),
                 password = pal::pkg_config_val("password"),
                 api_token = pal::pkg_config_val("api_token")) {
@@ -1904,7 +1886,7 @@ tbl <- function(id_tbl,
   
   api(path = glue::glue("api/v2/meta/tables/{id_tbl}"),
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token) |>
@@ -1956,11 +1938,11 @@ create_tbl <- function(name,
                        title = NULL,
                        meta = NULL,
                        order = NULL,
-                       id_base = base_id(hostname = hostname,
+                       id_base = base_id(origin = origin,
                                          email = email,
                                          password = password,
                                          api_token = api_token),
-                       hostname = pal::pkg_config_val("hostname"),
+                       origin = pal::pkg_config_val("origin"),
                        email = pal::pkg_config_val("email"),
                        password = pal::pkg_config_val("password"),
                        api_token = pal::pkg_config_val("api_token")) {
@@ -1979,7 +1961,7 @@ create_tbl <- function(name,
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}/tables"),
       method = "POST",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token,
@@ -2010,7 +1992,7 @@ update_tbl <- function(id_tbl,
                        name = NULL,
                        title = NULL,
                        meta = NULL,
-                       hostname = pal::pkg_config_val("hostname"),
+                       origin = pal::pkg_config_val("origin"),
                        email = pal::pkg_config_val("email"),
                        password = pal::pkg_config_val("password"),
                        api_token = pal::pkg_config_val("api_token"),
@@ -2030,7 +2012,7 @@ update_tbl <- function(id_tbl,
   
   result <- api(path = glue::glue("api/v2/meta/tables/{id_tbl}"),
                 method = "PATCH",
-                hostname = hostname,
+                origin = origin,
                 email = email,
                 password = password,
                 api_token = api_token,
@@ -2056,7 +2038,7 @@ update_tbl <- function(id_tbl,
 #' @family tbls
 #' @export
 delete_tbl <- function(id_tbl,
-                       hostname = pal::pkg_config_val("hostname"),
+                       origin = pal::pkg_config_val("origin"),
                        email = pal::pkg_config_val("email"),
                        password = pal::pkg_config_val("password"),
                        api_token = pal::pkg_config_val("api_token")) {
@@ -2065,7 +2047,7 @@ delete_tbl <- function(id_tbl,
   
   api(path = glue::glue("api/v2/meta/tables/{id_tbl}"),
       method = "DELETE",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token)
@@ -2088,7 +2070,7 @@ delete_tbl <- function(id_tbl,
 #' @export
 reorder_tbl <- function(id_tbl,
                         order = 1L,
-                        hostname = pal::pkg_config_val("hostname"),
+                        origin = pal::pkg_config_val("origin"),
                         email = pal::pkg_config_val("email"),
                         password = pal::pkg_config_val("password"),
                         api_token = pal::pkg_config_val("api_token")) {
@@ -2098,7 +2080,7 @@ reorder_tbl <- function(id_tbl,
   
   api(path = glue::glue("api/v2/meta/tables/{id_tbl}/reorder"),
       method = "POST",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token,
@@ -2124,11 +2106,11 @@ reorder_tbl <- function(id_tbl,
 #' @family tbls
 #' @export
 set_tbl_metadata <- function(data,
-                             id_base = base_id(hostname = hostname,
+                             id_base = base_id(origin = origin,
                                                email = email,
                                                password = password,
                                                api_token = api_token),
-                             hostname = pal::pkg_config_val("hostname"),
+                             origin = pal::pkg_config_val("origin"),
                              email = pal::pkg_config_val("email"),
                              password = pal::pkg_config_val("password"),
                              api_token = pal::pkg_config_val("api_token"),
@@ -2144,7 +2126,7 @@ set_tbl_metadata <- function(data,
       
       id <- tbl_id(name = name,
                    id_base = id_base,
-                   hostname = hostname,
+                   origin = origin,
                    email = email,
                    password = password,
                    api_token = api_token)
@@ -2155,7 +2137,7 @@ set_tbl_metadata <- function(data,
       
       reorder_tbl(id_tbl = id,
                   order = rowid,
-                  hostname = hostname,
+                  origin = origin,
                   email = email,
                   password = password,
                   api_token = api_token)
@@ -2167,7 +2149,7 @@ set_tbl_metadata <- function(data,
       if (!is.na(meta.icon)) {
         update_tbl(id_tbl = id,
                    meta = list(icon = meta.icon),
-                   hostname = hostname,
+                   origin = origin,
                    email = email,
                    password = password,
                    api_token = api_token,
@@ -2189,7 +2171,7 @@ set_tbl_metadata <- function(data,
 #' @family views
 #' @export
 tbl_views <- function(id_tbl,
-                      hostname = pal::pkg_config_val("hostname"),
+                      origin = pal::pkg_config_val("origin"),
                       email = pal::pkg_config_val("email"),
                       password = pal::pkg_config_val("password"),
                       api_token = pal::pkg_config_val("api_token")) {
@@ -2198,7 +2180,7 @@ tbl_views <- function(id_tbl,
   
   api(path = glue::glue("api/v2/meta/tables/{id_tbl}/views"),
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token) |>
@@ -2222,7 +2204,7 @@ tbl_view_id <- function(id_tbl,
                         type = "default",
                         name = NULL,
                         title = NULL,
-                        hostname = pal::pkg_config_val("hostname"),
+                        origin = pal::pkg_config_val("origin"),
                         email = pal::pkg_config_val("email"),
                         password = pal::pkg_config_val("password"),
                         api_token = pal::pkg_config_val("api_token")) {
@@ -2241,7 +2223,7 @@ tbl_view_id <- function(id_tbl,
   
   result <-
     tbl_views(id_tbl = id_tbl,
-              hostname = hostname,
+              origin = origin,
               email = email,
               password = password,
               api_token = api_token) |>
@@ -2285,7 +2267,7 @@ tbl_view_id <- function(id_tbl,
 #' @family cols
 #' @export
 tbl_cols <- function(id_tbl,
-                     hostname = pal::pkg_config_val("hostname"),
+                     origin = pal::pkg_config_val("origin"),
                      email = pal::pkg_config_val("email"),
                      password = pal::pkg_config_val("password"),
                      api_token = pal::pkg_config_val("api_token")) {
@@ -2294,7 +2276,7 @@ tbl_cols <- function(id_tbl,
   
   api(path = glue::glue("api/v2/meta/tables/{id_tbl}"),
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token) |>
@@ -2317,7 +2299,7 @@ tbl_cols <- function(id_tbl,
 tbl_col_id <- function(id_tbl,
                        name = NULL,
                        title = NULL,
-                       hostname = pal::pkg_config_val("hostname"),
+                       origin = pal::pkg_config_val("origin"),
                        email = pal::pkg_config_val("email"),
                        password = pal::pkg_config_val("password"),
                        api_token = pal::pkg_config_val("api_token")) {
@@ -2332,7 +2314,7 @@ tbl_col_id <- function(id_tbl,
   
   result <-
     tbl_cols(id_tbl = id_tbl,
-             hostname = hostname,
+             origin = origin,
              email = email,
              password = password,
              api_token = api_token) |>
@@ -2375,7 +2357,7 @@ tbl_col_id <- function(id_tbl,
 #' @family cols
 #' @export
 tbl_col <- function(id_col,
-                    hostname = pal::pkg_config_val("hostname"),
+                    origin = pal::pkg_config_val("origin"),
                     email = pal::pkg_config_val("email"),
                     password = pal::pkg_config_val("password"),
                     api_token = pal::pkg_config_val("api_token")) {
@@ -2384,7 +2366,7 @@ tbl_col <- function(id_col,
   
   api(path = glue::glue("api/v2/meta/columns/{id_col}"),
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token) |>
@@ -2410,7 +2392,7 @@ create_tbl_col <- function(id_tbl,
                            uidt = NULL,
                            dt = NULL,
                            cdf = NULL,
-                           hostname = pal::pkg_config_val("hostname"),
+                           origin = pal::pkg_config_val("origin"),
                            email = pal::pkg_config_val("email"),
                            password = pal::pkg_config_val("password"),
                            api_token = pal::pkg_config_val("api_token")) {
@@ -2429,7 +2411,7 @@ create_tbl_col <- function(id_tbl,
   
   api(path = glue::glue("api/v2/meta/tables/{id_tbl}/columns"),
       method = "POST",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token,
@@ -2470,7 +2452,7 @@ update_tbl_col <- function(id_col,
                            uidt = NULL,
                            dt = NULL,
                            cdf = NULL,
-                           hostname = pal::pkg_config_val("hostname"),
+                           origin = pal::pkg_config_val("origin"),
                            email = pal::pkg_config_val("email"),
                            password = pal::pkg_config_val("password"),
                            api_token = pal::pkg_config_val("api_token")) {
@@ -2488,7 +2470,7 @@ update_tbl_col <- function(id_col,
                            null.ok = TRUE)
   
   cur_data <- tbl_col(id_col = id_col,
-                      hostname = hostname,
+                      origin = origin,
                       email = email,
                       password = password,
                       api_token = api_token)
@@ -2534,7 +2516,7 @@ update_tbl_col <- function(id_col,
   
   api(path = glue::glue("api/v2/meta/columns/{id_col}"),
       method = "PATCH",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token,
@@ -2554,7 +2536,7 @@ update_tbl_col <- function(id_col,
 #' @family cols
 #' @export
 delete_tbl_col <- function(id_col,
-                           hostname = pal::pkg_config_val("hostname"),
+                           origin = pal::pkg_config_val("origin"),
                            email = pal::pkg_config_val("email"),
                            password = pal::pkg_config_val("password"),
                            api_token = pal::pkg_config_val("api_token")) {
@@ -2563,7 +2545,7 @@ delete_tbl_col <- function(id_col,
   
   api(path = glue::glue("api/v2/meta/columns/{id_col}"),
       method = "DELETE",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token)
@@ -2583,7 +2565,7 @@ delete_tbl_col <- function(id_col,
 #' @family cols
 #' @export
 set_display_val <- function(id_col,
-                            hostname = pal::pkg_config_val("hostname"),
+                            origin = pal::pkg_config_val("origin"),
                             email = pal::pkg_config_val("email"),
                             password = pal::pkg_config_val("password"),
                             api_token = pal::pkg_config_val("api_token")) {
@@ -2592,7 +2574,7 @@ set_display_val <- function(id_col,
   
   api(path = glue::glue("api/v2/meta/columns/{id_col}/primary"),
       method = "POST",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token) |>
@@ -2613,11 +2595,11 @@ set_display_val <- function(id_col,
 #' @family cols
 #' @export
 set_display_vals <- function(data,
-                             id_base = base_id(hostname = hostname,
+                             id_base = base_id(origin = origin,
                                                email = email,
                                                password = password,
                                                api_token = api_token),
-                             hostname = pal::pkg_config_val("hostname"),
+                             origin = pal::pkg_config_val("origin"),
                              email = pal::pkg_config_val("email"),
                              password = pal::pkg_config_val("password"),
                              api_token = pal::pkg_config_val("api_token"),
@@ -2639,16 +2621,16 @@ set_display_vals <- function(data,
                    
                    tbl_id(name = tbl_name,
                           id_base = id_base,
-                          hostname = hostname,
+                          origin = origin,
                           email = email,
                           password = password,
                           api_token = api_token) |>
                      tbl_col_id(name = col_name,
-                                hostname = hostname,
+                                origin = origin,
                                 email = email,
                                 password = password,
                                 api_token = api_token) |>
-                     set_display_val(hostname = hostname,
+                     set_display_val(origin = origin,
                                      email = email,
                                      password = password,
                                      api_token = api_token)
@@ -2681,7 +2663,7 @@ upload_attachments <- function(paths,
                                types = mime::guess_type(paths),
                                names = NULL,
                                upload_path = "r",
-                               hostname = pal::pkg_config_val("hostname"),
+                               origin = pal::pkg_config_val("origin"),
                                email = pal::pkg_config_val("email"),
                                password = pal::pkg_config_val("password"),
                                api_token = pal::pkg_config_val("api_token"),
@@ -2723,7 +2705,7 @@ upload_attachments <- function(paths,
   
   req_basic(path = "api/v2/storage/upload",
             method = "POST",
-            hostname = hostname,
+            origin = origin,
             max_tries = max_tries) |>
     httr2::req_url_query(path = upload_path) |>
     req_auth(email = email,
@@ -2751,7 +2733,7 @@ upload_attachments <- function(paths,
 #' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the specified NocoDB user")`
 #' @family users
 #' @export
-whoami <- function(hostname = pal::pkg_config_val("hostname"),
+whoami <- function(origin = pal::pkg_config_val("origin"),
                    email = pal::pkg_config_val("email"),
                    password = pal::pkg_config_val("password"),
                    api_token = NULL,
@@ -2759,7 +2741,7 @@ whoami <- function(hostname = pal::pkg_config_val("hostname"),
   
   api(path = "api/v1/auth/user/me",
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token,
@@ -2781,18 +2763,18 @@ whoami <- function(hostname = pal::pkg_config_val("hostname"),
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family users
 #' @export
-users <- function(hostname = pal::pkg_config_val("hostname"),
+users <- function(origin = pal::pkg_config_val("origin"),
                   email = pal::pkg_config_val("email",
                                               require = TRUE),
                   password = pal::pkg_config_val("password",
                                                  require = TRUE)) {
-  assert_super_admin(hostname = hostname,
+  assert_super_admin(origin = origin,
                      email = email,
                      password = password)
   
   api(path = "api/v1/users",
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = NULL) |>
@@ -2816,7 +2798,7 @@ users <- function(hostname = pal::pkg_config_val("hostname"),
 #' @export
 user_id <- function(user_email,
                     id_base = NULL,
-                    hostname = pal::pkg_config_val("hostname"),
+                    origin = pal::pkg_config_val("origin"),
                     email = pal::pkg_config_val("email"),
                     password = pal::pkg_config_val("password"),
                     api_token = pal::pkg_config_val("api_token")) {
@@ -2824,12 +2806,12 @@ user_id <- function(user_email,
   checkmate::assert_string(user_email)
   
   if (is.null(id_base)) {
-    result <- users(hostname = hostname,
+    result <- users(origin = origin,
                     email = email,
                     password = password)
   } else {
     result <- base_users(id_base = id_base,
-                         hostname = hostname,
+                         origin = origin,
                          email = email,
                          password = password,
                          api_token = api_token)
@@ -2845,7 +2827,7 @@ user_id <- function(user_email,
     result <- result[1L]
     cli::cli_warn("{.val {n_result}} users with e-mail address {.val {email}} present. The identifier of the first one listed in the API response is returned.")
   } else if (n_result == 0L) {
-    cli::cli_abort("No user found with e-mail address {.val {user_email}} on the {.field {hostname}} NocoDB server.")
+    cli::cli_abort("No user found with e-mail address {.val {user_email}} on the {.field {origin}} NocoDB server.")
   }
   
   result
@@ -2869,7 +2851,7 @@ add_user <- function(user_email,
                      user_password,
                      display_name = NULL,
                      subscribe_to_newsletter = FALSE,
-                     hostname = pal::pkg_config_val("hostname"),
+                     origin = pal::pkg_config_val("origin"),
                      email = pal::pkg_config_val("email",
                                                  require = TRUE),
                      password = pal::pkg_config_val("password",
@@ -2877,7 +2859,7 @@ add_user <- function(user_email,
                      quiet = TRUE) {
   
   invite_only_signup <-
-    app_settings(hostname = hostname,
+    app_settings(origin = origin,
                  email = email,
                  password = password,
                  api_token = NULL) |>
@@ -2887,7 +2869,7 @@ add_user <- function(user_email,
   # temporarily allow sign-up without invitation
   if (invite_only_signup) {
     update_app_settings(invite_only_signup = FALSE,
-                        hostname = hostname,
+                        origin = origin,
                         email = email,
                         password = password,
                         quiet = quiet)
@@ -2897,27 +2879,27 @@ add_user <- function(user_email,
   sign_up_user(user_email = user_email,
                user_password = user_password,
                subscribe_to_newsletter = subscribe_to_newsletter,
-               hostname = hostname,
+               origin = origin,
                email = email,
                password = password,
                api_token = NULL)
   
   # set user display name
   result <- update_user(display_name = display_name,
-                        hostname = hostname,
+                        origin = origin,
                         email = user_email,
                         password = user_password,
                         api_token = NULL)
   
   # validate user's e-mail address
   validate_user_email(verification_token = result$email_verification_token,
-                      hostname = hostname,
+                      origin = origin,
                       quiet = quiet)
   
   # restore signup invitation setting
   if (invite_only_signup) {
     update_app_settings(invite_only_signup = invite_only_signup,
-                        hostname = hostname,
+                        origin = origin,
                         email = email,
                         password = password,
                         quiet = quiet)
@@ -2942,7 +2924,7 @@ add_user <- function(user_email,
 #' @family users
 #' @export
 update_user <- function(display_name = NULL,
-                        hostname = pal::pkg_config_val("hostname"),
+                        origin = pal::pkg_config_val("origin"),
                         email = pal::pkg_config_val("email"),
                         password = pal::pkg_config_val("password"),
                         api_token = NULL) {
@@ -2952,7 +2934,7 @@ update_user <- function(display_name = NULL,
   result <-
     api(path = "api/v1/user/profile",
         method = "PATCH",
-        hostname = hostname,
+        origin = origin,
         email = email,
         password = password,
         api_token = api_token,
@@ -2961,10 +2943,10 @@ update_user <- function(display_name = NULL,
   
   # trigger NocoDB internal state update (so `base_users()` etc. reflect the updated metadata) if possible
   if (!is.null(display_name)) {
-    if (!is.null(email) && !is.null(password) && is_super_admin(hostname = hostname,
+    if (!is.null(email) && !is.null(password) && is_super_admin(origin = origin,
                                                                 email = email,
                                                                 password = password)) {
-      users(hostname = hostname,
+      users(origin = origin,
             email = email,
             password = password)
     } else {
@@ -2997,7 +2979,7 @@ update_user <- function(display_name = NULL,
 #' @family users
 #' @export
 delete_user <- function(id_user,
-                        hostname = pal::pkg_config_val("hostname"),
+                        origin = pal::pkg_config_val("origin"),
                         email = pal::pkg_config_val("email"),
                         password = pal::pkg_config_val("password"),
                         quiet = FALSE) {
@@ -3006,7 +2988,7 @@ delete_user <- function(id_user,
   
   result <- api(path = glue::glue("api/v1/users/{id_user}"),
                 method = "DELETE",
-                hostname = hostname,
+                origin = origin,
                 email = email,
                 password = password,
                 api_token = NULL)
@@ -3033,7 +3015,7 @@ delete_user <- function(id_user,
 #' @export
 invite_user <- function(user_email,
                         org_role = c("org-level-viewer", "org-level-creator"),
-                        hostname = pal::pkg_config_val("hostname"),
+                        origin = pal::pkg_config_val("origin"),
                         email = pal::pkg_config_val("email",
                                                     require = TRUE),
                         password = pal::pkg_config_val("password",
@@ -3046,7 +3028,7 @@ invite_user <- function(user_email,
   
   result <- api(path = "api/v1/users",
                 method = "POST",
-                hostname = hostname,
+                origin = origin,
                 email = email,
                 password = password,
                 api_token = NULL,
@@ -3093,7 +3075,7 @@ sign_up_user <- function(user_email,
                          user_password,
                          invite_token = NULL,
                          subscribe_to_newsletter = FALSE,
-                         hostname = pal::pkg_config_val("hostname"),
+                         origin = pal::pkg_config_val("origin"),
                          email = pal::pkg_config_val("email"),
                          password = pal::pkg_config_val("password"),
                          api_token = pal::pkg_config_val("api_token")) {
@@ -3106,7 +3088,7 @@ sign_up_user <- function(user_email,
   
   api(path = "api/v1/auth/user/signup",
       method = "POST",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token,
@@ -3115,7 +3097,7 @@ sign_up_user <- function(user_email,
                                       token = invite_token,
                                       ignore_subscribe = !subscribe_to_newsletter))) |>
     purrr::list_c(ptype = character()) |>
-    store_access_token(hostname = hostname,
+    store_access_token(origin = origin,
                        email = user_email)
 }
 
@@ -3133,12 +3115,12 @@ sign_up_user <- function(user_email,
 #' @family users
 #' @export
 validate_user_email <- function(verification_token,
-                                hostname = pal::pkg_config_val("hostname"),
+                                origin = pal::pkg_config_val("origin"),
                                 quiet = FALSE) {
   
   result <- api(path = glue::glue("api/v1/auth/email/validate/{verification_token}"),
                 method = "POST",
-                hostname = hostname,
+                origin = origin,
                 auth = FALSE)
   if (!quiet) {
     cli_alert_status(msg = result$msg)
@@ -3158,11 +3140,11 @@ validate_user_email <- function(verification_token,
 #' @family users
 #' @family bases
 #' @export
-base_users <- function(id_base = base_id(hostname = hostname,
+base_users <- function(id_base = base_id(origin = origin,
                                          email = email,
                                          password = password,
                                          api_token = api_token),
-                       hostname = pal::pkg_config_val("hostname"),
+                       origin = pal::pkg_config_val("origin"),
                        email = pal::pkg_config_val("email"),
                        password = pal::pkg_config_val("password"),
                        api_token = pal::pkg_config_val("api_token")) {
@@ -3171,7 +3153,7 @@ base_users <- function(id_base = base_id(hostname = hostname,
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}/users"),
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token) |>
@@ -3208,15 +3190,15 @@ update_base_user <- function(user_email,
                              role = c("no-access", "viewer", "commenter", "editor", "creator"),
                              id_user = user_id(user_email = user_email,
                                                id_base = id_base,
-                                               hostname = hostname,
+                                               origin = origin,
                                                email = email,
                                                password = password,
                                                api_token = api_token),
-                             id_base = base_id(hostname = hostname,
+                             id_base = base_id(origin = origin,
                                                email = email,
                                                password = password,
                                                api_token = api_token),
-                             hostname = pal::pkg_config_val("hostname"),
+                             origin = pal::pkg_config_val("origin"),
                              email = pal::pkg_config_val("email"),
                              password = pal::pkg_config_val("password"),
                              api_token = pal::pkg_config_val("api_token"),
@@ -3229,7 +3211,7 @@ update_base_user <- function(user_email,
   api_version <- rlang::arg_match(api_version)
   checkmate::assert_flag(quiet)
   
-  assert_super_admin(hostname = hostname,
+  assert_super_admin(origin = origin,
                      email = email,
                      password = password,
                      api_token = api_token)
@@ -3237,10 +3219,10 @@ update_base_user <- function(user_email,
   # NOTE: since NocoDB v0.250+, a user must always first be invited to a base, only then they can be updated via this endpoint
   invite <-
     base_users(id_base = id_base,
-             hostname = hostname,
-             email = email,
-             password = password,
-             api_token = api_token) |>
+               origin = origin,
+               email = email,
+               password = password,
+               api_token = api_token) |>
     dplyr::filter(email == !!user_email) |>
     dplyr::pull("roles") |>
     is.na()
@@ -3249,7 +3231,7 @@ update_base_user <- function(user_email,
     invite_base_user(user_email = user_email,
                      role = role,
                      id_base = id_base,
-                     hostname = hostname,
+                     origin = origin,
                      email = email,
                      password = password,
                      api_token = api_token,
@@ -3258,7 +3240,7 @@ update_base_user <- function(user_email,
     result <- switch(EXPR = api_version,
                      v2 = api(path = glue::glue("api/v2/meta/bases/{id_base}/users/{id_user}"),
                               method = "PATCH",
-                              hostname = hostname,
+                              origin = origin,
                               email = email,
                               password = password,
                               api_token = api_token,
@@ -3266,7 +3248,7 @@ update_base_user <- function(user_email,
                                                roles = role)),
                      v1 = api(path = glue::glue("api/v1/db/meta/projects/{id_base}/users/{id_user}"),
                               method = "PATCH",
-                              hostname = hostname,
+                              origin = origin,
                               email = email,
                               password = password,
                               api_token = api_token,
@@ -3295,11 +3277,11 @@ update_base_user <- function(user_email,
 #' @family bases
 #' @export
 delete_base_user <- function(id_user,
-                             id_base = base_id(hostname = hostname,
+                             id_base = base_id(origin = origin,
                                                email = email,
                                                password = password,
                                                api_token = api_token),
-                             hostname = pal::pkg_config_val("hostname"),
+                             origin = pal::pkg_config_val("origin"),
                              email = pal::pkg_config_val("email"),
                              password = pal::pkg_config_val("password"),
                              api_token = pal::pkg_config_val("api_token"),
@@ -3308,14 +3290,14 @@ delete_base_user <- function(id_user,
   checkmate::assert_string(id_user)
   checkmate::assert_string(id_base)
   
-  assert_super_admin(hostname = hostname,
+  assert_super_admin(origin = origin,
                      email = email,
                      password = password,
                      api_token = api_token)
   
   result <- api(path = glue::glue("api/v2/meta/bases/{id_base}/users/{id_user}"),
                 method = "DELETE",
-                hostname = hostname,
+                origin = origin,
                 email = email,
                 password = password,
                 api_token = api_token)
@@ -3343,11 +3325,11 @@ delete_base_user <- function(id_user,
 #' @export
 invite_base_user <- function(user_email,
                              role = c("no-access", "viewer", "commenter", "editor", "creator"),
-                             id_base = base_id(hostname = hostname,
+                             id_base = base_id(origin = origin,
                                                email = email,
                                                password = password,
                                                api_token = api_token),
-                             hostname = pal::pkg_config_val("hostname"),
+                             origin = pal::pkg_config_val("origin"),
                              email = pal::pkg_config_val("email"),
                              password = pal::pkg_config_val("password"),
                              api_token = pal::pkg_config_val("api_token"),
@@ -3360,7 +3342,7 @@ invite_base_user <- function(user_email,
   
   result <- api(path = glue::glue("api/v2/meta/bases/{id_base}/users"),
                 method = "POST",
-                hostname = hostname,
+                origin = origin,
                 email = email,
                 password = password,
                 api_token = api_token,
@@ -3386,11 +3368,11 @@ invite_base_user <- function(user_email,
 #' @family bases
 #' @export
 resend_base_user_invitation <- function(id_user,
-                                        id_base = base_id(hostname = hostname,
+                                        id_base = base_id(origin = origin,
                                                           email = email,
                                                           password = password,
                                                           api_token = api_token),
-                                        hostname = pal::pkg_config_val("hostname"),
+                                        origin = pal::pkg_config_val("origin"),
                                         email = pal::pkg_config_val("email"),
                                         password = pal::pkg_config_val("password"),
                                         api_token = pal::pkg_config_val("api_token"),
@@ -3398,14 +3380,14 @@ resend_base_user_invitation <- function(id_user,
   checkmate::assert_string(id_user)
   checkmate::assert_string(id_base)
   
-  assert_super_admin(hostname = hostname,
+  assert_super_admin(origin = origin,
                      email = email,
                      password = password,
                      api_token = api_token)
   
   result <- api(path = glue::glue("api/v2/meta/bases/{id_base}/users/{id_user}/resend-invite"),
                 method = "POST",
-                hostname = hostname,
+                origin = origin,
                 email = email,
                 password = password,
                 api_token = api_token)
@@ -3439,7 +3421,7 @@ integrations <- function(type = NULL,
                          id_base = NULL,
                          incl_config = TRUE,
                          decode_config = TRUE,
-                         hostname = pal::pkg_config_val("hostname"),
+                         origin = pal::pkg_config_val("origin"),
                          email = pal::pkg_config_val("email"),
                          password = pal::pkg_config_val("password"),
                          api_token = pal::pkg_config_val("api_token")) {
@@ -3454,7 +3436,7 @@ integrations <- function(type = NULL,
   
   api(path = "api/v2/meta/integrations",
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token,
@@ -3487,7 +3469,7 @@ integrations <- function(type = NULL,
 integration_id <- function(title = NULL,
                            type = "database",
                            sub_type = c("mysql2", "pg", "sqlite3"),
-                           hostname = pal::pkg_config_val("hostname"),
+                           origin = pal::pkg_config_val("origin"),
                            email = pal::pkg_config_val("email"),
                            password = pal::pkg_config_val("password"),
                            api_token = pal::pkg_config_val("api_token")) {
@@ -3505,7 +3487,7 @@ integration_id <- function(title = NULL,
   }
   
   result <-
-    integrations(hostname = hostname,
+    integrations(origin = origin,
                  email = email,
                  password = password,
                  api_token = api_token) |>
@@ -3552,7 +3534,7 @@ integration_id <- function(title = NULL,
 #' @export
 integration <- function(id_integration,
                         incl_config = TRUE,
-                        hostname = pal::pkg_config_val("hostname"),
+                        origin = pal::pkg_config_val("origin"),
                         email = pal::pkg_config_val("email"),
                         password = pal::pkg_config_val("password"),
                         api_token = pal::pkg_config_val("api_token")) {
@@ -3562,7 +3544,7 @@ integration <- function(id_integration,
   
   api(path = glue::glue("api/v2/meta/integrations/{id_integration}"),
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token,
@@ -3616,7 +3598,7 @@ create_integration <- function(connection,
                                type = "database",
                                sub_type = c("mysql2", "pg", "sqlite3"),
                                search_paths = "public",
-                               hostname = pal::pkg_config_val("hostname"),
+                               origin = pal::pkg_config_val("origin"),
                                email = pal::pkg_config_val("email"),
                                password = pal::pkg_config_val("password"),
                                api_token = pal::pkg_config_val("api_token")) {
@@ -3631,7 +3613,7 @@ create_integration <- function(connection,
   
   api(path = "api/v2/meta/integrations",
       method = "POST",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token,
@@ -3660,7 +3642,7 @@ update_integration <- function(id_integration,
                                type = NULL,
                                sub_type = NULL,
                                search_paths = NULL,
-                               hostname = pal::pkg_config_val("hostname"),
+                               origin = pal::pkg_config_val("origin"),
                                email = pal::pkg_config_val("email"),
                                password = pal::pkg_config_val("password"),
                                api_token = pal::pkg_config_val("api_token")) {
@@ -3678,7 +3660,7 @@ update_integration <- function(id_integration,
   # complement mandatory fields if necessary
   cur_data <- integration(id_integration = id_integration,
                           incl_config = TRUE,
-                          hostname = hostname,
+                          origin = origin,
                           email = email,
                           password = password,
                           api_token = api_token)
@@ -3700,7 +3682,7 @@ update_integration <- function(id_integration,
   
   api(path = glue::glue("api/v2/meta/integrations/{id_integration}"),
       method = "PATCH",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token,
@@ -3723,7 +3705,7 @@ update_integration <- function(id_integration,
 #' @family integrations
 #' @export
 delete_integration <- function(id_integration,
-                               hostname = pal::pkg_config_val("hostname"),
+                               origin = pal::pkg_config_val("origin"),
                                email = pal::pkg_config_val("email"),
                                password = pal::pkg_config_val("password"),
                                api_token = pal::pkg_config_val("api_token")) {
@@ -3732,7 +3714,7 @@ delete_integration <- function(id_integration,
   
   result <- api(path = glue::glue("api/v2/meta/integrations/{id_integration}"),
                 method = "DELETE",
-                hostname = hostname,
+                origin = origin,
                 email = email,
                 password = password,
                 api_token = api_token)
@@ -3754,14 +3736,14 @@ delete_integration <- function(id_integration,
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family plugins
 #' @export
-plugins <- function(hostname = pal::pkg_config_val("hostname"),
+plugins <- function(origin = pal::pkg_config_val("origin"),
                     email = pal::pkg_config_val("email"),
                     password = pal::pkg_config_val("password"),
                     api_token = pal::pkg_config_val("api_token")) {
   
   api(path = "api/v1/db/meta/plugins",
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token) |>
@@ -3781,7 +3763,7 @@ plugins <- function(hostname = pal::pkg_config_val("hostname"),
 #' @family plugins
 #' @export
 plugin_id <- function(title,
-                      hostname = pal::pkg_config_val("hostname"),
+                      origin = pal::pkg_config_val("origin"),
                       email = pal::pkg_config_val("email"),
                       password = pal::pkg_config_val("password"),
                       api_token = pal::pkg_config_val("api_token")) {
@@ -3789,7 +3771,7 @@ plugin_id <- function(title,
   checkmate::assert_string(title)
   
   result <-
-    plugins(hostname = hostname,
+    plugins(origin = origin,
             email = email,
             password = password,
             api_token = api_token) |>
@@ -3802,7 +3784,7 @@ plugin_id <- function(title,
     result <- result[1L]
     cli::cli_warn("{.val {n_result}} plugins with title {.val {title}} present. The identifier of the first one listed in the API response is returned.")
   } else if (n_result == 0L) {
-    cli::cli_abort("No plugin found with title {.val {title}} on the {.field {hostname}} NocoDB server.")
+    cli::cli_abort("No plugin found with title {.val {title}} on the {.field {origin}} NocoDB server.")
   }
   
   result
@@ -3818,14 +3800,14 @@ plugin_id <- function(title,
 #' @family plugins
 #' @export
 plugin_category <- function(id_plugin,
-                            hostname = pal::pkg_config_val("hostname"),
+                            origin = pal::pkg_config_val("origin"),
                             email = pal::pkg_config_val("email"),
                             password = pal::pkg_config_val("password"),
                             api_token = pal::pkg_config_val("api_token")) {
   
   checkmate::assert_string(id_plugin)
   
-  plugins(hostname = hostname,
+  plugins(origin = origin,
           email = email,
           password = password,
           api_token = api_token) |>
@@ -3845,7 +3827,7 @@ plugin_category <- function(id_plugin,
 #' @family plugins
 #' @export
 plugin <- function(id_plugin,
-                   hostname = pal::pkg_config_val("hostname"),
+                   origin = pal::pkg_config_val("origin"),
                    email = pal::pkg_config_val("email"),
                    password = pal::pkg_config_val("password"),
                    api_token = pal::pkg_config_val("api_token")) {
@@ -3854,7 +3836,7 @@ plugin <- function(id_plugin,
   
   api(path = glue::glue("api/v1/db/meta/plugins/{id_plugin}"),
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token) |>
@@ -3893,15 +3875,15 @@ plugin <- function(id_plugin,
 test_plugin <- function(title,
                         config,
                         category = plugin_category(id_plugin = plugin_id(title = title,
-                                                                         hostname = hostname,
+                                                                         origin = origin,
                                                                          email = email,
                                                                          password = password,
                                                                          api_token = api_token),
-                                                   hostname = hostname,
+                                                   origin = origin,
                                                    email = email,
                                                    password = password,
                                                    api_token = api_token),
-                        hostname = pal::pkg_config_val("hostname"),
+                        origin = pal::pkg_config_val("origin"),
                         email = pal::pkg_config_val("email"),
                         password = pal::pkg_config_val("password"),
                         api_token = pal::pkg_config_val("api_token")) {
@@ -3914,7 +3896,7 @@ test_plugin <- function(title,
   
   api(path = "api/v1/db/meta/plugins/test",
       method = "POST",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token,
@@ -3960,7 +3942,7 @@ test_plugin <- function(title,
 update_plugin <- function(id_plugin,
                           config = NULL,
                           activate = NULL,
-                          hostname = pal::pkg_config_val("hostname"),
+                          origin = pal::pkg_config_val("origin"),
                           email = pal::pkg_config_val("email"),
                           password = pal::pkg_config_val("password"),
                           api_token = pal::pkg_config_val("api_token")) {
@@ -3979,7 +3961,7 @@ update_plugin <- function(id_plugin,
   
   api(path = glue::glue("api/v1/db/meta/plugins/{id_plugin}"),
       method = "PATCH",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token,
@@ -4002,7 +3984,7 @@ update_plugin <- function(id_plugin,
 #' @family plugins
 #' @export
 is_plugin_active <- function(title,
-                             hostname = pal::pkg_config_val("hostname"),
+                             origin = pal::pkg_config_val("origin"),
                              email = pal::pkg_config_val("email"),
                              password = pal::pkg_config_val("password"),
                              api_token = pal::pkg_config_val("api_token")) {
@@ -4012,7 +3994,7 @@ is_plugin_active <- function(title,
   
   api(path = glue::glue("api/v1/db/meta/plugins/{title}/status"),
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token) |>
@@ -4029,14 +4011,14 @@ is_plugin_active <- function(title,
 #' @return The application settings of the specified NocoDB server as a [tibble][tibble::tbl_df].
 #' @family app_settings
 #' @export
-app_settings <- function(hostname = pal::pkg_config_val("hostname"),
+app_settings <- function(origin = pal::pkg_config_val("origin"),
                          email = pal::pkg_config_val("email"),
                          password = pal::pkg_config_val("password"),
                          api_token = pal::pkg_config_val("api_token")) {
   
   api(path = "api/v2/meta/nocodb/info",
       method = "GET",
-      hostname = hostname,
+      origin = origin,
       email = email,
       password = password,
       api_token = api_token) |>
@@ -4061,7 +4043,7 @@ app_settings <- function(hostname = pal::pkg_config_val("hostname"),
 #' @family app_settings
 #' @export
 update_app_settings <- function(invite_only_signup = NULL,
-                                hostname = pal::pkg_config_val("hostname"),
+                                origin = pal::pkg_config_val("origin"),
                                 email = pal::pkg_config_val("email",
                                                             require = TRUE),
                                 password = pal::pkg_config_val("password",
@@ -4074,13 +4056,13 @@ update_app_settings <- function(invite_only_signup = NULL,
   checkmate::assert_string(password)
   checkmate::assert_flag(quiet)
   
-  assert_super_admin(hostname = hostname,
+  assert_super_admin(origin = origin,
                      email = email,
                      password = password)
   
   result <- api(path = "api/v1/app-settings",
                 method = "POST",
-                hostname = hostname,
+                origin = origin,
                 email = email,
                 password = password,
                 api_token = NULL,

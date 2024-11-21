@@ -9,7 +9,7 @@ tbl_view_id(
   type = "default",
   name = NULL,
   title = NULL,
-  hostname = pal::pkg_config_val("hostname"),
+  origin = pal::pkg_config_val("origin"),
   email = pal::pkg_config_val("email"),
   password = pal::pkg_config_val("password"),
   api_token = pal::pkg_config_val("api_token")
@@ -24,7 +24,7 @@ tbl_view_id(
 
 \item{title}{NocoDB view title. A character scalar, or \code{NULL} for any title.}
 
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 

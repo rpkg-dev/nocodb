@@ -6,7 +6,7 @@
 \usage{
 delete_tbl_col(
   id_col,
-  hostname = pal::pkg_config_val("hostname"),
+  origin = pal::pkg_config_val("origin"),
   email = pal::pkg_config_val("email"),
   password = pal::pkg_config_val("password"),
   api_token = pal::pkg_config_val("api_token")
@@ -15,7 +15,7 @@ delete_tbl_col(
 \arguments{
 \item{id_col}{NocoDB column identifier as returned by \code{\link[=tbl_col_id]{tbl_col_id()}}. A character scalar.}
 
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 

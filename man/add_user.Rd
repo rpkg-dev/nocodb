@@ -9,7 +9,7 @@ add_user(
   user_password,
   display_name = NULL,
   subscribe_to_newsletter = FALSE,
-  hostname = pal::pkg_config_val("hostname"),
+  origin = pal::pkg_config_val("origin"),
   email = pal::pkg_config_val("email", require = TRUE),
   password = pal::pkg_config_val("password", require = TRUE),
   quiet = TRUE
@@ -24,7 +24,7 @@ add_user(
 
 \item{subscribe_to_newsletter}{Whether or not to subscribe the signed up user to the NocoDB newsletter.}
 
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 

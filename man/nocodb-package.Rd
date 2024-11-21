@@ -13,7 +13,7 @@ nocodb allows to work with NocoDB's RESTful APIs from R. NocoDB (https://nocodb.
 
 Some of nocodb's functionality is controlled via package-specific global configuration which can either be set via \href{https://rdrr.io/r/base/options.html}{R options} or \href{https://en.wikipedia.org/wiki/Environment_variable}{environment variables} (the former take precedence). This configuration includes:\tabular{llll}{
    \strong{Description} \tab \strong{R option} \tab \strong{Environment variable} \tab \strong{Default value} \cr
-   \href{https://en.wikipedia.org/wiki/Hostname}{Hostname} of the NocoDB server to work with. \tab \code{nocodb.hostname} \tab \code{R_NOCODB_HOSTNAME} \tab  \cr
+   \href{https://developer.mozilla.org/docs/Glossary/Origin}{Origin} of the NocoDB server to work with. \tab \code{nocodb.origin} \tab \code{R_NOCODB_ORIGIN} \tab  \cr
    Title (name) of the NocoDB \href{https://docs.nocodb.com/category/bases}{base} to work with. \tab \code{nocodb.base_title} \tab \code{R_NOCODB_BASE_TITLE} \tab  \cr
    E-mail address of the NocoDB user to authenticate with. \tab \code{nocodb.email} \tab \code{R_NOCODB_EMAIL} \tab  \cr
    Password of the NocoDB user to authenticate with. \tab \code{nocodb.password} \tab \code{R_NOCODB_PASSWORD} \tab  \cr

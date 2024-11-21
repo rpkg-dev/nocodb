@@ -9,7 +9,7 @@ create_base(
   description = NULL,
   color = "#36BFFF",
   show_null_and_empty_in_filter = TRUE,
-  hostname = pal::pkg_config_val("hostname"),
+  origin = pal::pkg_config_val("origin"),
   email = pal::pkg_config_val("email"),
   password = pal::pkg_config_val("password"),
   api_token = pal::pkg_config_val("api_token")
@@ -25,7 +25,7 @@ create_base(
 \item{show_null_and_empty_in_filter}{Whether or not to distinguish \code{NULL}s from empty values in column filters. If \code{FALSE}, \code{NULL} and empty fields are
 treated alike.}
 
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 

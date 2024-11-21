@@ -5,10 +5,10 @@
 \title{List NocoDB tables}
 \usage{
 tbls(
-  id_base = base_id(hostname = hostname, email = email, password = password, api_token =
+  id_base = base_id(origin = origin, email = email, password = password, api_token =
     api_token),
   include_m2m = TRUE,
-  hostname = pal::pkg_config_val("hostname"),
+  origin = pal::pkg_config_val("origin"),
   email = pal::pkg_config_val("email"),
   password = pal::pkg_config_val("password"),
   api_token = pal::pkg_config_val("api_token")
@@ -19,7 +19,7 @@ tbls(
 
 \item{include_m2m}{Whether or not to include many-to-many junction tables in the result.}
 
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 

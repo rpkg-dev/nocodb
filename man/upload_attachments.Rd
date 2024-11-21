@@ -9,7 +9,7 @@ upload_attachments(
   types = mime::guess_type(paths),
   names = NULL,
   upload_path = "r",
-  hostname = pal::pkg_config_val("hostname"),
+  origin = pal::pkg_config_val("origin"),
   email = pal::pkg_config_val("email"),
   password = pal::pkg_config_val("password"),
   api_token = pal::pkg_config_val("api_token"),
@@ -30,7 +30,7 @@ same length as \code{paths}.}
 \item{upload_path}{Destination path to store the uploaded file(s) at. Always interpreted relative to the directory \verb{/nc/uploads/} (which \href{https://github.com/search?q=repo\%3Anocodb\%2Fnocodb+nc+uploads+language\%3ATypeScript&type=code&l=TypeScript}{is hardcoded in NocoDB's source code}). A character scalar.
 Note that the characters \code{.} and \verb{?} are replaced with \verb{_} by the API.}
 
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 

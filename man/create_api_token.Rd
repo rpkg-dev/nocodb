@@ -6,7 +6,7 @@
 \usage{
 create_api_token(
   description,
-  hostname = pal::pkg_config_val("hostname"),
+  origin = pal::pkg_config_val("origin"),
   email = pal::pkg_config_val("email", require = TRUE),
   password = pal::pkg_config_val("password", require = TRUE)
 )
@@ -14,7 +14,7 @@ create_api_token(
 \arguments{
 \item{description}{Description to assign to the newly created API token (displayed as \emph{Token name} in NocoDB's UI).}
 
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 

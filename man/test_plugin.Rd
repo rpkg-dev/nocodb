@@ -7,10 +7,10 @@
 test_plugin(
   title,
   config,
-  category = plugin_category(id_plugin = plugin_id(title = title, hostname = hostname,
-    email = email, password = password, api_token = api_token), hostname = hostname,
-    email = email, password = password, api_token = api_token),
-  hostname = pal::pkg_config_val("hostname"),
+  category = plugin_category(id_plugin = plugin_id(title = title, origin = origin, email
+    = email, password = password, api_token = api_token), origin = origin, email = email,
+    password = password, api_token = api_token),
+  origin = pal::pkg_config_val("origin"),
   email = pal::pkg_config_val("email"),
   password = pal::pkg_config_val("password"),
   api_token = pal::pkg_config_val("api_token")
@@ -23,7 +23,7 @@ test_plugin(
 
 \item{category}{NocoDB plugin category as returned by \code{\link[=plugin_category]{plugin_category()}}. A character scalar.}
 
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 

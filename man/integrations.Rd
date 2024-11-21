@@ -9,7 +9,7 @@ integrations(
   id_base = NULL,
   incl_config = TRUE,
   decode_config = TRUE,
-  hostname = pal::pkg_config_val("hostname"),
+  origin = pal::pkg_config_val("origin"),
   email = pal::pkg_config_val("email"),
   password = pal::pkg_config_val("password"),
   api_token = pal::pkg_config_val("api_token")
@@ -29,7 +29,7 @@ Whether or not to include the integration configuration in the result.}
 Whether or not to decode the integration configuration in the result. If \code{FALSE}, the whole configuration is returned as a single Base64-encoded and
 encrypted \code{config} column, otherwise it is returned as multiple clear-text \verb{config.*} columns. Only relevant if \code{incl_config = TRUE}.}
 
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 

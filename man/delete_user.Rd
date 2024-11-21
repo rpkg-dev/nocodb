@@ -6,7 +6,7 @@
 \usage{
 delete_user(
   id_user,
-  hostname = pal::pkg_config_val("hostname"),
+  origin = pal::pkg_config_val("origin"),
   email = pal::pkg_config_val("email"),
   password = pal::pkg_config_val("password"),
   quiet = FALSE
@@ -15,7 +15,7 @@ delete_user(
 \arguments{
 \item{id_user}{NocoDB user identifier as returned by \code{\link[=user_id]{user_id()}}. A character scalar.}
 
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 

@@ -6,7 +6,7 @@
 \usage{
 update_app_settings(
   invite_only_signup = NULL,
-  hostname = pal::pkg_config_val("hostname"),
+  origin = pal::pkg_config_val("origin"),
   email = pal::pkg_config_val("email", require = TRUE),
   password = pal::pkg_config_val("password", require = TRUE),
   quiet = FALSE
@@ -15,7 +15,7 @@ update_app_settings(
 \arguments{
 \item{invite_only_signup}{Whether or not to \href{https://docs.nocodb.com/account-settings/oss-specific-details/#enable--disable-signup}{restrict sign-up of new NocoDB users to invitees only}.}
 
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 

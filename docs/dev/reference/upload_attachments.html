@@ -55,7 +55,7 @@ object storage bucket (if one is set up) or directly on the server's filesystem.
 <span>  types <span class="op">=</span> <span class="fu">mime</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/mime/man/guess_type.html" class="external-link">guess_type</a></span><span class="op">(</span><span class="va">paths</span><span class="op">)</span>,</span>
 <span>  names <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  upload_path <span class="op">=</span> <span class="st">"r"</span>,</span>
-<span>  hostname <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span><span class="st">"hostname"</span><span class="op">)</span>,</span>
+<span>  origin <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span><span class="st">"origin"</span><span class="op">)</span>,</span>
 <span>  email <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span><span class="st">"email"</span><span class="op">)</span>,</span>
 <span>  password <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span><span class="st">"password"</span><span class="op">)</span>,</span>
 <span>  api_token <span class="op">=</span> <span class="fu">pal</span><span class="fu">::</span><span class="fu"><a href="https://pal.rpkg.dev/reference/pkg_config_val.html" class="external-link">pkg_config_val</a></span><span class="op">(</span><span class="st">"api_token"</span><span class="op">)</span>,</span>
@@ -88,8 +88,8 @@ same length as <code>paths</code>.</p></dd>
 Note that the characters <code>.</code> and <code>?</code> are replaced with <code>_</code> by the API.</p></dd>
 
 
-<dt id="arg-hostname">hostname<a class="anchor" aria-label="anchor" href="#arg-hostname"></a></dt>
-<dd><p>NocoDB server <a href="https://en.wikipedia.org/wiki/Hostname" class="external-link">hostname</a>. A character scalar.</p></dd>
+<dt id="arg-origin">origin<a class="anchor" aria-label="anchor" href="#arg-origin"></a></dt>
+<dd><p>NocoDB server <a href="https://developer.mozilla.org/docs/Glossary/Origin" class="external-link">origin</a>. A character scalar.</p></dd>
 
 
 <dt id="arg-email">email<a class="anchor" aria-label="anchor" href="#arg-email"></a></dt>

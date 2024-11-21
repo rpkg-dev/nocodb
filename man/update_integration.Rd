@@ -11,7 +11,7 @@ update_integration(
   type = NULL,
   sub_type = NULL,
   search_paths = NULL,
-  hostname = pal::pkg_config_val("hostname"),
+  origin = pal::pkg_config_val("origin"),
   email = pal::pkg_config_val("email"),
   password = pal::pkg_config_val("password"),
   api_token = pal::pkg_config_val("api_token")
@@ -34,7 +34,7 @@ NocoDB integration subtype. One of \code{"mysql2"}, \code{"pg"} or \code{"sqlite
 
 \item{search_paths}{Database search paths (schemas) to expose for the \code{"pg"} integration. A character vector.}
 
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 

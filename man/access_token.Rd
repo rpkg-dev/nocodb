@@ -5,17 +5,17 @@
 \title{Get user's current access token}
 \usage{
 access_token(
-  hostname = pal::pkg_config_val("hostname"),
+  origin = pal::pkg_config_val("origin"),
   email = pal::pkg_config_val("email", require = TRUE)
 )
 }
 \arguments{
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 }
 \value{
-Access token as a character scalar. \code{NA_character_} if no access token exists for \code{hostname} and \code{email}.
+Access token as a character scalar. \code{NA_character_} if no access token exists for \code{origin} and \code{email}.
 }
 \description{
 Retrieves the access token belonging to the user with the specified \code{email} from the corresponding package environment. An access token is only available if

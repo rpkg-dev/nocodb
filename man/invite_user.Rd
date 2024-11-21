@@ -7,7 +7,7 @@
 invite_user(
   user_email,
   org_role = c("org-level-viewer", "org-level-creator"),
-  hostname = pal::pkg_config_val("hostname"),
+  origin = pal::pkg_config_val("origin"),
   email = pal::pkg_config_val("email", require = TRUE),
   password = pal::pkg_config_val("password", require = TRUE),
   quiet = FALSE
@@ -19,7 +19,7 @@ invite_user(
 \item{org_role}{\href{https://docs.nocodb.com/collaboration/oss-specific-details/#organisation-level-permissions}{Organisation-level role} to assign to the user.
 One of \code{"org-level-viewer"} or \code{"org-level-creator"}.}
 
-\item{hostname}{NocoDB server \href{https://en.wikipedia.org/wiki/Hostname}{hostname}. A character scalar.}
+\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 
 \item{email}{E-mail address of the NocoDB user to authenticate with.}
 
