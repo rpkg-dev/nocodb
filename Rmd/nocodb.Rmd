@@ -58,32 +58,6 @@ utils::globalVariables(names = c(".",
 
 ## Functions
 
-### `assemble_url`
-
-```{r}
-#' Assemble NocoDB URL
-#'
-#' @param ... Optional path components added to the base URL.
-#' @param .scheme [Scheme](https://en.wikipedia.org/wiki/URL#Syntax) to use in the assembled URL. A character scalar.
-#' @param .hostname [Hostname](https://en.wikipedia.org/wiki/Hostname) to use in the assembled URL. A character scalar.
-#'
-#' @return A character scalar.
-#' @family url_assembly
-#' @keywords internal
-#'
-#' @examples
-#' \dontrun{
-#' nocodb:::assemble_url("api/v2/meta/bases/")}
-assemble_url <- function(...,
-                         .scheme = "https",
-                         .hostname = pal::pkg_config_val("hostname")) {
-  
-  httr2::url_build(url = list(scheme = .scheme,
-                              hostname = .hostname,
-                              path = fs::path(...)))
-}
-```
-
 ### `cli_alert_status`
 
 ```{r}
@@ -149,116 +123,6 @@ tidy_date_time_cols <- function(data) {
                                       .fns = \(x) clock::date_time_parse_RFC_3339(x = x,
                                                                                   separator = " ",
                                                                                   offset = "%Ez")))
-}
-```
-
-### Access tokens
-
-#### `access_token`
-
-```{r}
-#' Get user's current access token
-#'
-#' Retrieves the access token belonging to the user with the specified `email` from the corresponding package environment. An access token is only available if
-#' the user has [signed in][sign_in] or [refreshed their access token][refresh_sign_in] during the current \R session.
-#'
-#' @inheritParams sign_in
-#'
-#' @return Access token as a character scalar. `NA_character_` if no access token exists for `hostname` and `email`.
-#' @family access_token
-#' @keywords internal
-access_token <- function(hostname = pal::pkg_config_val("hostname"),
-                         email = pal::pkg_config_val("email",
-                                                     require = TRUE)) {
-  checkmate::assert_string(hostname)
-  checkmate::assert_string(email)
-  
-  stateful$access_token[[hostname]][[email]] %||% NA_character_
-}
-```
-
-#### `store_access_token`
-
-```{r}
-#' Store NocoDB access token
-#'
-#' Stores a NocoDB user's access token in the `stateful` package environment.
-#'
-#' @inheritParams sign_in
-#' @param x Access token to be stored.
-#'
-#' @return `x`, invisibly.
-#' @family access_token
-#' @keywords internal
-store_access_token <- function(x,
-                               hostname = pal::pkg_config_val("hostname"),
-                               email = pal::pkg_config_val("email",
-                                                           require = TRUE)) {
-  stateful$access_token[[hostname]][[email]] <- x
-  
-  invisible(x)
-}
-```
-
-#### `decode_access_token`
-
-NOTES:
-
--   The JWT's signature is not checked but simply ignored. Verifying the signature can be done with `jose::jwt_decode_hmac()` and requires the JWT secret
-    (configured in NocoDB via env var `NC_AUTH_JWT_SECRET`).
-
-```{r}
-#' Decode access token (JWT)
-#'
-#' Decodes an access token that adheres to the [JSON Web Token (JWT)](https://de.wikipedia.org/wiki/JSON_Web_Token) standard and returns the payload as a
-#' [tibble][tibble::tbl_df]. The JWT's cryptographic signature is simply ignored.
-#'
-#' @param x Access token to be decoded.
-#'
-#' @return The decoded access token as a [tibble][tibble::tbl_df].
-#' 
-#'   Column `iat` gives the time at which the JWT was issued and column `exp` gives the expiration time on or after which the JWT must not be accepted anymore.
-#'   They are [registered claim names in the JWT standard](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1).
-#' @family access_token
-#' @keywords internal
-#'
-#' @examples
-#' \dontrun{
-#' nocodb:::access_token() |> nocodb:::decode_access_token()}
-decode_access_token <- function(x) {
-
-  checkmate::assert_string(x)
-  
-  x |>
-    stringr::str_split_1(pattern = stringr::fixed(".")) |>
-    _[2L] |>
-    base64enc::base64decode() |>
-    rawToChar() |>
-    jsonlite::fromJSON() |>
-    tidy_resp_data() |>
-    dplyr::mutate(dplyr::across(.cols = any_of(c("iat", "exp")),
-                                .fns = \(x) as.POSIXct(x = x,
-                                                       tz = "UTC")))
-}
-```
-
-#### `is_access_token_expired`
-
-```{r}
-#' Test if access token is expired
-#'
-#' Tests whether an [access token][access_token] is still valid or not.
-#'
-#' @param x Access token to be tested for expiration.
-#'
-#' @return A logical scalar.
-#' @family access_token
-#' @keywords internal
-is_access_token_expired <- function(x) {
-  
-  decode_access_token(x) |>
-    dplyr::pull("exp") |>
-    magrittr::is_less_than(clock::date_now(zone = "UTC"))
 }
 ```
 
@@ -470,7 +334,33 @@ api <- function(path,
 }
 ```
 
-#### !`req_basic`
+### !`assemble_url`
+
+```{r}
+#' Assemble NocoDB URL
+#'
+#' @param ... Optional path components added to the base URL.
+#' @param .scheme [Scheme](https://en.wikipedia.org/wiki/URL#Syntax) to use in the assembled URL. A character scalar.
+#' @param .hostname [Hostname](https://en.wikipedia.org/wiki/Hostname) to use in the assembled URL. A character scalar.
+#'
+#' @return A character scalar.
+#' @family url_assembly
+#' @keywords internal
+#'
+#' @examples
+#' \dontrun{
+#' nocodb:::assemble_url("api/v2/meta/bases/")}
+assemble_url <- function(...,
+                         .scheme = "https",
+                         .hostname = pal::pkg_config_val("hostname")) {
+  
+  httr2::url_build(url = list(scheme = .scheme,
+                              hostname = .hostname,
+                              path = fs::path(...)))
+}
+```
+
+### !`req_basic`
 
 ```{r}
 #' Create basic NocoDB API request
@@ -900,6 +790,116 @@ assert_super_admin <- function(hostname = pal::pkg_config_val("hostname"),
   }
   
   invisible(result)
+}
+```
+
+#### Access tokens
+
+##### !`access_token`
+
+```{r}
+#' Get user's current access token
+#'
+#' Retrieves the access token belonging to the user with the specified `email` from the corresponding package environment. An access token is only available if
+#' the user has [signed in][sign_in] or [refreshed their access token][refresh_sign_in] during the current \R session.
+#'
+#' @inheritParams sign_in
+#'
+#' @return Access token as a character scalar. `NA_character_` if no access token exists for `hostname` and `email`.
+#' @family access_token
+#' @keywords internal
+access_token <- function(hostname = pal::pkg_config_val("hostname"),
+                         email = pal::pkg_config_val("email",
+                                                     require = TRUE)) {
+  checkmate::assert_string(hostname)
+  checkmate::assert_string(email)
+  
+  stateful$access_token[[hostname]][[email]] %||% NA_character_
+}
+```
+
+##### !`store_access_token`
+
+```{r}
+#' Store NocoDB access token
+#'
+#' Stores a NocoDB user's access token in the `stateful` package environment.
+#'
+#' @inheritParams sign_in
+#' @param x Access token to be stored.
+#'
+#' @return `x`, invisibly.
+#' @family access_token
+#' @keywords internal
+store_access_token <- function(x,
+                               hostname = pal::pkg_config_val("hostname"),
+                               email = pal::pkg_config_val("email",
+                                                           require = TRUE)) {
+  stateful$access_token[[hostname]][[email]] <- x
+  
+  invisible(x)
+}
+```
+
+##### !`decode_access_token`
+
+NOTES:
+
+-   The JWT's signature is not checked but simply ignored. Verifying the signature can be done with `jose::jwt_decode_hmac()` and requires the JWT secret
+    (configured in NocoDB via env var `NC_AUTH_JWT_SECRET`).
+
+```{r}
+#' Decode access token (JWT)
+#'
+#' Decodes an access token that adheres to the [JSON Web Token (JWT)](https://de.wikipedia.org/wiki/JSON_Web_Token) standard and returns the payload as a
+#' [tibble][tibble::tbl_df]. The JWT's cryptographic signature is simply ignored.
+#'
+#' @param x Access token to be decoded.
+#'
+#' @return The decoded access token as a [tibble][tibble::tbl_df].
+#' 
+#'   Column `iat` gives the time at which the JWT was issued and column `exp` gives the expiration time on or after which the JWT must not be accepted anymore.
+#'   They are [registered claim names in the JWT standard](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1).
+#' @family access_token
+#' @keywords internal
+#'
+#' @examples
+#' \dontrun{
+#' nocodb:::access_token() |> nocodb:::decode_access_token()}
+decode_access_token <- function(x) {
+
+  checkmate::assert_string(x)
+  
+  x |>
+    stringr::str_split_1(pattern = stringr::fixed(".")) |>
+    _[2L] |>
+    base64enc::base64decode() |>
+    rawToChar() |>
+    jsonlite::fromJSON() |>
+    tidy_resp_data() |>
+    dplyr::mutate(dplyr::across(.cols = any_of(c("iat", "exp")),
+                                .fns = \(x) as.POSIXct(x = x,
+                                                       tz = "UTC")))
+}
+```
+
+##### !`is_access_token_expired`
+
+```{r}
+#' Test if access token is expired
+#'
+#' Tests whether an [access token][access_token] is still valid or not.
+#'
+#' @param x Access token to be tested for expiration.
+#'
+#' @return A logical scalar.
+#' @family access_token
+#' @keywords internal
+is_access_token_expired <- function(x) {
+  
+  decode_access_token(x) |>
+    dplyr::pull("exp") |>
+    magrittr::is_less_than(clock::date_now(zone = "UTC"))
 }
 ```
 
