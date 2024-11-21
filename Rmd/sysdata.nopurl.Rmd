@@ -37,22 +37,22 @@ pkg_config <-
                  require = logical(),
                  description = character()) |>
   tibble::add_row(key = "origin",
-                  description = "[Origin](https://developer.mozilla.org/docs/Glossary/Origin) of the NocoDB server to work with.",
-                  require = TRUE) |>
+                  require = TRUE,
+                  description = "[Origin](https://developer.mozilla.org/docs/Glossary/Origin) of the NocoDB server to work with.") |>
   tibble::add_row(key = "base_title",
-                  description = "Title (name) of the NocoDB [base](https://docs.nocodb.com/category/bases) to work with.",
-                  require = TRUE) |>
+                  require = TRUE,
+                  description = "Title (name) of the NocoDB [base](https://docs.nocodb.com/category/bases) to work with.") |>
   tibble::add_row(key = "email",
-                  description = "E-mail address of the NocoDB user to authenticate with.",
-                  require = FALSE) |>
+                  require = FALSE,
+                  description = "E-mail address of the NocoDB user to authenticate with.") |>
   tibble::add_row(key = "password",
-                  description = "Password of the NocoDB user to authenticate with.",
-                  require = FALSE) |>
+                  require = FALSE,
+                  description = "Password of the NocoDB user to authenticate with.") |>
   tibble::add_row(key = "api_token",
+                  require = FALSE,
                   description = paste0("[API token](https://docs.nocodb.com/account-settings/api-tokens/) belonging to the NocoDB user to work with. An ",
                                        "alternative to `email` and `password`. Note that not all of NocoDB's API endpoints support authentication via API ",
-                                       "tokens."),
-                  require = FALSE)
+                                       "tokens."))
 ```
 
 # Write data
