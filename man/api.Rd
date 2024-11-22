@@ -25,8 +25,8 @@ api(
 \arguments{
 \item{path}{NocoDB API endpoint path. A character scalar.}
 
-\item{method}{\href{https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods}{HTTP request method}. One of
-\code{"GET"}, \code{"CONNECT"}, \code{"DELETE"}, \code{"HEAD"}, \code{"OPTIONS"}, \code{"PATCH"}, \code{"POST"}, \code{"PUT"} or \code{"TRACE"}.}
+\item{method}{\href{https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods}{HTTP request method}.
+One of \code{"GET"}, \code{"CONNECT"}, \code{"DELETE"}, \code{"HEAD"}, \code{"OPTIONS"}, \code{"PATCH"}, \code{"POST"}, \code{"PUT"} or \code{"TRACE"}.}
 
 \item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
 

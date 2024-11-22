@@ -251,8 +251,7 @@ api <- function(path,
 #'
 #' @inheritParams pal::req_cached
 #' @param path NocoDB API endpoint path. A character scalar.
-#' @param method [HTTP request method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods). One of
-#'   `r pal::enum_fn_param_defaults(param = "method", fn = "api")`.
+#' @param method `r pkgsnip::param_lbl("http_method", one_of = pal::enum_fn_param_defaults(param = "method", fn = "api"))`
 #' @param origin NocoDB server [origin](https://developer.mozilla.org/docs/Glossary/Origin). A character scalar.
 #'
 #' @inherit httr2::req_method return
