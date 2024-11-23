@@ -171,6 +171,8 @@ stateful$access_token <- list()
 #'   Whether or not to automatically simplify JSON structures in the returned JSON. Enables/disables all `simplify*` arguments of [jsonlite::fromJSON()].
 #' @param flatten `r pkgsnip::type("lgl", 1L)`
 #'   Whether or not to automatically [flatten][jsonlite::flatten] nested data frames in the returned JSON into a single non-nested data frame.
+#' @param max_tries `r pkgsnip::type("int", 1L)`
+#'   `r pkgsnip::param_lbl("max_tries")`
 #'
 #' @return
 #' - `NULL` if the API response's body is empty.
