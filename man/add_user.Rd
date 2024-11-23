@@ -16,21 +16,29 @@ add_user(
 )
 }
 \arguments{
-\item{user_email}{E-mail address of the user to sign up. A character scalar.}
+\item{user_email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the user to sign up.}
 
-\item{user_password}{Password of the user to sign up. A character scalar.}
+\item{user_password}{\code{\link[base:character]{character(1)}}\cr
+Password of the user to sign up.}
 
-\item{display_name}{Name to be displayed for the user in NocoDB.}
+\item{display_name}{\code{\link[base:character]{character(1)}}\cr
+Name to be displayed for the user in NocoDB. Omitted if \code{NULL}.}
 
-\item{subscribe_to_newsletter}{Whether or not to subscribe the signed up user to the NocoDB newsletter.}
+\item{subscribe_to_newsletter}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to subscribe the signed up user to the NocoDB newsletter.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{quiet}{Whether or not to suppress printing status output from internal processing.}
+\item{quiet}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to suppress printing status output from internal processing.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble} with metadata about the updated NocoDB user, invisibly.

@@ -12,14 +12,18 @@ sign_in(
 )
 }
 \arguments{
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{cache_refresh_token}{Whether or not to write the refresh token included in the API response to disk (in the OS user cache directory). This allows to
-refresh an expired access token using \code{\link[=refresh_sign_in]{refresh_sign_in()}}.}
+\item{cache_refresh_token}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to write the refresh token included in the API response to disk (in the OS user cache directory). This allows to refresh an expired access
+token using \code{\link[=refresh_sign_in]{refresh_sign_in()}}.}
 }
 \value{
 The generated access token as a character scalar, invisibly.

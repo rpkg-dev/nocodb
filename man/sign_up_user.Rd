@@ -16,22 +16,29 @@ sign_up_user(
 )
 }
 \arguments{
-\item{user_email}{E-mail address of the user to sign up. A character scalar.}
+\item{user_email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the user to sign up.}
 
-\item{user_password}{Password of the user to sign up. A character scalar.}
+\item{user_password}{\code{\link[base:character]{character(1)}}\cr
+Password of the user to sign up.}
 
-\item{invite_token}{Invite token of the user to sign up. A character scalar.}
+\item{invite_token}{\code{\link[base:character]{character(1)}}\cr
+Invite token of the user to sign up.}
 
-\item{subscribe_to_newsletter}{Whether or not to subscribe the signed up user to the NocoDB newsletter.}
+\item{subscribe_to_newsletter}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to subscribe the signed up user to the NocoDB newsletter.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
-provided.}
+\item{api_token}{\code{\link[base:character]{character(1)}}\cr
+NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 }
 \value{
 The generated access token for the signed up user as a character scalar, invisibly.

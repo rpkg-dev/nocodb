@@ -15,20 +15,26 @@ update_plugin(
 )
 }
 \arguments{
-\item{id_plugin}{NocoDB plugin identifier as returned by \code{\link[=plugin_id]{plugin_id()}}. A character scalar.}
+\item{id_plugin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB plugin identifier as returned by \code{\link[=plugin_id]{plugin_id()}}.}
 
-\item{config}{Plugin configuration. A list or \code{NULL}. If \code{NULL}, the plugin's configuration is left untouched.}
+\item{config}{\code{\link[base:list]{list()}}\cr
+Plugin configuration. If \code{NULL}, the plugin's configuration is left untouched.}
 
-\item{activate}{Whether or not to activate the plugin. If \code{NULL}, the plugin's activation status is left untouched.}
+\item{activate}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to activate the plugin. If \code{NULL}, the plugin's activation status is left untouched.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
-provided.}
+\item{api_token}{\code{\link[base:character]{character(1)}}\cr
+NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble} with metadata about the updated NocoDB plugin, invisibly.

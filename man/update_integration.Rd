@@ -21,27 +21,32 @@ update_integration(
 \item{id_integration}{\code{\link[base:character]{character(1)}}\cr
 NocoDB integration identifier as returned by \code{\link[=integration_id]{integration_id()}}.}
 
-\item{connection}{Subtype-specific connection details for database integrations. A list.}
+\item{connection}{\code{\link[base:list]{list()}}\cr
+Subtype-specific connection details for database integrations.}
 
-\item{title}{\code{pkgsnip::type("chr")}
+\item{title}{\code{pkgsnip::type("chr", 1L)}
 NocoDB integration title.}
 
-\item{type}{\code{pkgsnip::type("chr")}
+\item{type}{\code{pkgsnip::type("chr", 1L)}
 NocoDB integration type. One of \code{"database"}, or \code{NULL} for any type.}
 
-\item{sub_type}{\code{pkgsnip::type("chr")}
+\item{sub_type}{\code{pkgsnip::type("chr", 1L)}
 NocoDB integration subtype. One of \code{"mysql2"}, \code{"pg"} or \code{"sqlite3"}, or \code{NULL} for any subtype.}
 
-\item{search_paths}{Database search paths (schemas) to expose for the \code{"pg"} integration. A character vector.}
+\item{search_paths}{\code{\link[base:character]{character()}}\cr
+Database search paths (schemas) to expose for the \code{"pg"} integration.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
-provided.}
+\item{api_token}{\code{\link[base:character]{character(1)}}\cr
+NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble} with metadata about the updated NocoDB integration, invisibly.

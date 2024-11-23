@@ -20,28 +20,38 @@ create_data_src_tbl(
 )
 }
 \arguments{
-\item{id_data_src}{NocoDB data source identifier as returned by \code{\link[=data_src_id]{data_src_id()}}. A character scalar.}
+\item{id_data_src}{\code{\link[base:character]{character(1)}}\cr
+NocoDB data source identifier as returned by \code{\link[=data_src_id]{data_src_id()}}.}
 
-\item{name}{Table name. A character scalar.}
+\item{name}{\code{\link[base:character]{character(1)}}\cr
+Table name.}
 
-\item{cols}{Table columns specification as a list or something coercible to like a data frame.}
+\item{cols}{\code{\link[base:list]{list()}}\cr
+Table columns specification as a list or something coercible to like a data frame.}
 
-\item{title}{NocoDB-specific table title. A character scalar.}
+\item{title}{\code{\link[base:character]{character(1)}}\cr
+NocoDB-specific table title.}
 
-\item{meta}{NocoDB-specific table metadata. A list.}
+\item{meta}{\code{\link[base:list]{list()}}\cr
+NocoDB-specific table metadata as a list or something coercible to like a data frame.}
 
-\item{order}{A number to assign as the table's NocoDB-specific order "weight".}
+\item{order}{\code{\link[base:integer]{integer(1)}}\cr
+A number to assign as the table's NocoDB-specific order "weight".}
 
-\item{id_base}{NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}. A character scalar.}
+\item{id_base}{\code{\link[base:character]{character(1)}}\cr
+NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
-provided.}
+\item{api_token}{\code{\link[base:character]{character(1)}}\cr
+NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble} with metadata about the newly created NocoDB table, invisibly.

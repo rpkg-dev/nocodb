@@ -15,23 +15,26 @@ integration_id(
 )
 }
 \arguments{
-\item{title}{\code{pkgsnip::type("chr")}
+\item{title}{\code{pkgsnip::type("chr", 1L)}
 NocoDB integration title. \code{NULL} means any title.}
 
-\item{type}{\code{pkgsnip::type("chr")}
+\item{type}{\code{pkgsnip::type("chr", 1L)}
 NocoDB integration type. One of \code{"database"}, or \code{NULL} for any type.}
 
-\item{sub_type}{\code{pkgsnip::type("chr")}
+\item{sub_type}{\code{pkgsnip::type("chr", 1L)}
 NocoDB integration subtype. One of \code{"mysql2"}, \code{"pg"} or \code{"sqlite3"}, or \code{NULL} for any subtype.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
-provided.}
+\item{api_token}{\code{\link[base:character]{character(1)}}\cr
+NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 }
 \value{
 A character scalar.

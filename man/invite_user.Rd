@@ -14,18 +14,24 @@ invite_user(
 )
 }
 \arguments{
-\item{user_email}{E-mail address of the user to invite. A character scalar.}
+\item{user_email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the user to invite.}
 
-\item{org_role}{\href{https://docs.nocodb.com/collaboration/oss-specific-details/#organisation-level-permissions}{Organisation-level role} to assign to the user.
-One of \code{"org-level-viewer"} or \code{"org-level-creator"}.}
+\item{org_role}{\code{\link[base:character]{character(1)}}\cr
+\href{https://docs.nocodb.com/collaboration/oss-specific-details/#organisation-level-permissions}{Organisation-level role} to assign to the user. One of
+\code{"org-level-viewer"} or \code{"org-level-creator"}.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{quiet}{Whether or not to suppress printing status output from internal processing.}
+\item{quiet}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to suppress printing status output from internal processing.}
 }
 \value{
 \code{NULL}, invisibly.

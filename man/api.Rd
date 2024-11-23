@@ -23,34 +23,44 @@ api(
 )
 }
 \arguments{
-\item{path}{NocoDB API endpoint path. A character scalar.}
+\item{path}{\code{\link[base:character]{character(1)}}\cr
+NocoDB API endpoint path.}
 
-\item{method}{\href{https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods}{HTTP request method}.
+\item{method}{\code{\link[base:character]{character(1)}}\cr
+\href{https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods}{HTTP request method}.
 One of \code{"GET"}, \code{"CONNECT"}, \code{"DELETE"}, \code{"HEAD"}, \code{"OPTIONS"}, \code{"PATCH"}, \code{"POST"}, \code{"PUT"} or \code{"TRACE"}.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
-provided.}
+\item{api_token}{\code{\link[base:character]{character(1)}}\cr
+NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 
-\item{auth}{Whether or not to include an \link[=req_auth]{authentication header} in the HTTP request.}
+\item{auth}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to include an \link[=req_auth]{authentication header} in the HTTP request.}
 
-\item{url_params}{URL parameters added to the \href{https://en.wikipedia.org/wiki/Query_string}{query string}. Either \code{NULL} to omit or a named list of key-value
-pairs that define query parameters. Values must be scalars. To opt out of automatic conversion of non-character values to JSON strings or
+\item{url_params}{\code{\link[base:list]{list()}}\cr
+URL parameters added to the \href{https://en.wikipedia.org/wiki/Query_string}{query string}. Either \code{NULL} to omit or a named list of key-value pairs that
+define query parameters. Values must be scalars. To opt out of automatic conversion of non-character values to JSON strings or
 \href{https://en.wikipedia.org/wiki/Percent-encoding}{percent-encoding} values, wrap values in \code{\link[=I]{I()}}.}
 
-\item{body_json}{Data to include as JSON in the HTTP request body. Either a list or \code{NULL} for an empty body.}
+\item{body_json}{\code{\link[base:list]{list()}}\cr
+Data to include as JSON in the HTTP request body. \code{NULL} means an empty body.}
 
-\item{auto_unbox}{Whether or not to automatically "unbox" length-1 vectors in \code{body_json} to JSON scalars.}
+\item{auto_unbox}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to automatically "unbox" length-1 vectors in \code{body_json} to JSON scalars.}
 
-\item{simplify}{Whether or not to automatically simplify JSON structures in the returned JSON. Enables/disables all \verb{simplify*} arguments of
-\code{\link[jsonlite:fromJSON]{jsonlite::fromJSON()}}.}
+\item{simplify}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to automatically simplify JSON structures in the returned JSON. Enables/disables all \verb{simplify*} arguments of \code{\link[jsonlite:fromJSON]{jsonlite::fromJSON()}}.}
 
-\item{flatten}{Whether or not to automatically \link[jsonlite:flatten]{flatten} nested data frames in the returned JSON into a single non-nested data frame.}
+\item{flatten}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to automatically \link[jsonlite:flatten]{flatten} nested data frames in the returned JSON into a single non-nested data frame.}
 
 \item{max_tries}{Maximum number of attempts to retry in case of an HTTP error. An integerish scalar.}
 

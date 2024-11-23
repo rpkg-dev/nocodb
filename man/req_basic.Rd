@@ -13,12 +13,15 @@ req_basic(
 )
 }
 \arguments{
-\item{path}{NocoDB API endpoint path. A character scalar.}
+\item{path}{\code{\link[base:character]{character(1)}}\cr
+NocoDB API endpoint path.}
 
-\item{method}{\href{https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods}{HTTP request method}.
+\item{method}{\code{\link[base:character]{character(1)}}\cr
+\href{https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods}{HTTP request method}.
 One of \code{"GET"}, \code{"CONNECT"}, \code{"DELETE"}, \code{"HEAD"}, \code{"OPTIONS"}, \code{"PATCH"}, \code{"POST"}, \code{"PUT"} or \code{"TRACE"}.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
 \item{max_tries}{Maximum number of attempts to retry in case of an HTTP error. An integerish scalar.}
 }

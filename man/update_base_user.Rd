@@ -20,31 +20,40 @@ update_base_user(
 )
 }
 \arguments{
-\item{user_email}{E-mail address of the user. A character scalar.}
+\item{user_email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the user.}
 
-\item{role}{\href{https://docs.nocodb.com/collaboration/oss-specific-details/#base-level-permissions}{Base role} to assign to the user. One of
+\item{role}{\code{\link[base:character]{character(1)}}\cr
+\href{https://docs.nocodb.com/collaboration/oss-specific-details/#base-level-permissions}{Base role} to assign to the user. One of
 \code{"no-access"}, \code{"viewer"}, \code{"commenter"}, \code{"editor"} or \code{"creator"}.}
 
-\item{id_user}{NocoDB user identifier as returned by \code{\link[=user_id]{user_id()}}. A character scalar.}
+\item{id_user}{\code{\link[base:character]{character(1)}}\cr
+NocoDB user identifier as returned by \code{\link[=user_id]{user_id()}}.}
 
-\item{id_base}{NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}. A character scalar.}
+\item{id_base}{\code{\link[base:character]{character(1)}}\cr
+NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
-provided.}
+\item{api_token}{\code{\link[base:character]{character(1)}}\cr
+NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 
-\item{api_version}{API endpoint version to use. Either
+\item{api_version}{\code{\link[base:character]{character(1)}}\cr
+API endpoint version to use. Either
 \itemize{
 \item \code{"v2"} for \href{https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis}{\code{PATCH /api/v1/db/meta/projects/{id_base}/users/{id_user}}}, or
 \item \code{"v1"} for \href{https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis}{\code{PATCH /api/v1/db/meta/projects/{id_base}/users/{id_user}}}.
 }}
 
-\item{quiet}{Whether or not to suppress printing status output from internal processing.}
+\item{quiet}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to suppress printing status output from internal processing.}
 }
 \value{
 \code{id_user}, invisibly.

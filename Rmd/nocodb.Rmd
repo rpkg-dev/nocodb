@@ -248,15 +248,20 @@ NOTES:
 #' @inheritParams req_auth
 #' @inheritParams httr2::req_perform
 #' @inheritParams httr2::req_body_json
-#' @param auth Whether or not to include an [authentication header][req_auth] in the HTTP request.
-#' @param url_params URL parameters added to the [query string](https://en.wikipedia.org/wiki/Query_string). Either `NULL` to omit or a named list of key-value
-#'   pairs that define query parameters. Values must be scalars. To opt out of automatic conversion of non-character values to JSON strings or
+#' @param auth `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to include an [authentication header][req_auth] in the HTTP request.
+#' @param url_params `r pkgsnip::type("list")`
+#'   URL parameters added to the [query string](https://en.wikipedia.org/wiki/Query_string). Either `NULL` to omit or a named list of key-value pairs that
+#'   define query parameters. Values must be scalars. To opt out of automatic conversion of non-character values to JSON strings or
 #'   [percent-encoding](https://en.wikipedia.org/wiki/Percent-encoding) values, wrap values in [I()].
-#' @param body_json Data to include as JSON in the HTTP request body. Either a list or `NULL` for an empty body.
-#' @param auto_unbox Whether or not to automatically "unbox" length-1 vectors in `body_json` to JSON scalars.
-#' @param simplify Whether or not to automatically simplify JSON structures in the returned JSON. Enables/disables all `simplify*` arguments of
-#'   [jsonlite::fromJSON()].
-#' @param flatten Whether or not to automatically [flatten][jsonlite::flatten] nested data frames in the returned JSON into a single non-nested data frame.
+#' @param body_json `r pkgsnip::type("list")`
+#'   Data to include as JSON in the HTTP request body. `NULL` means an empty body.
+#' @param auto_unbox `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to automatically "unbox" length-1 vectors in `body_json` to JSON scalars.
+#' @param simplify `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to automatically simplify JSON structures in the returned JSON. Enables/disables all `simplify*` arguments of [jsonlite::fromJSON()].
+#' @param flatten `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to automatically [flatten][jsonlite::flatten] nested data frames in the returned JSON into a single non-nested data frame.
 #'
 #' @return
 #' - `NULL` if the API response's body is empty.
@@ -345,9 +350,12 @@ api <- function(path,
 #' Assembles the HTTP request structure that is common to *all* NocoDB API requests performed by this package.
 #'
 #' @inheritParams pal::req_cached
-#' @param path NocoDB API endpoint path. A character scalar.
-#' @param method `r pkgsnip::param_lbl("http_method", one_of = pal::enum_fn_param_defaults(param = "method", fn = "api"))`
-#' @param origin NocoDB server [origin](https://developer.mozilla.org/docs/Glossary/Origin). A character scalar.
+#' @param path `r pkgsnip::type("chr", 1L)`
+#'   NocoDB API endpoint path.
+#' @param method `r pkgsnip::type("chr", 1L)`
+#'   `r pkgsnip::param_lbl("http_method", one_of = pal::enum_fn_param_defaults(param = "method", fn = "api"))`
+#' @param origin `r pkgsnip::type("chr", 1L)`
+#'   NocoDB server [origin](https://developer.mozilla.org/docs/Glossary/Origin).
 #'
 #' @inherit httr2::req_method return
 #' @family common
@@ -418,10 +426,12 @@ Functions to manage authentication against a NocoDB server.
 #' (`api_token`) instead of `email` and `password`.
 #'
 #' @inheritParams httr2::req_method
-#' @param email E-mail address of the NocoDB user to authenticate with.
-#' @param password Password of the NocoDB user to authenticate with.
-#' @param api_token NocoDB [API token](https://docs.nocodb.com/account-settings/api-tokens/). Takes precedence over `email` and `password` if
-#'   provided.
+#' @param email `r pkgsnip::type("chr", 1L)`
+#'   E-mail address of the NocoDB user to authenticate with.
+#' @param password `r pkgsnip::type("chr", 1L)`
+#'   Password of the NocoDB user to authenticate with.
+#' @param api_token `r pkgsnip::type("chr", 1L)`
+#'   NocoDB [API token](https://docs.nocodb.com/account-settings/api-tokens/). Takes precedence over `email` and `password` if provided.
 #'
 #' @inherit httr2::req_method return
 #' @family common
@@ -519,8 +529,9 @@ NOTES:
 #' this functionality.
 #'
 #' @inheritParams api
-#' @param cache_refresh_token Whether or not to write the refresh token included in the API response to disk (in the OS user cache directory). This allows to
-#'   refresh an expired access token using [refresh_sign_in()].
+#' @param cache_refresh_token `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to write the refresh token included in the API response to disk (in the OS user cache directory). This allows to refresh an expired access
+#'   token using [refresh_sign_in()].
 #'
 #' @return The generated access token as a character scalar, invisibly.
 #' @family auth
@@ -570,8 +581,10 @@ sign_in <- function(origin = pal::pkg_config_val("origin"),
 #'
 #' @inheritParams req_basic
 #' @inheritParams req_auth
-#' @param email E-mail address of the NocoDB user to sign out. A character scalar.
-#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#' @param email `r pkgsnip::type("chr", 1L)`
+#'   E-mail address of the NocoDB user to sign out.
+#' @param quiet `r pkgsnip::type("lgl", 1L)`
+#'   `r pkgsnip::param_lbl("quiet")`
 #'
 #' @return `email`, invisibly.
 #' @family auth
@@ -659,7 +672,8 @@ is_signed_in <- function(origin = pal::pkg_config_val("origin"),
 #' Besides generating a fresh access token, also a new refresh token is cached to disk.
 #'
 #' @inheritParams req_basic
-#' @param email E-mail address of the NocoDB user whose access token is to be refreshed. A character scalar.
+#' @param email `r pkgsnip::type("chr", 1L)`
+#'   E-mail address of the NocoDB user whose access token is to be refreshed.
 #'
 #' @return The freshly generated access token as a character scalar, invisibly.
 #' @family auth
@@ -803,7 +817,8 @@ access_token <- function(origin = pal::pkg_config_val("origin"),
 #' Stores a NocoDB user's access token in the `stateful` package environment.
 #'
 #' @inheritParams sign_in
-#' @param x Access token to be stored.
+#' @param x `r pkgsnip::type("chr", 1L)`
+#'   Access token to be stored.
 #'
 #' @return `x`, invisibly.
 #' @family access_token
@@ -831,7 +846,8 @@ NOTES:
 #' Decodes an access token that adheres to the [JSON Web Token (JWT)](https://de.wikipedia.org/wiki/JSON_Web_Token) standard and returns the payload as a
 #' [tibble][tibble::tbl_df]. The JWT's cryptographic signature is simply ignored.
 #'
-#' @param x Access token to be decoded.
+#' @param x `r pkgsnip::type("chr", 1L)`
+#'   Access token to be decoded.
 #'
 #' @return The decoded access token as a [tibble][tibble::tbl_df].
 #' 
@@ -867,7 +883,8 @@ decode_access_token <- function(x) {
 #'
 #' Tests whether an [access token][access_token] is still valid or not.
 #'
-#' @param x Access token to be tested for expiration.
+#' @param x `r pkgsnip::type("chr", 1L)`
+#'   Access token to be tested for expiration.
 #'
 #' @return A logical scalar.
 #' @family access_token
@@ -926,7 +943,8 @@ api_tokens <- function(origin = pal::pkg_config_val("origin"),
 #' `r md_text_no_api_token_support`
 #'
 #' @inheritParams api
-#' @param description Description to assign to the newly created API token (displayed as *Token name* in NocoDB's UI).
+#' @param description `r pkgsnip::type("chr", 1L)`
+#'   Description to assign to the newly created API token (displayed as *Token name* in NocoDB's UI).
 #'
 #' @return `r pkgsnip::return_lbl(id = "tibble_custom", custom = "(meta)data about the newly created API token")`
 #' @family api_tokens
@@ -962,7 +980,8 @@ create_api_token <- function(description,
 #' `r md_text_no_api_token_support`
 #'
 #' @inheritParams api
-#' @param api_token NocoDB API token to delete.
+#' @param api_token `r pkgsnip::type("chr", 1L)`
+#'   NocoDB API token to delete.
 #'
 #' @return `api_token`, invisibly.
 #' @family api_tokens
@@ -1044,7 +1063,8 @@ bases <- function(origin = pal::pkg_config_val("origin"),
 #' Returns the identifier of the base with the specified title on a NocoDB server.
 #'
 #' @inheritParams api
-#' @param title NocoDB base title. A character scalar.
+#' @param title `r pkgsnip::type("chr", 1L)`
+#'   NocoDB base title.
 #'
 #' @return Base identifier as a character scalar.
 #' @family bases
@@ -1099,7 +1119,8 @@ NOTES:
 #' [`GET /api/v2/meta/bases/{id_base}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-read) API endpoint.
 #'
 #' @inheritParams api
-#' @param id_base NocoDB base identifier as returned by [base_id()]. A character scalar.
+#' @param id_base `r pkgsnip::type("chr", 1L)`
+#'   NocoDB base identifier as returned by [base_id()].
 #'
 #' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the specified NocoDB base")`
 #' @family bases
@@ -1138,10 +1159,14 @@ NOTES:
 #' Adds a new base on a NocoDB server via its
 #' [`POST /api/v2/meta/bases`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-create) API endpoint.
 #'
-#' @param title Base title. A character scalar.
-#' @param description Base description. A character scalar.
-#' @param color Color to use for the base icon. A hexadecimal color code like `r pal::fn_param_defaults(param = "color", fn = "create_base")`.
-#' @param show_null_and_empty_in_filter Whether or not to distinguish `NULL`s from empty values in column filters. If `FALSE`, `NULL` and empty fields are
+#' @param title `r pkgsnip::type("chr", 1L)`
+#'   Base title.
+#' @param description `r pkgsnip::type("chr", 1L)`
+#'   Base description.
+#' @param color `r pkgsnip::type("chr", 1L)`
+#'   Color to use for the base icon. A hexadecimal color code like `r pal::fn_param_defaults(param = "color", fn = "create_base")`.
+#' @param show_null_and_empty_in_filter `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to distinguish `NULL`s from empty values in column filters. If `FALSE`, `NULL` and empty fields are
 #'   treated alike.
 #' @inheritParams api
 #'
@@ -1217,7 +1242,8 @@ TODO:
 #'
 #' @inheritParams create_base
 #' @inheritParams base
-#' @param title New base title. A character scalar.
+#' @param title `r pkgsnip::type("chr", 1L)`
+#'   New base title.
 #'
 #' @return `id_base`, invisibly.
 #' @family bases
@@ -1353,14 +1379,22 @@ base_ui_acl <- function(id_base = base_id(origin = origin,
 #' [`POST /api/v2/meta/bases/{id_base}/visibility-rules`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-model-visibility-set) API endpoint.
 #'
 #' @inheritParams base
-#' @param id_tbl_view Table view identifier as returned by [tbl_view_id()].
-#' @param guest Whether or not to hide the table view for users with role `guest`.
-#' @param viewer Whether or not to hide the table view for users with role `viewer`.
-#' @param commenter Whether or not to hide the table view for users with role `commenter`.
-#' @param editor Whether or not to hide the table view for users with role `editor`.
-#' @param creator Whether or not to hide the table view for users with role `creator`.
-#' @param owner Whether or not to hide the table view for users with role `owner`.
-#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#' @param id_tbl_view `r pkgsnip::type("chr", 1L)`
+#'   Table view identifier as returned by [tbl_view_id()].
+#' @param guest `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to hide the table view for users with role `guest`.
+#' @param viewer `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to hide the table view for users with role `viewer`.
+#' @param commenter `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to hide the table view for users with role `commenter`.
+#' @param editor `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to hide the table view for users with role `editor`.
+#' @param creator `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to hide the table view for users with role `creator`.
+#' @param owner `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to hide the table view for users with role `owner`.
+#' @param quiet `r pkgsnip::type("lgl", 1L)`
+#'   `r pkgsnip::param_lbl("quiet")`
 #'
 #' @return `id_tbl_view`, invisibly.
 #' @family ui_acl
@@ -1466,7 +1500,8 @@ data_srcs <- function(id_base = base_id(origin = origin,
 #' Returns the identifier of the data source with the specified alias in the specified base on a NocoDB server.
 #'
 #' @inheritParams base
-#' @param alias Alias of the data source. A character scalar.
+#' @param alias `r pkgsnip::type("chr", 1L)`
+#'   Alias of the data source.
 #'
 #' @return Data source identifier as a character scalar.
 #' @family data_src
@@ -1514,7 +1549,8 @@ data_src_id <- function(alias,
 #' [`GET /api/v2/meta/bases/{id_base}/sources/{id_data_src}`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-read) API endpoint.
 #'
 #' @inheritParams base
-#' @param id_data_src NocoDB data source identifier as returned by [data_src_id()]. A character scalar.
+#' @param id_data_src `r pkgsnip::type("chr", 1L)`
+#'   NocoDB data source identifier as returned by [data_src_id()].
 #'
 #' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the specified NocoDB data source")`
 #' @family data_src
@@ -1558,7 +1594,8 @@ NOTES
 #' Note that the PostgreSQL `connection` parameters `sslmode` and `database` have no effect, i.e. are simply ignored by the API endpoint.
 #'
 #' @inheritParams create_data_src
-#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#' @param quiet `r pkgsnip::type("lgl", 1L)`
+#'   `r pkgsnip::param_lbl("quiet")`
 #'
 #' @return A logical scalar indicating whether the connection test was successful or not.
 #' @family data_src
@@ -1729,9 +1766,11 @@ sync_data_src <- function(id_data_src,
 #' [has_data_src_diff()] doesn't detect any more changes.
 #'
 #' @inheritParams sync_data_src
-#' @param wait_max Maximum time in seconds to wait for schema synchronization to finish. An error is thrown if there are still schema changes pending when the
+#' @param wait_max `r pkgsnip::type("int", 1L)`
+#'   Maximum time in seconds to wait for schema synchronization to finish. An error is thrown if there are still schema changes pending when the
 #'   timeout is reached. An integerish scalar `>= wait_resync`.
-#' @param wait_resync Interval in seconds to repeat calling [sync_data_src()]. A number `>= 1` and `<= wait_max`.
+#' @param wait_resync `r pkgsnip::type("num", 1L)`
+#'   Interval in seconds to repeat calling [sync_data_src()]. A number `>= 1` and `<= wait_max`.
 #'
 #' @return `id_data_src`, invisibly.
 #' @family nocodb
@@ -1835,19 +1874,26 @@ NOTES:
 #' [`POST /api/v2/meta/bases/{id_base}/sources`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-create) API endpoint.
 #'
 #' @inheritParams data_src_id
-#' @param connection Type-specific connection details for the data source. A list.
-#' @param id_integration `r pkgsnip::type("chr")`
+#' @param connection `r pkgsnip::type("list")`
+#'   Type-specific connection details for the data source.
+#' @param id_integration `r pkgsnip::type("chr", 1L)`
 #'   Optional identifier of an existing NocoDB database integration as returned by [integration_id()], of which to reuse connection details
-#' @param type Type of the data source. One of `r pal::enum_fn_param_defaults(param = "type", fn = "create_data_src")`.
-#' @param inflection_column Type of inflection to apply for column names in the data source. One of
+#' @param type `r pkgsnip::type("chr", 1L)`
+#'   Type of the data source. One of `r pal::enum_fn_param_defaults(param = "type", fn = "create_data_src")`.
+#' @param inflection_column `r pkgsnip::type("chr", 1L)`
+#'   Type of inflection to apply for column names in the data source. One of
 #'   `r pal::enum_fn_param_defaults(param = "inflection_column", fn = "create_data_src")`.
-#' @param inflection_table Type of inflection to apply for table names in the data source. One of
+#' @param inflection_table `r pkgsnip::type("chr", 1L)`
+#'   Type of inflection to apply for table names in the data source. One of
 #'   `r pal::enum_fn_param_defaults(param = "inflection_column", fn = "create_data_src")`.
-#' @param is_schema_readonly Whether or not to [forbid alterations of the data source's **schema** from
+#' @param is_schema_readonly `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to [forbid alterations of the data source's **schema** from
 #'   NocoDB](https://docs.nocodb.com/data-sources/connect-to-data-source/#allow-schema-edit).
-#' @param is_data_readonly Whether or not to [forbid alterations of the data source's **data** from
+#' @param is_data_readonly `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to [forbid alterations of the data source's **data** from
 #'   NocoDB](https://docs.nocodb.com/data-sources/connect-to-data-source/#allow-data-edit).
-#' @param enabled Whether the added data source is enabled or disabled.
+#' @param enabled `r pkgsnip::type("lgl", 1L)`
+#'   Whether the added data source is enabled or disabled.
 #'
 #' @return `alias`, invisibly.
 #' @family data_src
@@ -2084,10 +2130,14 @@ data_src_tbls <- function(id_data_src,
 #'
 #' @inheritParams data_src
 #' @inheritParams reorder_tbl
-#' @param name Table name. A character scalar.
-#' @param cols Table columns specification as a list or something coercible to like a data frame.
-#' @param title NocoDB-specific table title. A character scalar.
-#' @param meta NocoDB-specific table metadata. A list.
+#' @param name `r pkgsnip::type("chr", 1L)`
+#'   Table name.
+#' @param cols `r pkgsnip::type("list")`
+#'   Table columns specification as a list or something coercible to like a data frame.
+#' @param title `r pkgsnip::type("chr", 1L)`
+#'   NocoDB-specific table title.
+#' @param meta `r pkgsnip::type("list")`
+#'   NocoDB-specific table metadata as a list or something coercible to like a data frame.
 #'
 #' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created NocoDB table, invisibly")`
 #' @family data_src
@@ -2170,7 +2220,8 @@ Functions to manage NocoDB [tables](https://docs.nocodb.com/category/tables).
 #' [`GET /api/v2/meta/bases/{id_base}/tables`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-list) API endpoint.
 #'
 #' @inheritParams base
-#' @param include_m2m Whether or not to include many-to-many junction tables in the result.
+#' @param include_m2m `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to include many-to-many junction tables in the result.
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family tbls
@@ -2210,7 +2261,8 @@ tbls <- function(id_base = base_id(origin = origin,
 #' Returns the identifier of the table with the specified name in the specified base on a NocoDB server.
 #'
 #' @inheritParams base
-#' @param name NocoDB table name. A character scalar.
+#' @param name `r pkgsnip::type("chr", 1L)`
+#'   NocoDB table name.
 #'
 #' @return A character scalar.
 #' @family tbls
@@ -2258,7 +2310,8 @@ tbl_id <- function(name,
 #' [`GET /api/v2/meta/tables/{id_tbl}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
 #'
 #' @inheritParams api
-#' @param id_tbl NocoDB table identifier as returned by [tbl_id()]. A character scalar.
+#' @param id_tbl `r pkgsnip::type("chr", 1L)`
+#'   NocoDB table identifier as returned by [tbl_id()].
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family tbls
@@ -2377,7 +2430,8 @@ create_tbl <- function(name,
 #' @inheritParams create_data_src_tbl
 #' @inheritParams tbl
 #' @inheritParams api
-#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#' @param quiet `r pkgsnip::type("lgl", 1L)`
+#'   `r pkgsnip::param_lbl("quiet")`
 #'
 #' @return `id_tbl`, invisibly.
 #' @family tbls
@@ -2466,7 +2520,8 @@ delete_tbl <- function(id_tbl,
 #' Lower numbers place the table higher up in the UI and vice versa. The current order of all the tables in a base can be determined via [tbls()].
 #'
 #' @inheritParams tbl
-#' @param order A number to assign as the table's NocoDB-specific order "weight".
+#' @param order `r pkgsnip::type("int", 1L)`
+#'   A number to assign as the table's NocoDB-specific order "weight".
 #'
 #' @return `id_tbl`, invisibly.
 #' @family tbls
@@ -2505,9 +2560,11 @@ reorder_tbl <- function(id_tbl,
 #' - Setting the [table icons](https://docs.nocodb.com/tables/actions-on-table/#change-table-icon) (emojis) using [update_tbl()] according to `data$meta.icon`.
 #'
 #' @inheritParams base
-#' @param data Data frame with the columns `name`, `meta.icon` that defines the table-name-and-metadata-value mapping to be applied. Additional columns are
+#' @param data `r pkgsnip::type("df")`
+#'   Data frame with the columns `name`, `meta.icon` that defines the table-name-and-metadata-value mapping to be applied. Additional columns are
 #'   ignored.
-#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#' @param quiet `r pkgsnip::type("lgl", 1L)`
+#'   `r pkgsnip::param_lbl("quiet")`
 #'
 #' @return `NULL`, invisibly.
 #' @family tbls
@@ -2614,9 +2671,12 @@ tbl_views <- function(id_tbl,
 #' Returns the identifier of the view with the specified `type`, `name` and/or `title` in the table with the specified `id_tbl` on a NocoDB server.
 #'
 #' @inheritParams tbl
-#' @param type NocoDB view type. One of `r c("default", view_types$type) |> pal::as_md_vals() |> pal::enum_str(sep2 = ", ")`, or `NULL` for any type.
-#' @param name NocoDB view name. A character scalar, or `NULL` for any name.
-#' @param title NocoDB view title. A character scalar, or `NULL` for any title.
+#' @param type `r pkgsnip::type("chr", 1L)`
+#'   NocoDB view type. One of `r c("default", view_types$type) |> pal::as_md_vals() |> pal::enum_str(sep2 = ", ")`, or `NULL` for any type.
+#' @param name `r pkgsnip::type("chr", 1L)`
+#'   NocoDB view name. `NULL` means any name.
+#' @param title `r pkgsnip::type("chr", 1L)`
+#'   NocoDB view title. `NULL` means any title.
 #'
 #' @return A character scalar.
 #' @family views
@@ -2725,8 +2785,10 @@ tbl_cols <- function(id_tbl,
 #' Returns the identifier of the column with the specified `name` or `title` in the table with the specified `id_tbl` on a NocoDB server.
 #'
 #' @inheritParams tbl_cols
-#' @param name NocoDB column name. A character scalar, or `NULL` for any name.
-#' @param title NocoDB column title. A character scalar, or `NULL` for any title.
+#' @param name `r pkgsnip::type("chr", 1L)`
+#'   NocoDB column name. `NULL` means any name.
+#' @param title `r pkgsnip::type("chr", 1L)`
+#'   NocoDB column title. `NULL` means any title.
 #'
 #' @return A character scalar.
 #' @family cols
@@ -2790,7 +2852,8 @@ tbl_col_id <- function(id_tbl,
 #' [`GET /api/v2/meta/columns/{id_col}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-get) API endpoint.
 #'
 #' @inheritParams api
-#' @param id_col NocoDB column identifier as returned by [tbl_col_id()]. A character scalar.
+#' @param id_col `r pkgsnip::type("chr", 1L)`
+#'   NocoDB column identifier as returned by [tbl_col_id()].
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family cols
@@ -2823,8 +2886,10 @@ tbl_col <- function(id_col,
 #'
 #' @inheritParams tbl
 #' @inheritParams update_tbl_col
-#' @param column_name Column name. A character scalar.
-#' @param title NocoDB column title. A character scalar.
+#' @param column_name `r pkgsnip::type("chr", 1L)`
+#'   Column name.
+#' @param title `r pkgsnip::type("chr", 1L)`
+#'   NocoDB column title.
 #'
 #' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created NocoDB table column, invisibly")`
 #' @family cols
@@ -2922,13 +2987,19 @@ NOTES:
 #' source](https://docs.nocodb.com/category/data-sources).
 #'
 #' @inheritParams tbl_col
-#' @param column_name Column name. Either `NULL` to omit or a character scalar.
-#' @param title NocoDB column title. Either `NULL` to omit or a character scalar.
-#' @param description NocoDB column description displayed as a tooltip in the column header. Either `NULL` to omit or a character scalar.
-#' @param uidt NocoDB **u**ser **i**nterface **d**ata **t**ype. Either `NULL` to omit or one of
+#' @param column_name `r pkgsnip::type("chr", 1L)`
+#'   Column name. Omitted if `NULL`.
+#' @param title `r pkgsnip::type("chr", 1L)`
+#'   NocoDB column title. Omitted if `NULL`.
+#' @param description `r pkgsnip::type("chr", 1L)`
+#'   NocoDB column description displayed as a tooltip in the column header. Omitted if `NULL`.
+#' @param uidt `r pkgsnip::type("chr", 1L)`
+#'   NocoDB **u**ser **i**nterface **d**ata **t**ype. Either `NULL` to omit or one of
 #'   `r pal::as_md_val_list(uidts$uidt)`.
-#' @param dt Column data type. Either `NULL` to omit or a character scalar.
-#' @param cdf Column default value. Either `NULL` to omit or a character scalar.
+#' @param dt `r pkgsnip::type("chr", 1L)`
+#'   Column data type. Omitted if `NULL`.
+#' @param cdf `r pkgsnip::type("chr", 1L)`
+#'   Column default value. Omitted if `NULL`.
 #'
 #' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the NocoDB table to which the updated column belongs, invisibly")`
 #' @family cols
@@ -3088,8 +3159,9 @@ set_display_val <- function(id_col,
 #' combines several of the other functions found in this package.
 #'
 #' @inheritParams set_tbl_metadata
-#' @param data Dataframe with the two columns `name` and `display_col` that defines the table-name-and-display-value-column mapping to be applied. Additional
-#'   columns are ignored.
+#' @param data `r pkgsnip::type("df")`
+#'   Dataframe with the two columns `name` and `display_col` that defines the table-name-and-display-value-column mapping to be applied. Additional columns are
+#'   ignored.
 #'
 #' @return `NULL`, invisibly.
 #' @family cols
@@ -3166,15 +3238,19 @@ NOTES:
 #' object storage bucket (if one is set up) or directly on the server's filesystem.
 #'
 #' @inheritParams api
-#' @param paths Paths to the files to be uploaded. A character vector.
-#' @param types [Media type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types)(s) of the uploaded files. A character vector of the
-#'   same length as `paths`.
-#' @param names File names to assign to the uploaded files. A character vector of the same length as `paths` or `NULL`. If `NULL`, the original file names from
-#'   `paths` are used. Note that a random string like `_NnW3C` is always appended to the resulting file name before its file type suffix, so
-#'   `names = "some-pic.jpg"` will result in a file name like `some-pic_NnW3C.jpg`, for example.
-#' @param upload_path Destination path to store the uploaded file(s) at. Always interpreted relative to the directory `/nc/uploads/` (which [is hardcoded in
-#'   NocoDB's source code](https://github.com/search?q=repo%3Anocodb%2Fnocodb+nc+uploads+language%3ATypeScript&type=code&l=TypeScript)). A character scalar.
-#'   Note that the characters `.` and `?` are replaced with `_` by the API.
+#' @param paths `r pkgsnip::type("chr")`
+#'   Paths to the files to be uploaded.
+#' @param types `r pkgsnip::type("chr")`
+#'   [Media type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types)(s) of the uploaded files. A character vector of the same length
+#'   as `paths`.
+#' @param names `r pkgsnip::type("chr")`
+#'   File names to assign to the uploaded files. A character vector of the same length as `paths` or `NULL`. If `NULL`, the original file names from `paths` are
+#'   used. Note that a random string like `_NnW3C` is always appended to the resulting file name before its file type suffix, so `names = "some-pic.jpg"` will
+#'   result in a file name like `some-pic_NnW3C.jpg`, for example.
+#' @param upload_path `r pkgsnip::type("chr", 1L)`
+#'   Destination path to store the uploaded file(s) at. Always interpreted relative to the directory `/nc/uploads/` (which [is hardcoded in NocoDB's source
+#'   code](https://github.com/search?q=repo%3Anocodb%2Fnocodb+nc+uploads+language%3ATypeScript&type=code&l=TypeScript)). Note that the characters `.` and `?`
+#'   are replaced with `_` by the API.
 #'
 #' @return A [tibble][tibble::tbl_df] containing metadata about the uploaded attachments.
 #' @family attachments
@@ -3334,7 +3410,8 @@ users <- function(origin = pal::pkg_config_val("origin"),
 #' support `api_token`s.
 #'
 #' @inheritParams base
-#' @param user_email E-mail address of the user. A character scalar.
+#' @param user_email `r pkgsnip::type("chr", 1L)`
+#'   E-mail address of the user.
 #'
 #' @return User identifier as a character scalar.
 #' @family users
@@ -3469,7 +3546,8 @@ add_user <- function(user_email,
 #' to be updated is the super admin and authentication is done via `email` and `password` instead of `api_token`.
 #'
 #' @inheritParams api
-#' @param display_name Name to be displayed for the user in NocoDB.
+#' @param display_name `r pkgsnip::type("chr", 1L)`
+#'   Name to be displayed for the user in NocoDB. Omitted if `NULL`.
 #'
 #' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the updated NocoDB user, invisibly")`
 #' @family users
@@ -3566,8 +3644,9 @@ delete_user <- function(id_user,
 #' `r md_text_no_api_token_support`
 #'
 #' @inheritParams invite_base_user
-#' @param org_role [Organisation-level role](https://docs.nocodb.com/collaboration/oss-specific-details/#organisation-level-permissions) to assign to the user.
-#'   One of `r pal::enum_fn_param_defaults(param = "org_role", fn = "invite_user")`.
+#' @param org_role `r pkgsnip::type("chr", 1L)`
+#'   [Organisation-level role](https://docs.nocodb.com/collaboration/oss-specific-details/#organisation-level-permissions) to assign to the user. One of
+#'   `r pal::enum_fn_param_defaults(param = "org_role", fn = "invite_user")`.
 #'
 #' @return `NULL`, invisibly.
 #' @family users
@@ -3631,10 +3710,14 @@ NOTES:
 #' - If you encounter an **`Invalid invite url`** error, it means the provided `invite_token` is either invalid or has already been used to sign up.
 #'
 #' @inheritParams api
-#' @param user_email E-mail address of the user to sign up. A character scalar.
-#' @param user_password Password of the user to sign up. A character scalar.
-#' @param invite_token Invite token of the user to sign up. A character scalar.
-#' @param subscribe_to_newsletter Whether or not to subscribe the signed up user to the NocoDB newsletter.
+#' @param user_email `r pkgsnip::type("chr", 1L)`
+#'   E-mail address of the user to sign up.
+#' @param user_password `r pkgsnip::type("chr", 1L)`
+#'   Password of the user to sign up.
+#' @param invite_token `r pkgsnip::type("chr", 1L)`
+#'   Invite token of the user to sign up.
+#' @param subscribe_to_newsletter `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to subscribe the signed up user to the NocoDB newsletter.
 #'
 #' @return The generated access token for the signed up user as a character scalar, invisibly.
 #' @family users
@@ -3682,7 +3765,8 @@ sign_up_user <- function(user_email,
 #' You can use [update_user()] to get a tibble containing a user's `email_verification_token`.
 #'
 #' @inheritParams set_tbl_metadata
-#' @param verification_token User's e-mail verification token.
+#' @param verification_token `r pkgsnip::type("chr", 1L)`
+#'   User's e-mail verification token.
 #'
 #' @return `NULL`, invisibly.
 #' @family users
@@ -3772,10 +3856,13 @@ NOTES:
 #'
 #' @inheritParams user_id
 #' @inheritParams set_tbl_metadata
-#' @param role [Base role](https://docs.nocodb.com/collaboration/oss-specific-details/#base-level-permissions) to assign to the user. One of
+#' @param role `r pkgsnip::type("chr", 1L)`
+#'   [Base role](https://docs.nocodb.com/collaboration/oss-specific-details/#base-level-permissions) to assign to the user. One of
 #'   `r pal::enum_fn_param_defaults(param = "role", fn = "update_base_user")`.
-#' @param id_user NocoDB user identifier as returned by [user_id()]. A character scalar.
-#' @param api_version API endpoint version to use. Either
+#' @param id_user `r pkgsnip::type("chr", 1L)`
+#'   NocoDB user identifier as returned by [user_id()].
+#' @param api_version `r pkgsnip::type("chr", 1L)`
+#'   API endpoint version to use. Either
 #'   - `"v2"` for [`PATCH /api/v1/db/meta/projects/{id_base}/users/{id_user}`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis), or
 #'   - `"v1"` for [`PATCH /api/v1/db/meta/projects/{id_base}/users/{id_user}`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis).
 #'
@@ -3929,8 +4016,10 @@ NOTES:
 #' Note that an invitation e-mail is sent if the specified user does not yet exist on the NocoDB server.
 #'
 #' @inheritParams set_tbl_metadata
-#' @param user_email E-mail address of the user to invite. A character scalar.
-#' @param role Base role to assign to the user. One of `r pal::enum_fn_param_defaults(param = "role", fn = "invite_base_user")`.
+#' @param user_email `r pkgsnip::type("chr", 1L)`
+#'   E-mail address of the user to invite.
+#' @param role `r pkgsnip::type("chr", 1L)`
+#'   Base role to assign to the user. One of `r pal::enum_fn_param_defaults(param = "role", fn = "invite_base_user")`.
 #'
 #' @return `user_email`, invisibly.
 #' @family users
@@ -4035,13 +4124,13 @@ NOTES
 #' Returns a [tibble][tibble::tbl_df] with metadata about all configured integrations on a NocoDB server from its `GET /api/v2/meta/integrations` API endpoint.
 #'
 #' @inheritParams api
-#' @param type `r pkgsnip::type("chr")`
+#' @param type `r pkgsnip::type("chr", 1L)`
 #'   Optional integration type to limit the results to. One of `r pal::as_md_vals(integration_types) |> pal::enum_str(sep2 = " or ")`.
-#' @param id_base `r pkgsnip::type("chr")`
+#' @param id_base `r pkgsnip::type("chr", 1L)`
 #'   Optional NocoDB base identifier (as returned by [base_id()]) to limit the results to.
-#' @param incl_config `r pkgsnip::type("lgl")`
+#' @param incl_config `r pkgsnip::type("lgl", 1L)`
 #'   Whether or not to include the integration configuration in the result.
-#' @param decode_config `r pkgsnip::type("lgl")`
+#' @param decode_config `r pkgsnip::type("lgl", 1L)`
 #'   Whether or not to decode the integration configuration in the result. If `FALSE`, the whole configuration is returned as a single Base64-encoded and
 #'   encrypted `config` column, otherwise it is returned as multiple clear-text `config.*` columns. Only relevant if `incl_config = TRUE`.
 #'
@@ -4091,11 +4180,11 @@ integrations <- function(type = NULL,
 #' just returns the identifier of the *first* integration listed in the API response (with a suitable warning).
 #'
 #' @inheritParams api
-#' @param title `pkgsnip::type("chr")`
+#' @param title `pkgsnip::type("chr", 1L)`
 #'   NocoDB integration title. `NULL` means any title.
-#' @param type `pkgsnip::type("chr")`
+#' @param type `pkgsnip::type("chr", 1L)`
 #'   NocoDB integration type. One of `r pal::enum_fn_param_defaults(param = "type", fn = "integration_id")`, or `NULL` for any type.
-#' @param sub_type `pkgsnip::type("chr")`
+#' @param sub_type `pkgsnip::type("chr", 1L)`
 #'   NocoDB integration subtype. One of `r pal::enum_fn_param_defaults(param = "sub_type", fn = "integration_id")`, or `NULL` for any subtype.
 #'
 #' @return A character scalar.
@@ -4164,9 +4253,10 @@ integration_id <- function(title = NULL,
 #' API endpoint.
 #'
 #' @inheritParams api
-#' @param id_integration `r pkgsnip::type("chr")`
+#' @param id_integration `r pkgsnip::type("chr", 1L)`
 #'   NocoDB integration identifier as returned by [integration_id()].
-#' @param incl_config Whether or not to include the integration configuration in the result (as a separate `config` column).
+#' @param incl_config `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to include the integration configuration in the result (as a separate `config` column).
 #'
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family integrations
@@ -4209,10 +4299,12 @@ NOTES
 #' the `connection` list.
 #'
 #' @inheritParams integration_id
-#' @param title `pkgsnip::type("chr")`
+#' @param title `pkgsnip::type("chr", 1L)`
 #'   NocoDB integration title.
-#' @param connection Subtype-specific connection details for database integrations. A list.
-#' @param search_paths Database search paths (schemas) to expose for the `"pg"` integration. A character vector.
+#' @param connection `r pkgsnip::type("list")`
+#'   Subtype-specific connection details for database integrations.
+#' @param search_paths `r pkgsnip::type("chr")`
+#'   Database search paths (schemas) to expose for the `"pg"` integration.
 #'
 #' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created NocoDB integration, invisibly")`
 #' @family integrations
@@ -4433,7 +4525,8 @@ plugins <- function(origin = pal::pkg_config_val("origin"),
 #' Returns the identifier of the plugin with the specified title on a NocoDB server.
 #'
 #' @inheritParams api
-#' @param title NocoDB plugin title. A character scalar.
+#' @param title `r pkgsnip::type("chr", 1L)`
+#'   NocoDB plugin title.
 #'
 #' @return Plugin identifier as a character scalar.
 #' @family plugins
@@ -4505,7 +4598,8 @@ plugin_category <- function(id_plugin,
 #' [`GET /api/v1/db/meta/plugins/{id_plugin}`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis) API endpoint.
 #'
 #' @inheritParams api
-#' @param id_plugin NocoDB plugin identifier as returned by [plugin_id()]. A character scalar.
+#' @param id_plugin `r pkgsnip::type("chr", 1L)`
+#'   NocoDB plugin identifier as returned by [plugin_id()].
 #'
 #' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the specified NocoDB plugin")`
 #' @family plugins
@@ -4543,8 +4637,10 @@ NOTES:
 #'
 #' @inheritParams plugin_id
 #' @inheritParams update_plugin
-#' @param config Plugin configuration. A list.
-#' @param category NocoDB plugin category as returned by [plugin_category()]. A character scalar.
+#' @param config `r pkgsnip::type("list")`
+#'   Plugin configuration.
+#' @param category `r pkgsnip::type("chr", 1L)`
+#'   NocoDB plugin category as returned by [plugin_category()].
 #'
 #' @return `TRUE` if the test was successful.
 #' @family plugins
@@ -4620,8 +4716,10 @@ NOTES:
 #'
 #' @inheritParams plugin
 #' @inheritParams api
-#' @param config Plugin configuration. A list or `NULL`. If `NULL`, the plugin's configuration is left untouched.
-#' @param activate Whether or not to activate the plugin. If `NULL`, the plugin's activation status is left untouched.
+#' @param config `r pkgsnip::type("list")`
+#'   Plugin configuration. If `NULL`, the plugin's configuration is left untouched.
+#' @param activate `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to activate the plugin. If `NULL`, the plugin's activation status is left untouched.
 #'
 #' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the updated NocoDB plugin, invisibly")`
 #' @family plugins
@@ -4764,9 +4862,11 @@ NOTES:
 #' `r md_text_super_admin_required`
 #'
 #' @inheritParams api
-#' @param invite_only_signup Whether or not to [restrict sign-up of new NocoDB users to
-#'   invitees only](https://docs.nocodb.com/account-settings/oss-specific-details/#enable--disable-signup).
-#' @param quiet `r pkgsnip::param_lbl("quiet")`
+#' @param invite_only_signup `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to [restrict sign-up of new NocoDB users to invitees
+#'   only](https://docs.nocodb.com/account-settings/oss-specific-details/#enable--disable-signup).
+#' @param quiet `r pkgsnip::type("lgl", 1L)`
+#'   `r pkgsnip::param_lbl("quiet")`
 #'
 #' @return `NULL`, invisibly.
 #' @family app_settings

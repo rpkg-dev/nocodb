@@ -7,7 +7,8 @@
 decode_access_token(x)
 }
 \arguments{
-\item{x}{Access token to be decoded.}
+\item{x}{\code{\link[base:character]{character(1)}}\cr
+Access token to be decoded.}
 }
 \value{
 The decoded access token as a \link[tibble:tbl_df-class]{tibble}.

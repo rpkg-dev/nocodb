@@ -15,20 +15,26 @@ test_data_src(
 )
 }
 \arguments{
-\item{connection}{Type-specific connection details for the data source. A list.}
+\item{connection}{\code{\link[base:list]{list()}}\cr
+Type-specific connection details for the data source.}
 
-\item{type}{Type of the data source. One of \code{"mssql"}, \code{"mysql"}, \code{"pg"} or \code{"sqlite3"}.}
+\item{type}{\code{\link[base:character]{character(1)}}\cr
+Type of the data source. One of \code{"mssql"}, \code{"mysql"}, \code{"pg"} or \code{"sqlite3"}.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
-provided.}
+\item{api_token}{\code{\link[base:character]{character(1)}}\cr
+NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 
-\item{quiet}{Whether or not to suppress printing status output from internal processing.}
+\item{quiet}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to suppress printing status output from internal processing.}
 }
 \value{
 A logical scalar indicating whether the connection test was successful or not.

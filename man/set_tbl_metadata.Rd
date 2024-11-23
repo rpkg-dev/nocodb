@@ -16,21 +16,27 @@ set_tbl_metadata(
 )
 }
 \arguments{
-\item{data}{Data frame with the columns \code{name}, \code{meta.icon} that defines the table-name-and-metadata-value mapping to be applied. Additional columns are
+\item{data}{\code{\link[base:data.frame]{data.frame}}\cr
+Data frame with the columns \code{name}, \code{meta.icon} that defines the table-name-and-metadata-value mapping to be applied. Additional columns are
 ignored.}
 
-\item{id_base}{NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}. A character scalar.}
+\item{id_base}{\code{\link[base:character]{character(1)}}\cr
+NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
-provided.}
+\item{api_token}{\code{\link[base:character]{character(1)}}\cr
+NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 
-\item{quiet}{Whether or not to suppress printing status output from internal processing.}
+\item{quiet}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to suppress printing status output from internal processing.}
 }
 \value{
 \code{NULL}, invisibly.

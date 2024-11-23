@@ -18,26 +18,33 @@ upload_attachments(
 )
 }
 \arguments{
-\item{paths}{Paths to the files to be uploaded. A character vector.}
+\item{paths}{\code{\link[base:character]{character()}}\cr
+Paths to the files to be uploaded.}
 
-\item{types}{\href{https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types}{Media type}(s) of the uploaded files. A character vector of the
-same length as \code{paths}.}
+\item{types}{\code{\link[base:character]{character()}}\cr
+\href{https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types}{Media type}(s) of the uploaded files. A character vector of the same length
+as \code{paths}.}
 
-\item{names}{File names to assign to the uploaded files. A character vector of the same length as \code{paths} or \code{NULL}. If \code{NULL}, the original file names from
-\code{paths} are used. Note that a random string like \verb{_NnW3C} is always appended to the resulting file name before its file type suffix, so
-\code{names = "some-pic.jpg"} will result in a file name like \code{some-pic_NnW3C.jpg}, for example.}
+\item{names}{\code{\link[base:character]{character()}}\cr
+File names to assign to the uploaded files. A character vector of the same length as \code{paths} or \code{NULL}. If \code{NULL}, the original file names from \code{paths} are
+used. Note that a random string like \verb{_NnW3C} is always appended to the resulting file name before its file type suffix, so \code{names = "some-pic.jpg"} will
+result in a file name like \code{some-pic_NnW3C.jpg}, for example.}
 
-\item{upload_path}{Destination path to store the uploaded file(s) at. Always interpreted relative to the directory \verb{/nc/uploads/} (which \href{https://github.com/search?q=repo\%3Anocodb\%2Fnocodb+nc+uploads+language\%3ATypeScript&type=code&l=TypeScript}{is hardcoded in NocoDB's source code}). A character scalar.
-Note that the characters \code{.} and \verb{?} are replaced with \verb{_} by the API.}
+\item{upload_path}{\code{\link[base:character]{character(1)}}\cr
+Destination path to store the uploaded file(s) at. Always interpreted relative to the directory \verb{/nc/uploads/} (which \href{https://github.com/search?q=repo\%3Anocodb\%2Fnocodb+nc+uploads+language\%3ATypeScript&type=code&l=TypeScript}{is hardcoded in NocoDB's source code}). Note that the characters \code{.} and \verb{?}
+are replaced with \verb{_} by the API.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
-provided.}
+\item{api_token}{\code{\link[base:character]{character(1)}}\cr
+NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 
 \item{max_tries}{Maximum number of attempts to retry in case of an HTTP error. An integerish scalar.}
 

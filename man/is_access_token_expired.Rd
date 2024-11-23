@@ -7,7 +7,8 @@
 is_access_token_expired(x)
 }
 \arguments{
-\item{x}{Access token to be tested for expiration.}
+\item{x}{\code{\link[base:character]{character(1)}}\cr
+Access token to be tested for expiration.}
 }
 \value{
 A logical scalar.

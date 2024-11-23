@@ -22,32 +22,44 @@ update_base_ui_acl(
 )
 }
 \arguments{
-\item{id_tbl_view}{Table view identifier as returned by \code{\link[=tbl_view_id]{tbl_view_id()}}.}
+\item{id_tbl_view}{\code{\link[base:character]{character(1)}}\cr
+Table view identifier as returned by \code{\link[=tbl_view_id]{tbl_view_id()}}.}
 
-\item{guest}{Whether or not to hide the table view for users with role \code{guest}.}
+\item{guest}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to hide the table view for users with role \code{guest}.}
 
-\item{viewer}{Whether or not to hide the table view for users with role \code{viewer}.}
+\item{viewer}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to hide the table view for users with role \code{viewer}.}
 
-\item{commenter}{Whether or not to hide the table view for users with role \code{commenter}.}
+\item{commenter}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to hide the table view for users with role \code{commenter}.}
 
-\item{editor}{Whether or not to hide the table view for users with role \code{editor}.}
+\item{editor}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to hide the table view for users with role \code{editor}.}
 
-\item{creator}{Whether or not to hide the table view for users with role \code{creator}.}
+\item{creator}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to hide the table view for users with role \code{creator}.}
 
-\item{owner}{Whether or not to hide the table view for users with role \code{owner}.}
+\item{owner}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to hide the table view for users with role \code{owner}.}
 
-\item{id_base}{NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}. A character scalar.}
+\item{id_base}{\code{\link[base:character]{character(1)}}\cr
+NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
-provided.}
+\item{api_token}{\code{\link[base:character]{character(1)}}\cr
+NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 
-\item{quiet}{Whether or not to suppress printing status output from internal processing.}
+\item{quiet}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to suppress printing status output from internal processing.}
 }
 \value{
 \code{id_tbl_view}, invisibly.

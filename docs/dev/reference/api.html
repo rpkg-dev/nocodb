@@ -68,56 +68,65 @@
 
 
 <dl><dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
-<dd><p>NocoDB API endpoint path. A character scalar.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+NocoDB API endpoint path.</p></dd>
 
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
-<dd><p><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods" class="external-link">HTTP request method</a>. One of
-<code>"GET"</code>, <code>"CONNECT"</code>, <code>"DELETE"</code>, <code>"HEAD"</code>, <code>"OPTIONS"</code>, <code>"PATCH"</code>, <code>"POST"</code>, <code>"PUT"</code> or <code>"TRACE"</code>.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods" class="external-link">HTTP request method</a>.
+One of <code>"GET"</code>, <code>"CONNECT"</code>, <code>"DELETE"</code>, <code>"HEAD"</code>, <code>"OPTIONS"</code>, <code>"PATCH"</code>, <code>"POST"</code>, <code>"PUT"</code> or <code>"TRACE"</code>.</p></dd>
 
 
 <dt id="arg-origin">origin<a class="anchor" aria-label="anchor" href="#arg-origin"></a></dt>
-<dd><p>NocoDB server <a href="https://developer.mozilla.org/docs/Glossary/Origin" class="external-link">origin</a>. A character scalar.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+NocoDB server <a href="https://developer.mozilla.org/docs/Glossary/Origin" class="external-link">origin</a>.</p></dd>
 
 
 <dt id="arg-email">email<a class="anchor" aria-label="anchor" href="#arg-email"></a></dt>
-<dd><p>E-mail address of the NocoDB user to authenticate with.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+E-mail address of the NocoDB user to authenticate with.</p></dd>
 
 
 <dt id="arg-password">password<a class="anchor" aria-label="anchor" href="#arg-password"></a></dt>
-<dd><p>Password of the NocoDB user to authenticate with.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+Password of the NocoDB user to authenticate with.</p></dd>
 
 
 <dt id="arg-api-token">api_token<a class="anchor" aria-label="anchor" href="#arg-api-token"></a></dt>
-<dd><p>NocoDB <a href="https://docs.nocodb.com/account-settings/api-tokens/" class="external-link">API token</a>. Takes precedence over <code>email</code> and <code>password</code> if
-provided.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+NocoDB <a href="https://docs.nocodb.com/account-settings/api-tokens/" class="external-link">API token</a>. Takes precedence over <code>email</code> and <code>password</code> if provided.</p></dd>
 
 
 <dt id="arg-auth">auth<a class="anchor" aria-label="anchor" href="#arg-auth"></a></dt>
-<dd><p>Whether or not to include an <a href="req_auth.html">authentication header</a> in the HTTP request.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br>
+Whether or not to include an <a href="req_auth.html">authentication header</a> in the HTTP request.</p></dd>
 
 
 <dt id="arg-url-params">url_params<a class="anchor" aria-label="anchor" href="#arg-url-params"></a></dt>
-<dd><p>URL parameters added to the <a href="https://en.wikipedia.org/wiki/Query_string" class="external-link">query string</a>. Either <code>NULL</code> to omit or a named list of key-value
-pairs that define query parameters. Values must be scalars. To opt out of automatic conversion of non-character values to JSON strings or
+<dd><p><code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code><br>
+URL parameters added to the <a href="https://en.wikipedia.org/wiki/Query_string" class="external-link">query string</a>. Either <code>NULL</code> to omit or a named list of key-value pairs that
+define query parameters. Values must be scalars. To opt out of automatic conversion of non-character values to JSON strings or
 <a href="https://en.wikipedia.org/wiki/Percent-encoding" class="external-link">percent-encoding</a> values, wrap values in <code><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I()</a></code>.</p></dd>
 
 
 <dt id="arg-body-json">body_json<a class="anchor" aria-label="anchor" href="#arg-body-json"></a></dt>
-<dd><p>Data to include as JSON in the HTTP request body. Either a list or <code>NULL</code> for an empty body.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code><br>
+Data to include as JSON in the HTTP request body. <code>NULL</code> means an empty body.</p></dd>
 
 
 <dt id="arg-auto-unbox">auto_unbox<a class="anchor" aria-label="anchor" href="#arg-auto-unbox"></a></dt>
-<dd><p>Whether or not to automatically "unbox" length-1 vectors in <code>body_json</code> to JSON scalars.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br>
+Whether or not to automatically "unbox" length-1 vectors in <code>body_json</code> to JSON scalars.</p></dd>
 
 
 <dt id="arg-simplify">simplify<a class="anchor" aria-label="anchor" href="#arg-simplify"></a></dt>
-<dd><p>Whether or not to automatically simplify JSON structures in the returned JSON. Enables/disables all <code>simplify*</code> arguments of
-<code><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">jsonlite::fromJSON()</a></code>.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br>
+Whether or not to automatically simplify JSON structures in the returned JSON. Enables/disables all <code>simplify*</code> arguments of <code><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">jsonlite::fromJSON()</a></code>.</p></dd>
 
 
 <dt id="arg-flatten">flatten<a class="anchor" aria-label="anchor" href="#arg-flatten"></a></dt>
-<dd><p>Whether or not to automatically <a href="https://rdrr.io/pkg/jsonlite/man/flatten.html" class="external-link">flatten</a> nested data frames in the returned JSON into a single non-nested data frame.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br>
+Whether or not to automatically <a href="https://rdrr.io/pkg/jsonlite/man/flatten.html" class="external-link">flatten</a> nested data frames in the returned JSON into a single non-nested data frame.</p></dd>
 
 
 <dt id="arg-max-tries">max_tries<a class="anchor" aria-label="anchor" href="#arg-max-tries"></a></dt>

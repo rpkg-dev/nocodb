@@ -17,23 +17,30 @@ sync_data_src_eagerly(
 )
 }
 \arguments{
-\item{id_data_src}{NocoDB data source identifier as returned by \code{\link[=data_src_id]{data_src_id()}}. A character scalar.}
+\item{id_data_src}{\code{\link[base:character]{character(1)}}\cr
+NocoDB data source identifier as returned by \code{\link[=data_src_id]{data_src_id()}}.}
 
-\item{id_base}{NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}. A character scalar.}
+\item{id_base}{\code{\link[base:character]{character(1)}}\cr
+NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
-provided.}
+\item{api_token}{\code{\link[base:character]{character(1)}}\cr
+NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 
-\item{wait_max}{Maximum time in seconds to wait for schema synchronization to finish. An error is thrown if there are still schema changes pending when the
+\item{wait_max}{\code{\link[base:integer]{integer(1)}}\cr
+Maximum time in seconds to wait for schema synchronization to finish. An error is thrown if there are still schema changes pending when the
 timeout is reached. An integerish scalar \verb{>= wait_resync}.}
 
-\item{wait_resync}{Interval in seconds to repeat calling \code{\link[=sync_data_src]{sync_data_src()}}. A number \verb{>= 1} and \verb{<= wait_max}.}
+\item{wait_resync}{\code{\link[base:numeric]{numeric(1)}}\cr
+Interval in seconds to repeat calling \code{\link[=sync_data_src]{sync_data_src()}}. A number \verb{>= 1} and \verb{<= wait_max}.}
 }
 \value{
 \code{id_data_src}, invisibly.

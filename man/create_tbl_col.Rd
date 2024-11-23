@@ -18,13 +18,17 @@ create_tbl_col(
 )
 }
 \arguments{
-\item{id_tbl}{NocoDB table identifier as returned by \code{\link[=tbl_id]{tbl_id()}}. A character scalar.}
+\item{id_tbl}{\code{\link[base:character]{character(1)}}\cr
+NocoDB table identifier as returned by \code{\link[=tbl_id]{tbl_id()}}.}
 
-\item{column_name}{Column name. A character scalar.}
+\item{column_name}{\code{\link[base:character]{character(1)}}\cr
+Column name.}
 
-\item{title}{NocoDB column title. A character scalar.}
+\item{title}{\code{\link[base:character]{character(1)}}\cr
+NocoDB column title.}
 
-\item{uidt}{NocoDB \strong{u}ser \strong{i}nterface \strong{d}ata \strong{t}ype. Either \code{NULL} to omit or one of
+\item{uidt}{\code{\link[base:character]{character(1)}}\cr
+NocoDB \strong{u}ser \strong{i}nterface \strong{d}ata \strong{t}ype. Either \code{NULL} to omit or one of
 \itemize{
 \item \code{"Attachment"}
 \item \code{"AutoNumber"}
@@ -69,18 +73,23 @@ create_tbl_col(
 \item \code{"Year"} .
 }}
 
-\item{dt}{Column data type. Either \code{NULL} to omit or a character scalar.}
+\item{dt}{\code{\link[base:character]{character(1)}}\cr
+Column data type. Omitted if \code{NULL}.}
 
-\item{cdf}{Column default value. Either \code{NULL} to omit or a character scalar.}
+\item{cdf}{\code{\link[base:character]{character(1)}}\cr
+Column default value. Omitted if \code{NULL}.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
-provided.}
+\item{api_token}{\code{\link[base:character]{character(1)}}\cr
+NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble} with metadata about the newly created NocoDB table column, invisibly.

@@ -15,20 +15,26 @@ tbl_col_id(
 )
 }
 \arguments{
-\item{id_tbl}{NocoDB table identifier as returned by \code{\link[=tbl_id]{tbl_id()}}. A character scalar.}
+\item{id_tbl}{\code{\link[base:character]{character(1)}}\cr
+NocoDB table identifier as returned by \code{\link[=tbl_id]{tbl_id()}}.}
 
-\item{name}{NocoDB column name. A character scalar, or \code{NULL} for any name.}
+\item{name}{\code{\link[base:character]{character(1)}}\cr
+NocoDB column name. \code{NULL} means any name.}
 
-\item{title}{NocoDB column title. A character scalar, or \code{NULL} for any title.}
+\item{title}{\code{\link[base:character]{character(1)}}\cr
+NocoDB column title. \code{NULL} means any title.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
-provided.}
+\item{api_token}{\code{\link[base:character]{character(1)}}\cr
+NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 }
 \value{
 A character scalar.

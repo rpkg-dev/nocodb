@@ -10,9 +10,11 @@ refresh_sign_in(
 )
 }
 \arguments{
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user whose access token is to be refreshed. A character scalar.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user whose access token is to be refreshed.}
 }
 \value{
 The freshly generated access token as a character scalar, invisibly.

@@ -71,62 +71,75 @@ PATCH /api/v2/meta/bases/{id_base}/sources/{id_data_src} API endpoint."><meta na
 
 
 <dl><dt id="arg-id-data-src">id_data_src<a class="anchor" aria-label="anchor" href="#arg-id-data-src"></a></dt>
-<dd><p>NocoDB data source identifier as returned by <code><a href="data_src_id.html">data_src_id()</a></code>. A character scalar.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+NocoDB data source identifier as returned by <code><a href="data_src_id.html">data_src_id()</a></code>.</p></dd>
 
 
 <dt id="arg-connection">connection<a class="anchor" aria-label="anchor" href="#arg-connection"></a></dt>
-<dd><p>Type-specific connection details for the data source. A list.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code><br>
+Type-specific connection details for the data source.</p></dd>
 
 
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
-<dd><p>Type of the data source. One of <code>"mssql"</code>, <code>"mysql"</code>, <code>"pg"</code> or <code>"sqlite3"</code>.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+Type of the data source. One of <code>"mssql"</code>, <code>"mysql"</code>, <code>"pg"</code> or <code>"sqlite3"</code>.</p></dd>
 
 
 <dt id="arg-alias">alias<a class="anchor" aria-label="anchor" href="#arg-alias"></a></dt>
-<dd><p>Alias of the data source. A character scalar.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+Alias of the data source.</p></dd>
 
 
 <dt id="arg-inflection-column">inflection_column<a class="anchor" aria-label="anchor" href="#arg-inflection-column"></a></dt>
-<dd><p>Type of inflection to apply for column names in the data source. One of
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+Type of inflection to apply for column names in the data source. One of
 <code>"none"</code> or <code>"camelize"</code>.</p></dd>
 
 
 <dt id="arg-inflection-table">inflection_table<a class="anchor" aria-label="anchor" href="#arg-inflection-table"></a></dt>
-<dd><p>Type of inflection to apply for table names in the data source. One of
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+Type of inflection to apply for table names in the data source. One of
 <code>"none"</code> or <code>"camelize"</code>.</p></dd>
 
 
 <dt id="arg-is-schema-readonly">is_schema_readonly<a class="anchor" aria-label="anchor" href="#arg-is-schema-readonly"></a></dt>
-<dd><p>Whether or not to <a href="https://docs.nocodb.com/data-sources/connect-to-data-source/#allow-schema-edit" class="external-link">forbid alterations of the data source's <strong>schema</strong> from NocoDB</a>.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br>
+Whether or not to <a href="https://docs.nocodb.com/data-sources/connect-to-data-source/#allow-schema-edit" class="external-link">forbid alterations of the data source's <strong>schema</strong> from NocoDB</a>.</p></dd>
 
 
 <dt id="arg-is-data-readonly">is_data_readonly<a class="anchor" aria-label="anchor" href="#arg-is-data-readonly"></a></dt>
-<dd><p>Whether or not to <a href="https://docs.nocodb.com/data-sources/connect-to-data-source/#allow-data-edit" class="external-link">forbid alterations of the data source's <strong>data</strong> from NocoDB</a>.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br>
+Whether or not to <a href="https://docs.nocodb.com/data-sources/connect-to-data-source/#allow-data-edit" class="external-link">forbid alterations of the data source's <strong>data</strong> from NocoDB</a>.</p></dd>
 
 
 <dt id="arg-enabled">enabled<a class="anchor" aria-label="anchor" href="#arg-enabled"></a></dt>
-<dd><p>Whether the added data source is enabled or disabled.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br>
+Whether the added data source is enabled or disabled.</p></dd>
 
 
 <dt id="arg-id-base">id_base<a class="anchor" aria-label="anchor" href="#arg-id-base"></a></dt>
-<dd><p>NocoDB base identifier as returned by <code><a href="base_id.html">base_id()</a></code>. A character scalar.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+NocoDB base identifier as returned by <code><a href="base_id.html">base_id()</a></code>.</p></dd>
 
 
 <dt id="arg-origin">origin<a class="anchor" aria-label="anchor" href="#arg-origin"></a></dt>
-<dd><p>NocoDB server <a href="https://developer.mozilla.org/docs/Glossary/Origin" class="external-link">origin</a>. A character scalar.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+NocoDB server <a href="https://developer.mozilla.org/docs/Glossary/Origin" class="external-link">origin</a>.</p></dd>
 
 
 <dt id="arg-email">email<a class="anchor" aria-label="anchor" href="#arg-email"></a></dt>
-<dd><p>E-mail address of the NocoDB user to authenticate with.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+E-mail address of the NocoDB user to authenticate with.</p></dd>
 
 
 <dt id="arg-password">password<a class="anchor" aria-label="anchor" href="#arg-password"></a></dt>
-<dd><p>Password of the NocoDB user to authenticate with.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+Password of the NocoDB user to authenticate with.</p></dd>
 
 
 <dt id="arg-api-token">api_token<a class="anchor" aria-label="anchor" href="#arg-api-token"></a></dt>
-<dd><p>NocoDB <a href="https://docs.nocodb.com/account-settings/api-tokens/" class="external-link">API token</a>. Takes precedence over <code>email</code> and <code>password</code> if
-provided.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+NocoDB <a href="https://docs.nocodb.com/account-settings/api-tokens/" class="external-link">API token</a>. Takes precedence over <code>email</code> and <code>password</code> if provided.</p></dd>
 
 </dl></div>
     <div class="section level2">

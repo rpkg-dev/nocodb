@@ -16,23 +16,30 @@ create_base(
 )
 }
 \arguments{
-\item{title}{Base title. A character scalar.}
+\item{title}{\code{\link[base:character]{character(1)}}\cr
+Base title.}
 
-\item{description}{Base description. A character scalar.}
+\item{description}{\code{\link[base:character]{character(1)}}\cr
+Base description.}
 
-\item{color}{Color to use for the base icon. A hexadecimal color code like "#36BFFF".}
+\item{color}{\code{\link[base:character]{character(1)}}\cr
+Color to use for the base icon. A hexadecimal color code like "#36BFFF".}
 
-\item{show_null_and_empty_in_filter}{Whether or not to distinguish \code{NULL}s from empty values in column filters. If \code{FALSE}, \code{NULL} and empty fields are
+\item{show_null_and_empty_in_filter}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to distinguish \code{NULL}s from empty values in column filters. If \code{FALSE}, \code{NULL} and empty fields are
 treated alike.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
-provided.}
+\item{api_token}{\code{\link[base:character]{character(1)}}\cr
+NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble} with metadata about the newly created NocoDB base, invisibly.

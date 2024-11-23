@@ -23,36 +23,49 @@ update_data_src(
 )
 }
 \arguments{
-\item{id_data_src}{NocoDB data source identifier as returned by \code{\link[=data_src_id]{data_src_id()}}. A character scalar.}
+\item{id_data_src}{\code{\link[base:character]{character(1)}}\cr
+NocoDB data source identifier as returned by \code{\link[=data_src_id]{data_src_id()}}.}
 
-\item{connection}{Type-specific connection details for the data source. A list.}
+\item{connection}{\code{\link[base:list]{list()}}\cr
+Type-specific connection details for the data source.}
 
-\item{type}{Type of the data source. One of \code{"mssql"}, \code{"mysql"}, \code{"pg"} or \code{"sqlite3"}.}
+\item{type}{\code{\link[base:character]{character(1)}}\cr
+Type of the data source. One of \code{"mssql"}, \code{"mysql"}, \code{"pg"} or \code{"sqlite3"}.}
 
-\item{alias}{Alias of the data source. A character scalar.}
+\item{alias}{\code{\link[base:character]{character(1)}}\cr
+Alias of the data source.}
 
-\item{inflection_column}{Type of inflection to apply for column names in the data source. One of
+\item{inflection_column}{\code{\link[base:character]{character(1)}}\cr
+Type of inflection to apply for column names in the data source. One of
 \code{"none"} or \code{"camelize"}.}
 
-\item{inflection_table}{Type of inflection to apply for table names in the data source. One of
+\item{inflection_table}{\code{\link[base:character]{character(1)}}\cr
+Type of inflection to apply for table names in the data source. One of
 \code{"none"} or \code{"camelize"}.}
 
-\item{is_schema_readonly}{Whether or not to \href{https://docs.nocodb.com/data-sources/connect-to-data-source/#allow-schema-edit}{forbid alterations of the data source's \strong{schema} from NocoDB}.}
+\item{is_schema_readonly}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to \href{https://docs.nocodb.com/data-sources/connect-to-data-source/#allow-schema-edit}{forbid alterations of the data source's \strong{schema} from NocoDB}.}
 
-\item{is_data_readonly}{Whether or not to \href{https://docs.nocodb.com/data-sources/connect-to-data-source/#allow-data-edit}{forbid alterations of the data source's \strong{data} from NocoDB}.}
+\item{is_data_readonly}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to \href{https://docs.nocodb.com/data-sources/connect-to-data-source/#allow-data-edit}{forbid alterations of the data source's \strong{data} from NocoDB}.}
 
-\item{enabled}{Whether the added data source is enabled or disabled.}
+\item{enabled}{\code{\link[base:logical]{logical(1)}}\cr
+Whether the added data source is enabled or disabled.}
 
-\item{id_base}{NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}. A character scalar.}
+\item{id_base}{\code{\link[base:character]{character(1)}}\cr
+NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
-provided.}
+\item{api_token}{\code{\link[base:character]{character(1)}}\cr
+NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble} with metadata about the updated NocoDB data source, invisibly.

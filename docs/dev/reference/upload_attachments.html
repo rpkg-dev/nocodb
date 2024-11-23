@@ -69,40 +69,46 @@ object storage bucket (if one is set up) or directly on the server's filesystem.
 
 
 <dl><dt id="arg-paths">paths<a class="anchor" aria-label="anchor" href="#arg-paths"></a></dt>
-<dd><p>Paths to the files to be uploaded. A character vector.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character()</a></code><br>
+Paths to the files to be uploaded.</p></dd>
 
 
 <dt id="arg-types">types<a class="anchor" aria-label="anchor" href="#arg-types"></a></dt>
-<dd><p><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types" class="external-link">Media type</a>(s) of the uploaded files. A character vector of the
-same length as <code>paths</code>.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character()</a></code><br><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types" class="external-link">Media type</a>(s) of the uploaded files. A character vector of the same length
+as <code>paths</code>.</p></dd>
 
 
 <dt id="arg-names">names<a class="anchor" aria-label="anchor" href="#arg-names"></a></dt>
-<dd><p>File names to assign to the uploaded files. A character vector of the same length as <code>paths</code> or <code>NULL</code>. If <code>NULL</code>, the original file names from
-<code>paths</code> are used. Note that a random string like <code>_NnW3C</code> is always appended to the resulting file name before its file type suffix, so
-<code>names = "some-pic.jpg"</code> will result in a file name like <code>some-pic_NnW3C.jpg</code>, for example.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character()</a></code><br>
+File names to assign to the uploaded files. A character vector of the same length as <code>paths</code> or <code>NULL</code>. If <code>NULL</code>, the original file names from <code>paths</code> are
+used. Note that a random string like <code>_NnW3C</code> is always appended to the resulting file name before its file type suffix, so <code>names = "some-pic.jpg"</code> will
+result in a file name like <code>some-pic_NnW3C.jpg</code>, for example.</p></dd>
 
 
 <dt id="arg-upload-path">upload_path<a class="anchor" aria-label="anchor" href="#arg-upload-path"></a></dt>
-<dd><p>Destination path to store the uploaded file(s) at. Always interpreted relative to the directory <code>/nc/uploads/</code> (which <a href="https://github.com/search?q=repo%3Anocodb%2Fnocodb+nc+uploads+language%3ATypeScript&amp;type=code&amp;l=TypeScript" class="external-link">is hardcoded in NocoDB's source code</a>). A character scalar.
-Note that the characters <code>.</code> and <code>?</code> are replaced with <code>_</code> by the API.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+Destination path to store the uploaded file(s) at. Always interpreted relative to the directory <code>/nc/uploads/</code> (which <a href="https://github.com/search?q=repo%3Anocodb%2Fnocodb+nc+uploads+language%3ATypeScript&amp;type=code&amp;l=TypeScript" class="external-link">is hardcoded in NocoDB's source code</a>). Note that the characters <code>.</code> and <code>?</code>
+are replaced with <code>_</code> by the API.</p></dd>
 
 
 <dt id="arg-origin">origin<a class="anchor" aria-label="anchor" href="#arg-origin"></a></dt>
-<dd><p>NocoDB server <a href="https://developer.mozilla.org/docs/Glossary/Origin" class="external-link">origin</a>. A character scalar.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+NocoDB server <a href="https://developer.mozilla.org/docs/Glossary/Origin" class="external-link">origin</a>.</p></dd>
 
 
 <dt id="arg-email">email<a class="anchor" aria-label="anchor" href="#arg-email"></a></dt>
-<dd><p>E-mail address of the NocoDB user to authenticate with.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+E-mail address of the NocoDB user to authenticate with.</p></dd>
 
 
 <dt id="arg-password">password<a class="anchor" aria-label="anchor" href="#arg-password"></a></dt>
-<dd><p>Password of the NocoDB user to authenticate with.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+Password of the NocoDB user to authenticate with.</p></dd>
 
 
 <dt id="arg-api-token">api_token<a class="anchor" aria-label="anchor" href="#arg-api-token"></a></dt>
-<dd><p>NocoDB <a href="https://docs.nocodb.com/account-settings/api-tokens/" class="external-link">API token</a>. Takes precedence over <code>email</code> and <code>password</code> if
-provided.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+NocoDB <a href="https://docs.nocodb.com/account-settings/api-tokens/" class="external-link">API token</a>. Takes precedence over <code>email</code> and <code>password</code> if provided.</p></dd>
 
 
 <dt id="arg-max-tries">max_tries<a class="anchor" aria-label="anchor" href="#arg-max-tries"></a></dt>

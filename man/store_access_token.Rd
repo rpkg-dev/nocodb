@@ -11,11 +11,14 @@ store_access_token(
 )
 }
 \arguments{
-\item{x}{Access token to be stored.}
+\item{x}{\code{\link[base:character]{character(1)}}\cr
+Access token to be stored.}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 }
 \value{
 \code{x}, invisibly.

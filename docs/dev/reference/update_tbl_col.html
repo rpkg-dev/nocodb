@@ -70,23 +70,28 @@ Beware that this API endpoint alters the schema of the underlying table, which m
 
 
 <dl><dt id="arg-id-col">id_col<a class="anchor" aria-label="anchor" href="#arg-id-col"></a></dt>
-<dd><p>NocoDB column identifier as returned by <code><a href="tbl_col_id.html">tbl_col_id()</a></code>. A character scalar.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+NocoDB column identifier as returned by <code><a href="tbl_col_id.html">tbl_col_id()</a></code>.</p></dd>
 
 
 <dt id="arg-column-name">column_name<a class="anchor" aria-label="anchor" href="#arg-column-name"></a></dt>
-<dd><p>Column name. Either <code>NULL</code> to omit or a character scalar.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+Column name. Omitted if <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-title">title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>
-<dd><p>NocoDB column title. Either <code>NULL</code> to omit or a character scalar.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+NocoDB column title. Omitted if <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-description">description<a class="anchor" aria-label="anchor" href="#arg-description"></a></dt>
-<dd><p>NocoDB column description displayed as a tooltip in the column header. Either <code>NULL</code> to omit or a character scalar.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+NocoDB column description displayed as a tooltip in the column header. Omitted if <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-uidt">uidt<a class="anchor" aria-label="anchor" href="#arg-uidt"></a></dt>
-<dd><p>NocoDB <strong>u</strong>ser <strong>i</strong>nterface <strong>d</strong>ata <strong>t</strong>ype. Either <code>NULL</code> to omit or one of</p><ul><li><p><code>"Attachment"</code></p></li>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+NocoDB <strong>u</strong>ser <strong>i</strong>nterface <strong>d</strong>ata <strong>t</strong>ype. Either <code>NULL</code> to omit or one of</p><ul><li><p><code>"Attachment"</code></p></li>
 <li><p><code>"AutoNumber"</code></p></li>
 <li><p><code>"Barcode"</code></p></li>
 <li><p><code>"Button"</code></p></li>
@@ -131,28 +136,33 @@ Beware that this API endpoint alters the schema of the underlying table, which m
 
 
 <dt id="arg-dt">dt<a class="anchor" aria-label="anchor" href="#arg-dt"></a></dt>
-<dd><p>Column data type. Either <code>NULL</code> to omit or a character scalar.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+Column data type. Omitted if <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-cdf">cdf<a class="anchor" aria-label="anchor" href="#arg-cdf"></a></dt>
-<dd><p>Column default value. Either <code>NULL</code> to omit or a character scalar.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+Column default value. Omitted if <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-origin">origin<a class="anchor" aria-label="anchor" href="#arg-origin"></a></dt>
-<dd><p>NocoDB server <a href="https://developer.mozilla.org/docs/Glossary/Origin" class="external-link">origin</a>. A character scalar.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+NocoDB server <a href="https://developer.mozilla.org/docs/Glossary/Origin" class="external-link">origin</a>.</p></dd>
 
 
 <dt id="arg-email">email<a class="anchor" aria-label="anchor" href="#arg-email"></a></dt>
-<dd><p>E-mail address of the NocoDB user to authenticate with.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+E-mail address of the NocoDB user to authenticate with.</p></dd>
 
 
 <dt id="arg-password">password<a class="anchor" aria-label="anchor" href="#arg-password"></a></dt>
-<dd><p>Password of the NocoDB user to authenticate with.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+Password of the NocoDB user to authenticate with.</p></dd>
 
 
 <dt id="arg-api-token">api_token<a class="anchor" aria-label="anchor" href="#arg-api-token"></a></dt>
-<dd><p>NocoDB <a href="https://docs.nocodb.com/account-settings/api-tokens/" class="external-link">API token</a>. Takes precedence over <code>email</code> and <code>password</code> if
-provided.</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+NocoDB <a href="https://docs.nocodb.com/account-settings/api-tokens/" class="external-link">API token</a>. Takes precedence over <code>email</code> and <code>password</code> if provided.</p></dd>
 
 </dl></div>
     <div class="section level2">

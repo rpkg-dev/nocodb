@@ -14,18 +14,23 @@ reorder_tbl(
 )
 }
 \arguments{
-\item{id_tbl}{NocoDB table identifier as returned by \code{\link[=tbl_id]{tbl_id()}}. A character scalar.}
+\item{id_tbl}{\code{\link[base:character]{character(1)}}\cr
+NocoDB table identifier as returned by \code{\link[=tbl_id]{tbl_id()}}.}
 
-\item{order}{A number to assign as the table's NocoDB-specific order "weight".}
+\item{order}{\code{\link[base:integer]{integer(1)}}\cr
+A number to assign as the table's NocoDB-specific order "weight".}
 
-\item{origin}{NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}. A character scalar.}
+\item{origin}{\code{\link[base:character]{character(1)}}\cr
+NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{email}{E-mail address of the NocoDB user to authenticate with.}
+\item{email}{\code{\link[base:character]{character(1)}}\cr
+E-mail address of the NocoDB user to authenticate with.}
 
-\item{password}{Password of the NocoDB user to authenticate with.}
+\item{password}{\code{\link[base:character]{character(1)}}\cr
+Password of the NocoDB user to authenticate with.}
 
-\item{api_token}{NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if
-provided.}
+\item{api_token}{\code{\link[base:character]{character(1)}}\cr
+NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 }
 \value{
 \code{id_tbl}, invisibly.
