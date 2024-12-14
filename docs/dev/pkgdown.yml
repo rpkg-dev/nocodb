@@ -1,8 +1,8 @@
-pandoc: '3.5'
+pandoc: '3.6'
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles: {}
-last_built: 2024-11-23T18:04Z
+last_built: 2024-12-14T00:00Z
 urls:
   reference: https://nocodb.rpkg.dev/reference
   article: https://nocodb.rpkg.dev/articles
