@@ -73,7 +73,8 @@ NocoDB server <a href="https://developer.mozilla.org/docs/Glossary/Origin" class
 
 
 <dt id="arg-max-tries">max_tries<a class="anchor" aria-label="anchor" href="#arg-max-tries"></a></dt>
-<dd><p>Maximum number of attempts to retry in case of an HTTP error. An integerish scalar.</p></dd>
+<dd><p>Maximum number of attempts to retry the request in case of an HTTP error. An integerish scalar. The retries are performed using exponential
+backoff and jitter, see <code><a href="https://httr2.r-lib.org/reference/req_retry.html" class="external-link">httr2::req_retry()</a></code> for details.</p></dd>
 
 </dl></div>
     <div class="section level2">

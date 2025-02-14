@@ -63,7 +63,7 @@ Whether or not to automatically simplify JSON structures in the returned JSON. E
 Whether or not to automatically \link[jsonlite:flatten]{flatten} nested data frames in the returned JSON into a single non-nested data frame.}
 
 \item{max_tries}{\code{\link[base:integer]{integer(1)}}\cr
-Maximum number of attempts to retry in case of an HTTP error.}
+Maximum number of request attempts in case of an HTTP error. An integerish scalar. Retries are performed using exponential backoff and jitter, see \code{\link[httr2:req_retry]{httr2::req_retry()}} for details.}
 
 \item{verbosity}{How much information to print? This is a wrapper
 around \code{\link[httr2:req_verbose]{req_verbose()}} that uses an integer to control verbosity:

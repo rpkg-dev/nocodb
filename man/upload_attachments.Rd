@@ -47,7 +47,7 @@ Password of the NocoDB user to authenticate with.}
 NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 
 \item{max_tries}{\code{\link[base:integer]{integer(1)}}\cr
-Maximum number of attempts to retry in case of an HTTP error.}
+Maximum number of request attempts in case of an HTTP error. An integerish scalar. Retries are performed using exponential backoff and jitter, see \code{\link[httr2:req_retry]{httr2::req_retry()}} for details.}
 
 \item{verbosity}{How much information to print? This is a wrapper
 around \code{\link[httr2:req_verbose]{req_verbose()}} that uses an integer to control verbosity:

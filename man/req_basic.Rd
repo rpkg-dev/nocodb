@@ -23,7 +23,8 @@ One of \code{"GET"}, \code{"CONNECT"}, \code{"DELETE"}, \code{"HEAD"}, \code{"OP
 \item{origin}{\code{\link[base:character]{character(1)}}\cr
 NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
 
-\item{max_tries}{Maximum number of attempts to retry in case of an HTTP error. An integerish scalar.}
+\item{max_tries}{Maximum number of attempts to retry the request in case of an HTTP error. An integerish scalar. The retries are performed using exponential
+backoff and jitter, see \code{\link[httr2:req_retry]{httr2::req_retry()}} for details.}
 }
 \value{
 A modified HTTP \link[httr2]{request}.
