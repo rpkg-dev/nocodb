@@ -26,7 +26,7 @@ Useful links:
 \itemize{
   \item \url{https://nocodb.rpkg.dev}
   \item \url{https://gitlab.com/rpkg.dev/nocodb}
-  \item Report bugs at \url{https://gitlab.com/rpkg.dev/nocodb/issues}
+  \item Report bugs at \url{https://gitlab.com/rpkg.dev/nocodb/-/issues}
 }
 
 }
