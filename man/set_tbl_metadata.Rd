@@ -8,10 +8,10 @@ set_tbl_metadata(
   data,
   id_base = base_id(origin = origin, email = email, password = password, api_token =
     api_token),
-  origin = pal::pkg_config_val("origin"),
-  email = pal::pkg_config_val("email"),
-  password = pal::pkg_config_val("password"),
-  api_token = pal::pkg_config_val("api_token"),
+  origin = funky::config_val("origin"),
+  email = funky::config_val("email"),
+  password = funky::config_val("password"),
+  api_token = funky::config_val("api_token"),
   quiet = FALSE
 )
 }

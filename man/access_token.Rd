@@ -5,8 +5,8 @@
 \title{Get user's current access token}
 \usage{
 access_token(
-  origin = pal::pkg_config_val("origin"),
-  email = pal::pkg_config_val("email", require = TRUE)
+  origin = funky::config_val("origin"),
+  email = funky::config_val("email", require = TRUE)
 )
 }
 \arguments{

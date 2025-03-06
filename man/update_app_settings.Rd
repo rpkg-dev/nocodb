@@ -6,9 +6,9 @@
 \usage{
 update_app_settings(
   invite_only_signup = NULL,
-  origin = pal::pkg_config_val("origin"),
-  email = pal::pkg_config_val("email", require = TRUE),
-  password = pal::pkg_config_val("password", require = TRUE),
+  origin = funky::config_val("origin"),
+  email = funky::config_val("email", require = TRUE),
+  password = funky::config_val("password", require = TRUE),
   quiet = FALSE
 )
 }

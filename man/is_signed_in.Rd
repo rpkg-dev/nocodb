@@ -5,8 +5,8 @@
 \title{Test if user is signed in}
 \usage{
 is_signed_in(
-  origin = pal::pkg_config_val("origin"),
-  email = pal::pkg_config_val("email", require = TRUE)
+  origin = funky::config_val("origin"),
+  email = funky::config_val("email", require = TRUE)
 )
 }
 \arguments{

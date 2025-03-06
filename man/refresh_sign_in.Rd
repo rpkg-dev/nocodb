@@ -5,8 +5,8 @@
 \title{Refresh NocoDB access token}
 \usage{
 refresh_sign_in(
-  origin = pal::pkg_config_val("origin"),
-  email = pal::pkg_config_val("email", require = TRUE)
+  origin = funky::config_val("origin"),
+  email = funky::config_val("email", require = TRUE)
 )
 }
 \arguments{

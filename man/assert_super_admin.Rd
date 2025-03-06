@@ -5,9 +5,9 @@
 \title{Assert super admin}
 \usage{
 assert_super_admin(
-  origin = pal::pkg_config_val("origin"),
-  email = pal::pkg_config_val("email"),
-  password = pal::pkg_config_val("password"),
+  origin = funky::config_val("origin"),
+  email = funky::config_val("email"),
+  password = funky::config_val("password"),
   api_token = NULL
 )
 }

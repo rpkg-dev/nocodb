@@ -7,9 +7,9 @@
 invite_user(
   user_email,
   org_role = c("org-level-viewer", "org-level-creator"),
-  origin = pal::pkg_config_val("origin"),
-  email = pal::pkg_config_val("email", require = TRUE),
-  password = pal::pkg_config_val("password", require = TRUE),
+  origin = funky::config_val("origin"),
+  email = funky::config_val("email", require = TRUE),
+  password = funky::config_val("password", require = TRUE),
   quiet = FALSE
 )
 }

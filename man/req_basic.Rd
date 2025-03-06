@@ -8,7 +8,7 @@ req_basic(
   path,
   method = c("GET", "CONNECT", "DELETE", "HEAD", "OPTIONS", "PATCH", "POST", "PUT",
     "TRACE"),
-  origin = pal::pkg_config_val("origin"),
+  origin = funky::config_val("origin"),
   max_tries = 3L
 )
 }

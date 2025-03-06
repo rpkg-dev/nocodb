@@ -6,7 +6,7 @@
 \usage{
 validate_user_email(
   verification_token,
-  origin = pal::pkg_config_val("origin"),
+  origin = funky::config_val("origin"),
   quiet = FALSE
 )
 }
