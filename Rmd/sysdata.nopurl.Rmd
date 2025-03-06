@@ -27,15 +27,11 @@ library(magrittr,
 
 # Define data
 
-## `pkg_config`
+## `funky_config`
 
 ```{r}
-pkg_config <-
-  tibble::tibble(key = character(),
-                 default_value = list(),
-                 default_value_dynamic = character(),
-                 require = logical(),
-                 description = character()) |>
+funky_config <-
+  funky::ptype_config |>
   tibble::add_row(key = "origin",
                   require = TRUE,
                   description = "[Origin](https://developer.mozilla.org/docs/Glossary/Origin) of the NocoDB server to work with.") |>
@@ -61,7 +57,7 @@ Save all the small data objects as a single internal file `R/sysdata.rda`. Note 
 to package users.
 
 ```{r}
-usethis::use_data(pkg_config,
+usethis::use_data(funky_config,
                   internal = TRUE,
                   overwrite = TRUE,
                   compress = "xz",

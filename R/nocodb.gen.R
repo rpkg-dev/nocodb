@@ -182,10 +182,10 @@ stateful$access_token <- list()
 #' @export
 api <- function(path,
                 method = c("GET", "CONNECT", "DELETE", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE"),
-                origin = pal::pkg_config_val("origin"),
-                email = pal::pkg_config_val("email"),
-                password = pal::pkg_config_val("password"),
-                api_token = pal::pkg_config_val("api_token"),
+                origin = funky::config_val("origin"),
+                email = funky::config_val("email"),
+                password = funky::config_val("password"),
+                api_token = funky::config_val("api_token"),
                 auth = TRUE,
                 url_params = NULL,
                 body_json = NULL,
@@ -269,7 +269,7 @@ api <- function(path,
 #' @keywords internal
 req_basic <- function(path,
                       method = c("GET", "CONNECT", "DELETE", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE"),
-                      origin = pal::pkg_config_val("origin"),
+                      origin = funky::config_val("origin"),
                       max_tries = 3L) {
   
   checkmate::assert_string(path)
@@ -336,9 +336,9 @@ req_basic <- function(path,
 #' @keywords internal
 # nolint start: cyclocomp_linter
 req_auth <- function(req,
-                     email = pal::pkg_config_val("email"),
-                     password = pal::pkg_config_val("password"),
-                     api_token = pal::pkg_config_val("api_token")) {
+                     email = funky::config_val("email"),
+                     password = funky::config_val("password"),
+                     api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(api_token,
                            null.ok = TRUE)
@@ -423,10 +423,10 @@ req_auth <- function(req,
 #' @family auth
 #' @family user
 #' @export
-sign_in <- function(origin = pal::pkg_config_val("origin"),
-                    email = pal::pkg_config_val("email",
+sign_in <- function(origin = funky::config_val("origin"),
+                    email = funky::config_val("email",
                                                 require = TRUE),
-                    password = pal::pkg_config_val("password",
+                    password = funky::config_val("password",
                                                    require = TRUE),
                     cache_refresh_token = TRUE) {
   
@@ -472,11 +472,11 @@ sign_in <- function(origin = pal::pkg_config_val("origin"),
 #' @family auth
 #' @family user
 #' @export
-sign_out <- function(origin = pal::pkg_config_val("origin"),
-                     email = pal::pkg_config_val("email",
+sign_out <- function(origin = funky::config_val("origin"),
+                     email = funky::config_val("email",
                                                  require = TRUE),
-                     password = pal::pkg_config_val("password"),
-                     api_token = pal::pkg_config_val("api_token"),
+                     password = funky::config_val("password"),
+                     api_token = funky::config_val("api_token"),
                      quiet = FALSE) {
   
   checkmate::assert_string(origin)
@@ -531,8 +531,8 @@ sign_out <- function(origin = pal::pkg_config_val("origin"),
 #' @family auth
 #' @family user
 #' @keywords internal
-is_signed_in <- function(origin = pal::pkg_config_val("origin"),
-                         email = pal::pkg_config_val("email",
+is_signed_in <- function(origin = funky::config_val("origin"),
+                         email = funky::config_val("email",
                                                      require = TRUE)) {
   !is.na(access_token(origin = origin,
                       email = email))
@@ -553,8 +553,8 @@ is_signed_in <- function(origin = pal::pkg_config_val("origin"),
 #' @family auth
 #' @family user
 #' @keywords internal
-refresh_sign_in <- function(origin = pal::pkg_config_val("origin"),
-                            email = pal::pkg_config_val("email",
+refresh_sign_in <- function(origin = funky::config_val("origin"),
+                            email = funky::config_val("email",
                                                         require = TRUE)) {
   req_basic(path = "api/v1/auth/token/refresh",
             method = "POST",
@@ -581,9 +581,9 @@ refresh_sign_in <- function(origin = pal::pkg_config_val("origin"),
 #' @family auth
 #' @family user
 #' @keywords internal
-is_super_admin <- function(origin = pal::pkg_config_val("origin"),
-                           email = pal::pkg_config_val("email"),
-                           password = pal::pkg_config_val("password"),
+is_super_admin <- function(origin = funky::config_val("origin"),
+                           email = funky::config_val("email"),
+                           password = funky::config_val("password"),
                            api_token = NULL) {
   
   checkmate::assert_string(api_token,
@@ -624,9 +624,9 @@ is_super_admin <- function(origin = pal::pkg_config_val("origin"),
 #' @family auth
 #' @family user
 #' @keywords internal
-assert_super_admin <- function(origin = pal::pkg_config_val("origin"),
-                               email = pal::pkg_config_val("email"),
-                               password = pal::pkg_config_val("password"),
+assert_super_admin <- function(origin = funky::config_val("origin"),
+                               email = funky::config_val("email"),
+                               password = funky::config_val("password"),
                                api_token = NULL) {
   
   result <- is_super_admin(origin = origin,
@@ -654,8 +654,8 @@ assert_super_admin <- function(origin = pal::pkg_config_val("origin"),
 #' @return Access token as a character scalar. `NA_character_` if no access token exists for `origin` and `email`.
 #' @family access_token
 #' @keywords internal
-access_token <- function(origin = pal::pkg_config_val("origin"),
-                         email = pal::pkg_config_val("email",
+access_token <- function(origin = funky::config_val("origin"),
+                         email = funky::config_val("email",
                                                      require = TRUE)) {
   checkmate::assert_string(origin)
   checkmate::assert_string(email)
@@ -675,8 +675,8 @@ access_token <- function(origin = pal::pkg_config_val("origin"),
 #' @family access_token
 #' @keywords internal
 store_access_token <- function(x,
-                               origin = pal::pkg_config_val("origin"),
-                               email = pal::pkg_config_val("email",
+                               origin = funky::config_val("origin"),
+                               email = funky::config_val("email",
                                                            require = TRUE)) {
   stateful$access_token[[origin]][[email]] <- x
   
@@ -747,10 +747,10 @@ is_access_token_expired <- function(x) {
 #' @family api_tokens
 #' @family auth
 #' @export
-api_tokens <- function(origin = pal::pkg_config_val("origin"),
-                       email = pal::pkg_config_val("email",
+api_tokens <- function(origin = funky::config_val("origin"),
+                       email = funky::config_val("email",
                                                    require = TRUE),
-                       password = pal::pkg_config_val("password",
+                       password = funky::config_val("password",
                                                       require = TRUE)) {
   api(path = "api/v1/tokens",
       method = "GET",
@@ -779,10 +779,10 @@ api_tokens <- function(origin = pal::pkg_config_val("origin"),
 #' @family auth
 #' @export
 create_api_token <- function(description,
-                             origin = pal::pkg_config_val("origin"),
-                             email = pal::pkg_config_val("email",
+                             origin = funky::config_val("origin"),
+                             email = funky::config_val("email",
                                                          require = TRUE),
-                             password = pal::pkg_config_val("password",
+                             password = funky::config_val("password",
                                                             require = TRUE)) {
   checkmate::assert_string(description)
   
@@ -812,10 +812,10 @@ create_api_token <- function(description,
 #' @family auth
 #' @export
 delete_api_token <- function(api_token,
-                             origin = pal::pkg_config_val("origin"),
-                             email = pal::pkg_config_val("email",
+                             origin = funky::config_val("origin"),
+                             email = funky::config_val("email",
                                                          require = TRUE),
-                             password = pal::pkg_config_val("password",
+                             password = funky::config_val("password",
                                                             require = TRUE)) {
   
   api(path = fs::path("api/v1/tokens/", utils::URLencode(api_token)),
@@ -838,10 +838,10 @@ delete_api_token <- function(api_token,
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family bases
 #' @export
-bases <- function(origin = pal::pkg_config_val("origin"),
-                  email = pal::pkg_config_val("email"),
-                  password = pal::pkg_config_val("password"),
-                  api_token = pal::pkg_config_val("api_token")) {
+bases <- function(origin = funky::config_val("origin"),
+                  email = funky::config_val("email"),
+                  password = funky::config_val("password"),
+                  api_token = funky::config_val("api_token")) {
   
   api(path = "api/v2/meta/bases",
       method = "GET",
@@ -865,11 +865,11 @@ bases <- function(origin = pal::pkg_config_val("origin"),
 #' @return Base identifier as a character scalar.
 #' @family bases
 #' @export
-base_id <- function(title = pal::pkg_config_val("base_title"),
-                    origin = pal::pkg_config_val("origin"),
-                    email = pal::pkg_config_val("email"),
-                    password = pal::pkg_config_val("password"),
-                    api_token = pal::pkg_config_val("api_token")) {
+base_id <- function(title = funky::config_val("base_title"),
+                    origin = funky::config_val("origin"),
+                    email = funky::config_val("email"),
+                    password = funky::config_val("password"),
+                    api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(title)
   
@@ -909,10 +909,10 @@ base <- function(id_base = base_id(origin = origin,
                                    email = email,
                                    password = password,
                                    api_token = api_token),
-                 origin = pal::pkg_config_val("origin"),
-                 email = pal::pkg_config_val("email"),
-                 password = pal::pkg_config_val("password"),
-                 api_token = pal::pkg_config_val("api_token")) {
+                 origin = funky::config_val("origin"),
+                 email = funky::config_val("email"),
+                 password = funky::config_val("password"),
+                 api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_base)
   
@@ -944,14 +944,14 @@ base <- function(id_base = base_id(origin = origin,
 #' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the newly created NocoDB base, invisibly")`
 #' @family bases
 #' @export
-create_base <- function(title = pal::pkg_config_val("base_title"),
+create_base <- function(title = funky::config_val("base_title"),
                         description = NULL,
                         color = "#36BFFF",
                         show_null_and_empty_in_filter = TRUE,
-                        origin = pal::pkg_config_val("origin"),
-                        email = pal::pkg_config_val("email"),
-                        password = pal::pkg_config_val("password"),
-                        api_token = pal::pkg_config_val("api_token")) {
+                        origin = funky::config_val("origin"),
+                        email = funky::config_val("email"),
+                        password = funky::config_val("password"),
+                        api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(title)
   checkmate::assert_string(description,
@@ -997,10 +997,10 @@ update_base <- function(title = NULL,
                                           email = email,
                                           password = password,
                                           api_token = api_token),
-                        origin = pal::pkg_config_val("origin"),
-                        email = pal::pkg_config_val("email"),
-                        password = pal::pkg_config_val("password"),
-                        api_token = pal::pkg_config_val("api_token")) {
+                        origin = funky::config_val("origin"),
+                        email = funky::config_val("email"),
+                        password = funky::config_val("password"),
+                        api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(title,
                            null.ok = TRUE)
@@ -1050,10 +1050,10 @@ update_base <- function(title = NULL,
 #' @family bases
 #' @export
 delete_base <- function(id_base,
-                        origin = pal::pkg_config_val("origin"),
-                        email = pal::pkg_config_val("email"),
-                        password = pal::pkg_config_val("password"),
-                        api_token = pal::pkg_config_val("api_token")) {
+                        origin = funky::config_val("origin"),
+                        email = funky::config_val("email"),
+                        password = funky::config_val("password"),
+                        api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_base)
   
@@ -1084,10 +1084,10 @@ base_ui_acl <- function(id_base = base_id(origin = origin,
                                           email = email,
                                           password = password,
                                           api_token = api_token),
-                        origin = pal::pkg_config_val("origin"),
-                        email = pal::pkg_config_val("email"),
-                        password = pal::pkg_config_val("password"),
-                        api_token = pal::pkg_config_val("api_token")) {
+                        origin = funky::config_val("origin"),
+                        email = funky::config_val("email"),
+                        password = funky::config_val("password"),
+                        api_token = funky::config_val("api_token")) {
   
   api(path = glue::glue("api/v2/meta/bases/{id_base}/visibility-rules"),
       method = "GET",
@@ -1139,10 +1139,10 @@ update_base_ui_acl <- function(id_tbl_view,
                                                  email = email,
                                                  password = password,
                                                  api_token = api_token),
-                               origin = pal::pkg_config_val("origin"),
-                               email = pal::pkg_config_val("email"),
-                               password = pal::pkg_config_val("password"),
-                               api_token = pal::pkg_config_val("api_token"),
+                               origin = funky::config_val("origin"),
+                               email = funky::config_val("email"),
+                               password = funky::config_val("password"),
+                               api_token = funky::config_val("api_token"),
                                quiet = FALSE) {
   
   checkmate::assert_flag(guest)
@@ -1189,10 +1189,10 @@ data_srcs <- function(id_base = base_id(origin = origin,
                                         email = email,
                                         password = password,
                                         api_token = api_token),
-                      origin = pal::pkg_config_val("origin"),
-                      email = pal::pkg_config_val("email"),
-                      password = pal::pkg_config_val("password"),
-                      api_token = pal::pkg_config_val("api_token")) {
+                      origin = funky::config_val("origin"),
+                      email = funky::config_val("email"),
+                      password = funky::config_val("password"),
+                      api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_base)
   
@@ -1223,10 +1223,10 @@ data_src_id <- function(alias,
                                           email = email,
                                           password = password,
                                           api_token = api_token),
-                        origin = pal::pkg_config_val("origin"),
-                        email = pal::pkg_config_val("email"),
-                        password = pal::pkg_config_val("password"),
-                        api_token = pal::pkg_config_val("api_token")) {
+                        origin = funky::config_val("origin"),
+                        email = funky::config_val("email"),
+                        password = funky::config_val("password"),
+                        api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(alias)
   
@@ -1268,10 +1268,10 @@ data_src <- function(id_data_src,
                                        email = email,
                                        password = password,
                                        api_token = api_token),
-                     origin = pal::pkg_config_val("origin"),
-                     email = pal::pkg_config_val("email"),
-                     password = pal::pkg_config_val("password"),
-                     api_token = pal::pkg_config_val("api_token")) {
+                     origin = funky::config_val("origin"),
+                     email = funky::config_val("email"),
+                     password = funky::config_val("password"),
+                     api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_data_src)
   checkmate::assert_string(id_base)
@@ -1310,10 +1310,10 @@ data_src <- function(id_data_src,
 #'                                         password = "REPLACE-ME"))}
 test_data_src <- function(connection,
                           type = c("mssql", "mysql", "pg", "sqlite3"),
-                          origin = pal::pkg_config_val("origin"),
-                          email = pal::pkg_config_val("email"),
-                          password = pal::pkg_config_val("password"),
-                          api_token = pal::pkg_config_val("api_token"),
+                          origin = funky::config_val("origin"),
+                          email = funky::config_val("email"),
+                          password = funky::config_val("password"),
+                          api_token = funky::config_val("api_token"),
                           quiet = FALSE) {
   
   checkmate::assert_list(connection,
@@ -1356,10 +1356,10 @@ data_src_diff <- function(id_data_src,
                                             email = email,
                                             password = password,
                                             api_token = api_token),
-                          origin = pal::pkg_config_val("origin"),
-                          email = pal::pkg_config_val("email"),
-                          password = pal::pkg_config_val("password"),
-                          api_token = pal::pkg_config_val("api_token")) {
+                          origin = funky::config_val("origin"),
+                          email = funky::config_val("email"),
+                          password = funky::config_val("password"),
+                          api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_data_src)
   checkmate::assert_string(id_base)
@@ -1387,10 +1387,10 @@ has_data_src_diff <- function(id_data_src,
                                                 email = email,
                                                 password = password,
                                                 api_token = api_token),
-                              origin = pal::pkg_config_val("origin"),
-                              email = pal::pkg_config_val("email"),
-                              password = pal::pkg_config_val("password"),
-                              api_token = pal::pkg_config_val("api_token")) {
+                              origin = funky::config_val("origin"),
+                              email = funky::config_val("email"),
+                              password = funky::config_val("password"),
+                              api_token = funky::config_val("api_token")) {
   
   diff <- data_src_diff(id_data_src = id_data_src,
                         id_base = id_base,
@@ -1425,10 +1425,10 @@ sync_data_src <- function(id_data_src,
                                             email = email,
                                             password = password,
                                             api_token = api_token),
-                          origin = pal::pkg_config_val("origin"),
-                          email = pal::pkg_config_val("email"),
-                          password = pal::pkg_config_val("password"),
-                          api_token = pal::pkg_config_val("api_token")) {
+                          origin = funky::config_val("origin"),
+                          email = funky::config_val("email"),
+                          password = funky::config_val("password"),
+                          api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_data_src)
   checkmate::assert_string(id_base)
@@ -1464,10 +1464,10 @@ sync_data_src_eagerly <- function(id_data_src,
                                                     email = email,
                                                     password = password,
                                                     api_token = api_token),
-                                  origin = pal::pkg_config_val("origin"),
-                                  email = pal::pkg_config_val("email"),
-                                  password = pal::pkg_config_val("password"),
-                                  api_token = pal::pkg_config_val("api_token"),
+                                  origin = funky::config_val("origin"),
+                                  email = funky::config_val("email"),
+                                  password = funky::config_val("password"),
+                                  api_token = funky::config_val("api_token"),
                                   wait_max = 30L,
                                   wait_resync = 7.0) {
   
@@ -1575,10 +1575,10 @@ create_data_src <- function(connection,
                                               email = email,
                                               password = password,
                                               api_token = api_token),
-                            origin = pal::pkg_config_val("origin"),
-                            email = pal::pkg_config_val("email"),
-                            password = pal::pkg_config_val("password"),
-                            api_token = pal::pkg_config_val("api_token")) {
+                            origin = funky::config_val("origin"),
+                            email = funky::config_val("email"),
+                            password = funky::config_val("password"),
+                            api_token = funky::config_val("api_token")) {
   
   checkmate::assert_list(connection,
                          any.missing = FALSE)
@@ -1637,10 +1637,10 @@ update_data_src <- function(id_data_src,
                                               email = email,
                                               password = password,
                                               api_token = api_token),
-                            origin = pal::pkg_config_val("origin"),
-                            email = pal::pkg_config_val("email"),
-                            password = pal::pkg_config_val("password"),
-                            api_token = pal::pkg_config_val("api_token")) {
+                            origin = funky::config_val("origin"),
+                            email = funky::config_val("email"),
+                            password = funky::config_val("password"),
+                            api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_data_src)
   checkmate::assert_list(connection,
@@ -1702,10 +1702,10 @@ delete_data_src <- function(id_data_src,
                                               email = email,
                                               password = password,
                                               api_token = api_token),
-                            origin = pal::pkg_config_val("origin"),
-                            email = pal::pkg_config_val("email"),
-                            password = pal::pkg_config_val("password"),
-                            api_token = pal::pkg_config_val("api_token")) {
+                            origin = funky::config_val("origin"),
+                            email = funky::config_val("email"),
+                            password = funky::config_val("password"),
+                            api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_data_src)
   checkmate::assert_string(id_base)
@@ -1736,10 +1736,10 @@ data_src_tbls <- function(id_data_src,
                                             email = email,
                                             password = password,
                                             api_token = api_token),
-                          origin = pal::pkg_config_val("origin"),
-                          email = pal::pkg_config_val("email"),
-                          password = pal::pkg_config_val("password"),
-                          api_token = pal::pkg_config_val("api_token")) {
+                          origin = funky::config_val("origin"),
+                          email = funky::config_val("email"),
+                          password = funky::config_val("password"),
+                          api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_data_src)
   checkmate::assert_string(id_base)
@@ -1803,10 +1803,10 @@ create_data_src_tbl <- function(id_data_src,
                                                   email = email,
                                                   password = password,
                                                   api_token = api_token),
-                                origin = pal::pkg_config_val("origin"),
-                                email = pal::pkg_config_val("email"),
-                                password = pal::pkg_config_val("password"),
-                                api_token = pal::pkg_config_val("api_token")) {
+                                origin = funky::config_val("origin"),
+                                email = funky::config_val("email"),
+                                password = funky::config_val("password"),
+                                api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_data_src)
   checkmate::assert_string(name)
@@ -1853,10 +1853,10 @@ tbls <- function(id_base = base_id(origin = origin,
                                    password = password,
                                    api_token = api_token),
                  include_m2m = TRUE,
-                 origin = pal::pkg_config_val("origin"),
-                 email = pal::pkg_config_val("email"),
-                 password = pal::pkg_config_val("password"),
-                 api_token = pal::pkg_config_val("api_token")) {
+                 origin = funky::config_val("origin"),
+                 email = funky::config_val("email"),
+                 password = funky::config_val("password"),
+                 api_token = funky::config_val("api_token")) {
   
   checkmate::assert_flag(include_m2m)
   checkmate::assert_string(id_base)
@@ -1890,10 +1890,10 @@ tbl_id <- function(name,
                                      email = email,
                                      password = password,
                                      api_token = api_token),
-                   origin = pal::pkg_config_val("origin"),
-                   email = pal::pkg_config_val("email"),
-                   password = pal::pkg_config_val("password"),
-                   api_token = pal::pkg_config_val("api_token")) {
+                   origin = funky::config_val("origin"),
+                   email = funky::config_val("email"),
+                   password = funky::config_val("password"),
+                   api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(name)
   
@@ -1931,10 +1931,10 @@ tbl_id <- function(name,
 #' @family tbls
 #' @export
 tbl <- function(id_tbl,
-                origin = pal::pkg_config_val("origin"),
-                email = pal::pkg_config_val("email"),
-                password = pal::pkg_config_val("password"),
-                api_token = pal::pkg_config_val("api_token")) {
+                origin = funky::config_val("origin"),
+                email = funky::config_val("email"),
+                password = funky::config_val("password"),
+                api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_tbl)
   
@@ -1996,10 +1996,10 @@ create_tbl <- function(name,
                                          email = email,
                                          password = password,
                                          api_token = api_token),
-                       origin = pal::pkg_config_val("origin"),
-                       email = pal::pkg_config_val("email"),
-                       password = pal::pkg_config_val("password"),
-                       api_token = pal::pkg_config_val("api_token")) {
+                       origin = funky::config_val("origin"),
+                       email = funky::config_val("email"),
+                       password = funky::config_val("password"),
+                       api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(name)
   checkmate::assert_list(cols,
@@ -2047,10 +2047,10 @@ update_tbl <- function(id_tbl,
                        name = NULL,
                        title = NULL,
                        meta = NULL,
-                       origin = pal::pkg_config_val("origin"),
-                       email = pal::pkg_config_val("email"),
-                       password = pal::pkg_config_val("password"),
-                       api_token = pal::pkg_config_val("api_token"),
+                       origin = funky::config_val("origin"),
+                       email = funky::config_val("email"),
+                       password = funky::config_val("password"),
+                       api_token = funky::config_val("api_token"),
                        quiet = FALSE) {
   
   checkmate::assert_string(id_tbl)
@@ -2093,10 +2093,10 @@ update_tbl <- function(id_tbl,
 #' @family tbls
 #' @export
 delete_tbl <- function(id_tbl,
-                       origin = pal::pkg_config_val("origin"),
-                       email = pal::pkg_config_val("email"),
-                       password = pal::pkg_config_val("password"),
-                       api_token = pal::pkg_config_val("api_token")) {
+                       origin = funky::config_val("origin"),
+                       email = funky::config_val("email"),
+                       password = funky::config_val("password"),
+                       api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_tbl)
   
@@ -2126,10 +2126,10 @@ delete_tbl <- function(id_tbl,
 #' @export
 reorder_tbl <- function(id_tbl,
                         order = 1L,
-                        origin = pal::pkg_config_val("origin"),
-                        email = pal::pkg_config_val("email"),
-                        password = pal::pkg_config_val("password"),
-                        api_token = pal::pkg_config_val("api_token")) {
+                        origin = funky::config_val("origin"),
+                        email = funky::config_val("email"),
+                        password = funky::config_val("password"),
+                        api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_tbl)
   checkmate::assert_number(order)
@@ -2168,10 +2168,10 @@ set_tbl_metadata <- function(data,
                                                email = email,
                                                password = password,
                                                api_token = api_token),
-                             origin = pal::pkg_config_val("origin"),
-                             email = pal::pkg_config_val("email"),
-                             password = pal::pkg_config_val("password"),
-                             api_token = pal::pkg_config_val("api_token"),
+                             origin = funky::config_val("origin"),
+                             email = funky::config_val("email"),
+                             password = funky::config_val("password"),
+                             api_token = funky::config_val("api_token"),
                              quiet = FALSE) {
   
   pal::assert_cols(data = data,
@@ -2229,10 +2229,10 @@ set_tbl_metadata <- function(data,
 #' @family views
 #' @export
 tbl_views <- function(id_tbl,
-                      origin = pal::pkg_config_val("origin"),
-                      email = pal::pkg_config_val("email"),
-                      password = pal::pkg_config_val("password"),
-                      api_token = pal::pkg_config_val("api_token")) {
+                      origin = funky::config_val("origin"),
+                      email = funky::config_val("email"),
+                      password = funky::config_val("password"),
+                      api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_tbl)
   
@@ -2265,10 +2265,10 @@ tbl_view_id <- function(id_tbl,
                         type = "default",
                         name = NULL,
                         title = NULL,
-                        origin = pal::pkg_config_val("origin"),
-                        email = pal::pkg_config_val("email"),
-                        password = pal::pkg_config_val("password"),
-                        api_token = pal::pkg_config_val("api_token")) {
+                        origin = funky::config_val("origin"),
+                        email = funky::config_val("email"),
+                        password = funky::config_val("password"),
+                        api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(name,
                            null.ok = TRUE)
@@ -2328,10 +2328,10 @@ tbl_view_id <- function(id_tbl,
 #' @family cols
 #' @export
 tbl_cols <- function(id_tbl,
-                     origin = pal::pkg_config_val("origin"),
-                     email = pal::pkg_config_val("email"),
-                     password = pal::pkg_config_val("password"),
-                     api_token = pal::pkg_config_val("api_token")) {
+                     origin = funky::config_val("origin"),
+                     email = funky::config_val("email"),
+                     password = funky::config_val("password"),
+                     api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_tbl)
   
@@ -2362,10 +2362,10 @@ tbl_cols <- function(id_tbl,
 tbl_col_id <- function(id_tbl,
                        name = NULL,
                        title = NULL,
-                       origin = pal::pkg_config_val("origin"),
-                       email = pal::pkg_config_val("email"),
-                       password = pal::pkg_config_val("password"),
-                       api_token = pal::pkg_config_val("api_token")) {
+                       origin = funky::config_val("origin"),
+                       email = funky::config_val("email"),
+                       password = funky::config_val("password"),
+                       api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(name,
                            null.ok = TRUE)
@@ -2421,10 +2421,10 @@ tbl_col_id <- function(id_tbl,
 #' @family cols
 #' @export
 tbl_col <- function(id_col,
-                    origin = pal::pkg_config_val("origin"),
-                    email = pal::pkg_config_val("email"),
-                    password = pal::pkg_config_val("password"),
-                    api_token = pal::pkg_config_val("api_token")) {
+                    origin = funky::config_val("origin"),
+                    email = funky::config_val("email"),
+                    password = funky::config_val("password"),
+                    api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_col)
   
@@ -2458,10 +2458,10 @@ create_tbl_col <- function(id_tbl,
                            uidt = NULL,
                            dt = NULL,
                            cdf = NULL,
-                           origin = pal::pkg_config_val("origin"),
-                           email = pal::pkg_config_val("email"),
-                           password = pal::pkg_config_val("password"),
-                           api_token = pal::pkg_config_val("api_token")) {
+                           origin = funky::config_val("origin"),
+                           email = funky::config_val("email"),
+                           password = funky::config_val("password"),
+                           api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_tbl)
   checkmate::assert_string(column_name)
@@ -2524,10 +2524,10 @@ update_tbl_col <- function(id_col,
                            uidt = NULL,
                            dt = NULL,
                            cdf = NULL,
-                           origin = pal::pkg_config_val("origin"),
-                           email = pal::pkg_config_val("email"),
-                           password = pal::pkg_config_val("password"),
-                           api_token = pal::pkg_config_val("api_token")) {
+                           origin = funky::config_val("origin"),
+                           email = funky::config_val("email"),
+                           password = funky::config_val("password"),
+                           api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_col)
   checkmate::assert_string(column_name,
@@ -2608,10 +2608,10 @@ update_tbl_col <- function(id_col,
 #' @family cols
 #' @export
 delete_tbl_col <- function(id_col,
-                           origin = pal::pkg_config_val("origin"),
-                           email = pal::pkg_config_val("email"),
-                           password = pal::pkg_config_val("password"),
-                           api_token = pal::pkg_config_val("api_token")) {
+                           origin = funky::config_val("origin"),
+                           email = funky::config_val("email"),
+                           password = funky::config_val("password"),
+                           api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_col)
   
@@ -2637,10 +2637,10 @@ delete_tbl_col <- function(id_col,
 #' @family cols
 #' @export
 set_display_val <- function(id_col,
-                            origin = pal::pkg_config_val("origin"),
-                            email = pal::pkg_config_val("email"),
-                            password = pal::pkg_config_val("password"),
-                            api_token = pal::pkg_config_val("api_token")) {
+                            origin = funky::config_val("origin"),
+                            email = funky::config_val("email"),
+                            password = funky::config_val("password"),
+                            api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_col)
   
@@ -2672,10 +2672,10 @@ set_display_vals <- function(data,
                                                email = email,
                                                password = password,
                                                api_token = api_token),
-                             origin = pal::pkg_config_val("origin"),
-                             email = pal::pkg_config_val("email"),
-                             password = pal::pkg_config_val("password"),
-                             api_token = pal::pkg_config_val("api_token"),
+                             origin = funky::config_val("origin"),
+                             email = funky::config_val("email"),
+                             password = funky::config_val("password"),
+                             api_token = funky::config_val("api_token"),
                              quiet = FALSE) {
   
   pal::assert_cols(data = data,
@@ -2740,10 +2740,10 @@ upload_attachments <- function(paths,
                                types = mime::guess_type(paths),
                                names = NULL,
                                upload_path = "r",
-                               origin = pal::pkg_config_val("origin"),
-                               email = pal::pkg_config_val("email"),
-                               password = pal::pkg_config_val("password"),
-                               api_token = pal::pkg_config_val("api_token"),
+                               origin = funky::config_val("origin"),
+                               email = funky::config_val("email"),
+                               password = funky::config_val("password"),
+                               api_token = funky::config_val("api_token"),
                                max_tries = 5L,
                                verbosity = NULL) {
   purrr::walk(paths,
@@ -2810,9 +2810,9 @@ upload_attachments <- function(paths,
 #' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the specified NocoDB user")`
 #' @family users
 #' @export
-whoami <- function(origin = pal::pkg_config_val("origin"),
-                   email = pal::pkg_config_val("email"),
-                   password = pal::pkg_config_val("password"),
+whoami <- function(origin = funky::config_val("origin"),
+                   email = funky::config_val("email"),
+                   password = funky::config_val("password"),
                    api_token = NULL,
                    auth = TRUE) {
   
@@ -2840,10 +2840,10 @@ whoami <- function(origin = pal::pkg_config_val("origin"),
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family users
 #' @export
-users <- function(origin = pal::pkg_config_val("origin"),
-                  email = pal::pkg_config_val("email",
+users <- function(origin = funky::config_val("origin"),
+                  email = funky::config_val("email",
                                               require = TRUE),
-                  password = pal::pkg_config_val("password",
+                  password = funky::config_val("password",
                                                  require = TRUE)) {
   assert_super_admin(origin = origin,
                      email = email,
@@ -2876,10 +2876,10 @@ users <- function(origin = pal::pkg_config_val("origin"),
 #' @export
 user_id <- function(user_email,
                     id_base = NULL,
-                    origin = pal::pkg_config_val("origin"),
-                    email = pal::pkg_config_val("email"),
-                    password = pal::pkg_config_val("password"),
-                    api_token = pal::pkg_config_val("api_token")) {
+                    origin = funky::config_val("origin"),
+                    email = funky::config_val("email"),
+                    password = funky::config_val("password"),
+                    api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(user_email)
   
@@ -2929,10 +2929,10 @@ add_user <- function(user_email,
                      user_password,
                      display_name = NULL,
                      subscribe_to_newsletter = FALSE,
-                     origin = pal::pkg_config_val("origin"),
-                     email = pal::pkg_config_val("email",
+                     origin = funky::config_val("origin"),
+                     email = funky::config_val("email",
                                                  require = TRUE),
-                     password = pal::pkg_config_val("password",
+                     password = funky::config_val("password",
                                                     require = TRUE),
                      quiet = TRUE) {
   
@@ -3003,9 +3003,9 @@ add_user <- function(user_email,
 #' @family users
 #' @export
 update_user <- function(display_name = NULL,
-                        origin = pal::pkg_config_val("origin"),
-                        email = pal::pkg_config_val("email"),
-                        password = pal::pkg_config_val("password"),
+                        origin = funky::config_val("origin"),
+                        email = funky::config_val("email"),
+                        password = funky::config_val("password"),
                         api_token = NULL) {
   
   checkmate::assert_string(display_name,
@@ -3058,9 +3058,9 @@ update_user <- function(display_name = NULL,
 #' @family users
 #' @export
 delete_user <- function(id_user,
-                        origin = pal::pkg_config_val("origin"),
-                        email = pal::pkg_config_val("email"),
-                        password = pal::pkg_config_val("password"),
+                        origin = funky::config_val("origin"),
+                        email = funky::config_val("email"),
+                        password = funky::config_val("password"),
                         quiet = FALSE) {
   
   checkmate::assert_string(id_user)
@@ -3095,10 +3095,10 @@ delete_user <- function(id_user,
 #' @export
 invite_user <- function(user_email,
                         org_role = c("org-level-viewer", "org-level-creator"),
-                        origin = pal::pkg_config_val("origin"),
-                        email = pal::pkg_config_val("email",
+                        origin = funky::config_val("origin"),
+                        email = funky::config_val("email",
                                                     require = TRUE),
-                        password = pal::pkg_config_val("password",
+                        password = funky::config_val("password",
                                                        require = TRUE),
                         quiet = FALSE) {
   
@@ -3159,10 +3159,10 @@ sign_up_user <- function(user_email,
                          user_password,
                          invite_token = NULL,
                          subscribe_to_newsletter = FALSE,
-                         origin = pal::pkg_config_val("origin"),
-                         email = pal::pkg_config_val("email"),
-                         password = pal::pkg_config_val("password"),
-                         api_token = pal::pkg_config_val("api_token")) {
+                         origin = funky::config_val("origin"),
+                         email = funky::config_val("email"),
+                         password = funky::config_val("password"),
+                         api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(user_email)
   checkmate::assert_string(user_password)
@@ -3200,7 +3200,7 @@ sign_up_user <- function(user_email,
 #' @family users
 #' @export
 validate_user_email <- function(verification_token,
-                                origin = pal::pkg_config_val("origin"),
+                                origin = funky::config_val("origin"),
                                 quiet = FALSE) {
   
   result <- api(path = glue::glue("api/v1/auth/email/validate/{verification_token}"),
@@ -3229,10 +3229,10 @@ base_users <- function(id_base = base_id(origin = origin,
                                          email = email,
                                          password = password,
                                          api_token = api_token),
-                       origin = pal::pkg_config_val("origin"),
-                       email = pal::pkg_config_val("email"),
-                       password = pal::pkg_config_val("password"),
-                       api_token = pal::pkg_config_val("api_token")) {
+                       origin = funky::config_val("origin"),
+                       email = funky::config_val("email"),
+                       password = funky::config_val("password"),
+                       api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_base)
   
@@ -3286,10 +3286,10 @@ update_base_user <- function(user_email,
                                                email = email,
                                                password = password,
                                                api_token = api_token),
-                             origin = pal::pkg_config_val("origin"),
-                             email = pal::pkg_config_val("email"),
-                             password = pal::pkg_config_val("password"),
-                             api_token = pal::pkg_config_val("api_token"),
+                             origin = funky::config_val("origin"),
+                             email = funky::config_val("email"),
+                             password = funky::config_val("password"),
+                             api_token = funky::config_val("api_token"),
                              api_version = c("v2", "v1"),
                              quiet = FALSE) {
 
@@ -3369,10 +3369,10 @@ delete_base_user <- function(id_user,
                                                email = email,
                                                password = password,
                                                api_token = api_token),
-                             origin = pal::pkg_config_val("origin"),
-                             email = pal::pkg_config_val("email"),
-                             password = pal::pkg_config_val("password"),
-                             api_token = pal::pkg_config_val("api_token"),
+                             origin = funky::config_val("origin"),
+                             email = funky::config_val("email"),
+                             password = funky::config_val("password"),
+                             api_token = funky::config_val("api_token"),
                              quiet = FALSE) {
   
   checkmate::assert_string(id_user)
@@ -3419,10 +3419,10 @@ invite_base_user <- function(user_email,
                                                email = email,
                                                password = password,
                                                api_token = api_token),
-                             origin = pal::pkg_config_val("origin"),
-                             email = pal::pkg_config_val("email"),
-                             password = pal::pkg_config_val("password"),
-                             api_token = pal::pkg_config_val("api_token"),
+                             origin = funky::config_val("origin"),
+                             email = funky::config_val("email"),
+                             password = funky::config_val("password"),
+                             api_token = funky::config_val("api_token"),
                              quiet = FALSE) {
   
   checkmate::assert_string(user_email)
@@ -3462,10 +3462,10 @@ resend_base_user_invitation <- function(id_user,
                                                           email = email,
                                                           password = password,
                                                           api_token = api_token),
-                                        origin = pal::pkg_config_val("origin"),
-                                        email = pal::pkg_config_val("email"),
-                                        password = pal::pkg_config_val("password"),
-                                        api_token = pal::pkg_config_val("api_token"),
+                                        origin = funky::config_val("origin"),
+                                        email = funky::config_val("email"),
+                                        password = funky::config_val("password"),
+                                        api_token = funky::config_val("api_token"),
                                         quiet = FALSE) {
   checkmate::assert_string(id_user)
   checkmate::assert_string(id_base)
@@ -3511,10 +3511,10 @@ integrations <- function(type = NULL,
                          id_base = NULL,
                          incl_config = TRUE,
                          decode_config = TRUE,
-                         origin = pal::pkg_config_val("origin"),
-                         email = pal::pkg_config_val("email"),
-                         password = pal::pkg_config_val("password"),
-                         api_token = pal::pkg_config_val("api_token")) {
+                         origin = funky::config_val("origin"),
+                         email = funky::config_val("email"),
+                         password = funky::config_val("password"),
+                         api_token = funky::config_val("api_token")) {
   if (!is.null(type)) {
     type <- rlang::arg_match(arg = type,
                              values = integration_types)
@@ -3559,10 +3559,10 @@ integrations <- function(type = NULL,
 integration_id <- function(title = NULL,
                            type = "database",
                            sub_type = c("mysql2", "pg", "sqlite3"),
-                           origin = pal::pkg_config_val("origin"),
-                           email = pal::pkg_config_val("email"),
-                           password = pal::pkg_config_val("password"),
-                           api_token = pal::pkg_config_val("api_token")) {
+                           origin = funky::config_val("origin"),
+                           email = funky::config_val("email"),
+                           password = funky::config_val("password"),
+                           api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(title,
                            null.ok = TRUE)
@@ -3625,10 +3625,10 @@ integration_id <- function(title = NULL,
 #' @export
 integration <- function(id_integration,
                         incl_config = TRUE,
-                        origin = pal::pkg_config_val("origin"),
-                        email = pal::pkg_config_val("email"),
-                        password = pal::pkg_config_val("password"),
-                        api_token = pal::pkg_config_val("api_token")) {
+                        origin = funky::config_val("origin"),
+                        email = funky::config_val("email"),
+                        password = funky::config_val("password"),
+                        api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_integration)
   checkmate::assert_flag(incl_config)
@@ -3691,10 +3691,10 @@ create_integration <- function(connection,
                                type = "database",
                                sub_type = c("mysql2", "pg", "sqlite3"),
                                search_paths = "public",
-                               origin = pal::pkg_config_val("origin"),
-                               email = pal::pkg_config_val("email"),
-                               password = pal::pkg_config_val("password"),
-                               api_token = pal::pkg_config_val("api_token")) {
+                               origin = funky::config_val("origin"),
+                               email = funky::config_val("email"),
+                               password = funky::config_val("password"),
+                               api_token = funky::config_val("api_token")) {
   
   checkmate::assert_list(connection,
                          any.missing = FALSE)
@@ -3735,10 +3735,10 @@ update_integration <- function(id_integration,
                                type = NULL,
                                sub_type = NULL,
                                search_paths = NULL,
-                               origin = pal::pkg_config_val("origin"),
-                               email = pal::pkg_config_val("email"),
-                               password = pal::pkg_config_val("password"),
-                               api_token = pal::pkg_config_val("api_token")) {
+                               origin = funky::config_val("origin"),
+                               email = funky::config_val("email"),
+                               password = funky::config_val("password"),
+                               api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_integration)
   checkmate::assert_list(connection,
@@ -3798,10 +3798,10 @@ update_integration <- function(id_integration,
 #' @family integrations
 #' @export
 delete_integration <- function(id_integration,
-                               origin = pal::pkg_config_val("origin"),
-                               email = pal::pkg_config_val("email"),
-                               password = pal::pkg_config_val("password"),
-                               api_token = pal::pkg_config_val("api_token")) {
+                               origin = funky::config_val("origin"),
+                               email = funky::config_val("email"),
+                               password = funky::config_val("password"),
+                               api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_integration)
   
@@ -3829,10 +3829,10 @@ delete_integration <- function(id_integration,
 #' @return `r pkgsnip::return_lbl("tibble")`
 #' @family plugins
 #' @export
-plugins <- function(origin = pal::pkg_config_val("origin"),
-                    email = pal::pkg_config_val("email"),
-                    password = pal::pkg_config_val("password"),
-                    api_token = pal::pkg_config_val("api_token")) {
+plugins <- function(origin = funky::config_val("origin"),
+                    email = funky::config_val("email"),
+                    password = funky::config_val("password"),
+                    api_token = funky::config_val("api_token")) {
   
   api(path = "api/v1/db/meta/plugins",
       method = "GET",
@@ -3857,10 +3857,10 @@ plugins <- function(origin = pal::pkg_config_val("origin"),
 #' @family plugins
 #' @export
 plugin_id <- function(title,
-                      origin = pal::pkg_config_val("origin"),
-                      email = pal::pkg_config_val("email"),
-                      password = pal::pkg_config_val("password"),
-                      api_token = pal::pkg_config_val("api_token")) {
+                      origin = funky::config_val("origin"),
+                      email = funky::config_val("email"),
+                      password = funky::config_val("password"),
+                      api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(title)
   
@@ -3894,10 +3894,10 @@ plugin_id <- function(title,
 #' @family plugins
 #' @export
 plugin_category <- function(id_plugin,
-                            origin = pal::pkg_config_val("origin"),
-                            email = pal::pkg_config_val("email"),
-                            password = pal::pkg_config_val("password"),
-                            api_token = pal::pkg_config_val("api_token")) {
+                            origin = funky::config_val("origin"),
+                            email = funky::config_val("email"),
+                            password = funky::config_val("password"),
+                            api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_plugin)
   
@@ -3922,10 +3922,10 @@ plugin_category <- function(id_plugin,
 #' @family plugins
 #' @export
 plugin <- function(id_plugin,
-                   origin = pal::pkg_config_val("origin"),
-                   email = pal::pkg_config_val("email"),
-                   password = pal::pkg_config_val("password"),
-                   api_token = pal::pkg_config_val("api_token")) {
+                   origin = funky::config_val("origin"),
+                   email = funky::config_val("email"),
+                   password = funky::config_val("password"),
+                   api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_plugin)
   
@@ -3980,10 +3980,10 @@ test_plugin <- function(title,
                                                    email = email,
                                                    password = password,
                                                    api_token = api_token),
-                        origin = pal::pkg_config_val("origin"),
-                        email = pal::pkg_config_val("email"),
-                        password = pal::pkg_config_val("password"),
-                        api_token = pal::pkg_config_val("api_token")) {
+                        origin = funky::config_val("origin"),
+                        email = funky::config_val("email"),
+                        password = funky::config_val("password"),
+                        api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(title)
   checkmate::assert_list(config,
@@ -4041,10 +4041,10 @@ test_plugin <- function(title,
 update_plugin <- function(id_plugin,
                           config = NULL,
                           activate = NULL,
-                          origin = pal::pkg_config_val("origin"),
-                          email = pal::pkg_config_val("email"),
-                          password = pal::pkg_config_val("password"),
-                          api_token = pal::pkg_config_val("api_token")) {
+                          origin = funky::config_val("origin"),
+                          email = funky::config_val("email"),
+                          password = funky::config_val("password"),
+                          api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(id_plugin)
   checkmate::assert_flag(activate,
@@ -4083,10 +4083,10 @@ update_plugin <- function(id_plugin,
 #' @family plugins
 #' @export
 is_plugin_active <- function(title,
-                             origin = pal::pkg_config_val("origin"),
-                             email = pal::pkg_config_val("email"),
-                             password = pal::pkg_config_val("password"),
-                             api_token = pal::pkg_config_val("api_token")) {
+                             origin = funky::config_val("origin"),
+                             email = funky::config_val("email"),
+                             password = funky::config_val("password"),
+                             api_token = funky::config_val("api_token")) {
   
   checkmate::assert_string(title)
   title %<>% utils::URLencode()
@@ -4110,10 +4110,10 @@ is_plugin_active <- function(title,
 #' @return The application settings of the specified NocoDB server as a [tibble][tibble::tbl_df].
 #' @family app_settings
 #' @export
-app_settings <- function(origin = pal::pkg_config_val("origin"),
-                         email = pal::pkg_config_val("email"),
-                         password = pal::pkg_config_val("password"),
-                         api_token = pal::pkg_config_val("api_token")) {
+app_settings <- function(origin = funky::config_val("origin"),
+                         email = funky::config_val("email"),
+                         password = funky::config_val("password"),
+                         api_token = funky::config_val("api_token")) {
   
   api(path = "api/v2/meta/nocodb/info",
       method = "GET",
@@ -4144,10 +4144,10 @@ app_settings <- function(origin = pal::pkg_config_val("origin"),
 #' @family app_settings
 #' @export
 update_app_settings <- function(invite_only_signup = NULL,
-                                origin = pal::pkg_config_val("origin"),
-                                email = pal::pkg_config_val("email",
+                                origin = funky::config_val("origin"),
+                                email = funky::config_val("email",
                                                             require = TRUE),
-                                password = pal::pkg_config_val("password",
+                                password = funky::config_val("password",
                                                                require = TRUE),
                                 quiet = FALSE) {
   

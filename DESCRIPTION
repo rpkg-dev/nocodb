@@ -20,6 +20,7 @@ Imports:
     curl (>= 5.2.1),
     dplyr (>= 1.1.4),
     fs (>= 1.6.4),
+    funky (>= 0.0.9000),
     glue (>= 1.7.0),
     httr2 (>= 1.0.1),
     jsonlite (>= 1.8.8),
@@ -36,6 +37,7 @@ Imports:
 Suggests: 
     pkgsnip (>= 0.0.9037)
 Remotes:
+    gitlab::rpkg.dev/funky,
     gitlab::rpkg.dev/pal,
     gitlab::rpkg.dev/pkgsnip
 Config/Needs/website: gitlab::rpkg.dev/pkgdown.tpl
