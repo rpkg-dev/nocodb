@@ -351,7 +351,7 @@ api <- function(path,
 #'
 #' Assembles the HTTP request structure that is common to *all* NocoDB API requests performed by this package.
 #'
-#' @inheritParams pal::req_cached
+#' @inheritParams pal::http_get_cached
 #' @param path `r pkgsnip::type("chr", 1L)`
 #'   NocoDB API endpoint path.
 #' @param method `r pkgsnip::type("chr", 1L)`
