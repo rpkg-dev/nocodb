@@ -105,11 +105,15 @@ tidy_resp_data <- function(x) {
   }
   
   x |>
-    # replace `NULL`s with `NA_character_` to harmonize field length
+    # harmonize field lengths
+    ## replace `NULL`s with `NA_character_`
     purrr::map(\(el) el %||% NA_character_) |>
-    # wrap nested fields in list
+    ## wrap nested fields in list
     purrr::modify_if(.p = \(x) length(x) > 1L,
                      .f = \(x) list(x)) |>
+    ## replace empty fields (stemming from empty JSON arrays) with lists of `NULL`
+    purrr::modify_if(.p = \(x) length(x) == 0L,
+                     .f = \(x) list(NULL)) |>
     # convert result to tibble
     tibble::as_tibble_row() |>
     # tidy date-time cols
