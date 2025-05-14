@@ -79,7 +79,22 @@ tidy_date_time_cols <- function(data) {
                                                                                   offset = "%Ez")))
 }
 
+tidy_na_cols <- function(data) {
+  
+  is_na_lgl <- \(x) is.logical(x) && all(is.na(x))
+  
+  data |>
+    dplyr::mutate(dplyr::across(.cols = where(is_na_lgl) & one_of(col_types$int),
+                                .fns = as.integer)) |>
+    dplyr::mutate(dplyr::across(.cols = where(is_na_lgl) & !one_of(col_types$lgl),
+                                .fns = as.character))
+}
+
 this_pkg <- utils::packageName()
+
+col_types <- list(int = c("email_verified",
+                          "projectsCount"),
+                  lgl = character())
 
 integration_types <- "database"
 
@@ -2857,7 +2872,8 @@ users <- function(origin = funky::config_val("origin"),
       api_token = NULL) |>
     _$list |>
     tibble::as_tibble() |>
-    tidy_date_time_cols()
+    tidy_date_time_cols() |>
+    tidy_na_cols()
 }
 
 #' Get NocoDB user ID

@@ -129,10 +129,36 @@ tidy_date_time_cols <- function(data) {
 }
 ```
 
+### `tidy_na_cols`
+
+Converts all NA-only lgl columns – except for cols which are *known* to be of type lgl – to their known types, or type chr as a fallback. This is done because
+when the NocoDB API returns empty field vals (JSON `null`s), such fields are converted to `NA` by `api()` (or the underlying `jsonlite::toJSON()` respectively).
+
+```{r}
+tidy_na_cols <- function(data) {
+  
+  is_na_lgl <- \(x) is.logical(x) && all(is.na(x))
+  
+  data |>
+    dplyr::mutate(dplyr::across(.cols = where(is_na_lgl) & one_of(col_types$int),
+                                .fns = as.integer)) |>
+    dplyr::mutate(dplyr::across(.cols = where(is_na_lgl) & !one_of(col_types$lgl),
+                                .fns = as.character))
+}
+```
+
 ## Constants
 
 ```{r}
 this_pkg <- utils::packageName()
+```
+
+### `col_types`
+
+```{r}
+col_types <- list(int = c("email_verified",
+                          "projectsCount"),
+                  lgl = character())
 ```
 
 ### `integration_types`
@@ -3397,7 +3423,8 @@ users <- function(origin = funky::config_val("origin"),
       api_token = NULL) |>
     _$list |>
     tibble::as_tibble() |>
-    tidy_date_time_cols()
+    tidy_date_time_cols() |>
+    tidy_na_cols()
 }
 ```
 
