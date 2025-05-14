@@ -12,158 +12,6 @@
 # 
 # You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-utils::globalVariables(names = c(".",
-                                 # tidyselect fns
-                                 "any_of",
-                                 "ends_with",
-                                 # other
-                                 "display_col",
-                                 "id",
-                                 "inviteOnlySignup",
-                                 "name",
-                                 "roles",
-                                 "table_name"))
-
-cli_alert_status <- function(msg,
-                             pattern_success = "\\bsuccess") {
-  
-  if (stringr::str_detect(string = msg,
-                          pattern = pattern_success)) {
-    cli::cli_alert_success(msg)
-  } else {
-    cli::cli_alert_info(msg)
-  }
-}
-
-path_cookie <- function(origin,
-                        email) {
-  
-  hostname <- httr2::url_parse(origin)$hostname
-  checkmate::assert_string(hostname)
-  
-  tools::R_user_dir(package = this_pkg,
-                    which = "cache") |>
-    fs::path(hostname, email,
-             ext = "txt")
-}
-
-tidy_resp_data <- function(x) {
-  
-  # flatten `meta` if non-scalar
-  if (purrr::pluck_depth(x$meta) > 1L) {
-    
-    for (i in seq_along(x$meta)) {
-      x[[paste0("meta.", names(x$meta[i]))]] <- x$meta[[i]]
-    }
-    
-    x$meta <- NULL
-  }
-  
-  x |>
-    # harmonize field lengths
-    ## replace `NULL`s with `NA_character_`
-    purrr::map(\(el) el %||% NA_character_) |>
-    ## wrap nested fields in list
-    purrr::modify_if(.p = \(x) length(x) > 1L,
-                     .f = \(x) list(x)) |>
-    ## replace empty fields (stemming from empty JSON arrays) with lists of `NULL`
-    purrr::modify_if(.p = \(x) length(x) == 0L,
-                     .f = \(x) list(NULL)) |>
-    # convert result to tibble
-    tibble::as_tibble_row() |>
-    # tidy date-time cols
-    tidy_date_time_cols()
-}
-
-tidy_date_time_cols <- function(data) {
-  
-  data |> dplyr::mutate(dplyr::across(.cols = ends_with("_at"),
-                                      .fns = \(x) clock::date_time_parse_RFC_3339(x = x,
-                                                                                  separator = " ",
-                                                                                  offset = "%Ez")))
-}
-
-tidy_na_cols <- function(data) {
-  
-  is_na_lgl <- \(x) is.logical(x) && all(is.na(x))
-  
-  data |>
-    dplyr::mutate(dplyr::across(.cols = where(is_na_lgl) & one_of(col_types$int),
-                                .fns = as.integer)) |>
-    dplyr::mutate(dplyr::across(.cols = where(is_na_lgl) & !one_of(col_types$lgl),
-                                .fns = as.character))
-}
-
-this_pkg <- utils::packageName()
-
-col_types <- list(int = c("email_verified",
-                          "projectsCount"),
-                  lgl = character())
-
-integration_types <- "database"
-
-md_text_no_api_token_support <- "This API endpoint does not support authentication via [API tokens](https://docs.nocodb.com/account-settings/api-tokens/)."
-md_text_super_admin_required <- "Only the super admin user is allowed to use this API endpoint, i.e. the provided credentials must belong to them."
-md_text_user_from_auth <- "The user is determined based on `api_token` or `email` and `password` (the former takes precedence)."
-
-uidts <- tibble::tribble(
-  ~uidt,                 ~is_virtual,
-  "Attachment",          FALSE,
-  "AutoNumber",          FALSE,
-  "Barcode",             FALSE,
-  "Button",              FALSE,
-  "Checkbox",            FALSE,
-  "Collaborator",        FALSE,
-  "Count",               FALSE,
-  "CreatedBy",           FALSE,
-  "CreatedTime",         FALSE,
-  "Currency",            FALSE,
-  "Date",                FALSE,
-  "DateTime",            FALSE,
-  "Decimal",             FALSE,
-  "Duration",            FALSE,
-  "Email",               FALSE,
-  "ForeignKey",          FALSE,
-  "Formula",             TRUE,
-  "GeoData",             FALSE,
-  "Geometry",            FALSE,
-  "ID",                  FALSE,
-  "JSON",                FALSE,
-  "LastModifiedBy",      FALSE,
-  "LastModifiedTime",    FALSE,
-  "Links",               TRUE,
-  "LinkToAnotherRecord", TRUE,
-  "LongText",            FALSE,
-  "Lookup",              TRUE,
-  "MultiSelect",         FALSE,
-  "Number",              FALSE,
-  "Percent",             FALSE,
-  "PhoneNumber",         FALSE,
-  "QrCode",              FALSE,
-  "Rating",              FALSE,
-  "Rollup",              TRUE,
-  "SingleLineText",      FALSE,
-  "SingleSelect",        FALSE,
-  "SpecificDBType",      FALSE,
-  "Time",                FALSE,
-  "URL",                 FALSE,
-  "User",                FALSE,
-  "Year",                FALSE
-)
-
-view_types <- tibble::tribble(
-  ~nr, ~type,
-  1L,  "form",
-  2L,  "gallery",
-  3L,  "grid",
-  4L,  "kanban",
-  5L,  "map",
-  6L,  "calendar"
-)
-
-stateful <- new.env(parent = emptyenv())
-stateful$access_token <- list()
-
 #' Call NocoDB API
 #'
 #' Performs an API call to a NocoDB server and returns the response as a list if it is of type JSON, otherwise as a character scalar.
@@ -4196,3 +4044,157 @@ update_app_settings <- function(invite_only_signup = NULL,
   
   invisible(NULL)
 }
+
+utils::globalVariables(names = c(".",
+                                 # tidyselect fns
+                                 "any_of",
+                                 "ends_with",
+                                 "one_of",
+                                 "where",
+                                 # other
+                                 "display_col",
+                                 "id",
+                                 "inviteOnlySignup",
+                                 "name",
+                                 "roles",
+                                 "table_name"))
+
+cli_alert_status <- function(msg,
+                             pattern_success = "\\bsuccess") {
+  
+  if (stringr::str_detect(string = msg,
+                          pattern = pattern_success)) {
+    cli::cli_alert_success(msg)
+  } else {
+    cli::cli_alert_info(msg)
+  }
+}
+
+path_cookie <- function(origin,
+                        email) {
+  
+  hostname <- httr2::url_parse(origin)$hostname
+  checkmate::assert_string(hostname)
+  
+  tools::R_user_dir(package = this_pkg,
+                    which = "cache") |>
+    fs::path(hostname, email,
+             ext = "txt")
+}
+
+tidy_resp_data <- function(x) {
+  
+  # flatten `meta` if non-scalar
+  if (purrr::pluck_depth(x$meta) > 1L) {
+    
+    for (i in seq_along(x$meta)) {
+      x[[paste0("meta.", names(x$meta[i]))]] <- x$meta[[i]]
+    }
+    
+    x$meta <- NULL
+  }
+  
+  x |>
+    # harmonize field lengths
+    ## replace `NULL`s with `NA_character_`
+    purrr::map(\(el) el %||% NA_character_) |>
+    ## wrap nested fields in list
+    purrr::modify_if(.p = \(x) length(x) > 1L,
+                     .f = \(x) list(x)) |>
+    ## replace empty fields (stemming from empty JSON arrays) with lists of `NULL`
+    purrr::modify_if(.p = \(x) length(x) == 0L,
+                     .f = \(x) list(NULL)) |>
+    # convert result to tibble
+    tibble::as_tibble_row() |>
+    # tidy date-time cols
+    tidy_date_time_cols()
+}
+
+tidy_date_time_cols <- function(data) {
+  
+  data |> dplyr::mutate(dplyr::across(.cols = ends_with("_at"),
+                                      .fns = \(x) clock::date_time_parse_RFC_3339(x = x,
+                                                                                  separator = " ",
+                                                                                  offset = "%Ez")))
+}
+
+tidy_na_cols <- function(data) {
+  
+  is_na_lgl <- \(x) is.logical(x) && all(is.na(x))
+  
+  data |>
+    dplyr::mutate(dplyr::across(.cols = where(is_na_lgl) & one_of(col_types$int),
+                                .fns = as.integer)) |>
+    dplyr::mutate(dplyr::across(.cols = where(is_na_lgl) & !one_of(col_types$lgl),
+                                .fns = as.character))
+}
+
+this_pkg <- utils::packageName()
+
+col_types <- list(int = c("email_verified",
+                          "projectsCount"),
+                  lgl = character())
+
+integration_types <- "database"
+
+md_text_no_api_token_support <- "This API endpoint does not support authentication via [API tokens](https://docs.nocodb.com/account-settings/api-tokens/)."
+md_text_super_admin_required <- "Only the super admin user is allowed to use this API endpoint, i.e. the provided credentials must belong to them."
+md_text_user_from_auth <- "The user is determined based on `api_token` or `email` and `password` (the former takes precedence)."
+
+uidts <- tibble::tribble(
+  ~uidt,                 ~is_virtual,
+  "Attachment",          FALSE,
+  "AutoNumber",          FALSE,
+  "Barcode",             FALSE,
+  "Button",              FALSE,
+  "Checkbox",            FALSE,
+  "Collaborator",        FALSE,
+  "Count",               FALSE,
+  "CreatedBy",           FALSE,
+  "CreatedTime",         FALSE,
+  "Currency",            FALSE,
+  "Date",                FALSE,
+  "DateTime",            FALSE,
+  "Decimal",             FALSE,
+  "Duration",            FALSE,
+  "Email",               FALSE,
+  "ForeignKey",          FALSE,
+  "Formula",             TRUE,
+  "GeoData",             FALSE,
+  "Geometry",            FALSE,
+  "ID",                  FALSE,
+  "JSON",                FALSE,
+  "LastModifiedBy",      FALSE,
+  "LastModifiedTime",    FALSE,
+  "Links",               TRUE,
+  "LinkToAnotherRecord", TRUE,
+  "LongText",            FALSE,
+  "Lookup",              TRUE,
+  "MultiSelect",         FALSE,
+  "Number",              FALSE,
+  "Percent",             FALSE,
+  "PhoneNumber",         FALSE,
+  "QrCode",              FALSE,
+  "Rating",              FALSE,
+  "Rollup",              TRUE,
+  "SingleLineText",      FALSE,
+  "SingleSelect",        FALSE,
+  "SpecificDBType",      FALSE,
+  "Time",                FALSE,
+  "URL",                 FALSE,
+  "User",                FALSE,
+  "Year",                FALSE
+)
+
+view_types <- tibble::tribble(
+  ~nr, ~type,
+  1L,  "form",
+  2L,  "gallery",
+  3L,  "grid",
+  4L,  "kanban",
+  5L,  "map",
+  6L,  "calendar"
+)
+
+stateful <- new.env(parent = emptyenv())
+stateful$access_token <- list()
