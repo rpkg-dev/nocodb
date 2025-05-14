@@ -1,8 +1,8 @@
 pandoc: 3.6.4
-pkgdown: 2.1.1.9000
-pkgdown_sha: 87287f602d5889b3ee3ccd82a6c686f6e5874732
+pkgdown: 2.1.2
+pkgdown_sha: ~
 articles: {}
-last_built: 2025-04-15T19:20Z
+last_built: 2025-05-14T20:40Z
 urls:
   reference: https://nocodb.rpkg.dev/reference
   article: https://nocodb.rpkg.dev/articles
