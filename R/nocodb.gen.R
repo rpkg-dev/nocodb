@@ -62,6 +62,7 @@ api <- function(path,
                 max_tries = 3L,
                 verbosity = NULL) {
   
+  method <- rlang::arg_match(method)
   checkmate::assert_flag(auth)
   checkmate::assert_list(url_params,
                          null.ok = TRUE,
