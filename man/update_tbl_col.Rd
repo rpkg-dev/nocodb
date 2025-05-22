@@ -100,7 +100,7 @@ A \link[tibble:tbl_df-class]{tibble} with metadata about the NocoDB table to whi
 }
 \description{
 Updates the metadata of the specified table column on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-update}{\code{PATCH /api/v2/meta/columns/{id_col}}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/Fields/operation/db-table-column-update}{\code{PATCH /api/v2/meta/columns/{id_col}}} API endpoint.
 
 Beware that this API endpoint alters the schema of the underlying table, which might be undesirable, especially if the table is from an external \href{https://docs.nocodb.com/category/data-sources}{data source}.
 }

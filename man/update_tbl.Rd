@@ -53,7 +53,7 @@ Whether or not to suppress printing status output from internal processing.}
 }
 \description{
 Updates the metadata of the specified table on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-update}{\code{PATCH /api/v2/meta/tables/{id_tbl}}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/Tables/operation/db-table-update}{\code{PATCH /api/v2/meta/tables/{id_tbl}}} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB tables:

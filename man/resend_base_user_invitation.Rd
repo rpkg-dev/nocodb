@@ -42,7 +42,7 @@ Whether or not to suppress printing status output from internal processing.}
 }
 \description{
 Resends the invitation e-mail message to the specified user in regard to the specified base on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-resend-invite}{\code{POST /api/v2/meta/bases/{id_base}/users/{id_user/resend-invite}}} API
+\code{POST /api/v2/meta/bases/{id_base}/users/{id_user/resend-invite}} API
 endpoint.
 }
 \seealso{

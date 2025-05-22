@@ -33,7 +33,7 @@ NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. T
 }
 \description{
 Deletes the specified table column on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-delete}{\code{DELETE /api/v2/meta/columns/{id_col}}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/Fields/operation/db-table-column-delete}{\code{DELETE /api/v2/meta/columns/{id_col}}} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB table columns:

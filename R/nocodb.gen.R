@@ -699,7 +699,7 @@ delete_api_token <- function(api_token,
 #' List NocoDB bases
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about all bases on a NocoDB server from its
-#' [`GET /api/v2/meta/bases`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-list) API endpoint.
+#' [`GET /api/v2/meta/bases`](https://meta-apis-v2.nocodb.com/#tag/Bases/operation/workspace-base-list) API endpoint.
 #'
 #' @inheritParams api
 #'
@@ -764,7 +764,7 @@ base_id <- function(title = funky::config_val("base_title"),
 #' Get NocoDB base
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the specified base on a NocoDB server from its
-#' [`GET /api/v2/meta/bases/{id_base}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-read) API endpoint.
+#' [`GET /api/v2/meta/bases/{id_base}`](https://meta-apis-v2.nocodb.com/#tag/Bases/operation/base-read) API endpoint.
 #'
 #' @inheritParams api
 #' @param id_base `r pkgsnip::type("chr", 1L)`
@@ -796,7 +796,7 @@ base <- function(id_base = base_id(origin = origin,
 #' Create NocoDB base
 #'
 #' Adds a new base on a NocoDB server via its
-#' [`POST /api/v2/meta/bases`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-create) API endpoint.
+#' [`POST /api/v2/meta/bases`](https://meta-apis-v2.nocodb.com/#tag/Bases/operation/base-create) API endpoint.
 #'
 #' @param title `r pkgsnip::type("chr", 1L)`
 #'   Base title.
@@ -846,7 +846,7 @@ create_base <- function(title = funky::config_val("base_title"),
 
 #' Update NocoDB base
 #'
-#' Updates the specified base on a NocoDB server via its [`PATCH /api/v2/meta/bases/{id_base}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-update)
+#' Updates the specified base on a NocoDB server via its [`PATCH /api/v2/meta/bases/{id_base}`](https://meta-apis-v2.nocodb.com/#tag/Bases/operation/base-update)
 #' API endpoint.
 #'
 #' @inheritParams create_base
@@ -910,7 +910,7 @@ update_base <- function(title = NULL,
 #' Delete NocoDB base
 #'
 #' Deletes the specified base on a NocoDB server via its
-#' [`DELETE /api/v2/meta/bases/{id_base}`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-delete) API endpoint.
+#' [`DELETE /api/v2/meta/bases/{id_base}`](https://meta-apis-v2.nocodb.com/#tag/Bases/operation/base-delete) API endpoint.
 #'
 #' @inheritParams base
 #'
@@ -939,7 +939,7 @@ delete_base <- function(id_base,
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about [visibility rules (UI ACL) for the different
 #' views](https://docs.nocodb.com/data-sources/actions-on-data-sources#ui-access-control) in the specified base on a NocoDB server from its
-#' [`GET /api/v2/meta/bases/{id_base}/visibility-rules`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-model-visibility-list) API endpoint.
+#' `GET /api/v2/meta/bases/{id_base}/visibility-rules` API endpoint.
 #'
 #' @inheritParams base
 #'
@@ -971,7 +971,7 @@ base_ui_acl <- function(id_base = base_id(origin = origin,
 #'
 #' Updates the [visibility rules (UI ACL) for the different views](https://docs.nocodb.com/data-sources/actions-on-data-sources#ui-access-control) of the
 #' specified table view on a NocoDB server via its
-#' [`POST /api/v2/meta/bases/{id_base}/visibility-rules`](https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-model-visibility-set) API endpoint.
+#' `POST /api/v2/meta/bases/{id_base}/visibility-rules` API endpoint.
 #'
 #' @inheritParams base
 #' @param id_tbl_view `r pkgsnip::type("chr", 1L)`
@@ -1046,7 +1046,7 @@ update_base_ui_acl <- function(id_tbl_view,
 #' List NocoDB data sources
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about all data sources of the specified base on a NocoDB server from its
-#' [`GET /api/v2/meta/bases/{id_base}/sources`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-list) API endpoint.
+#' [`GET /api/v2/meta/bases/{id_base}/sources`](https://meta-apis-v2.nocodb.com/#tag/Sources/operation/source-list) API endpoint.
 #'
 #' @inheritParams base
 #'
@@ -1122,7 +1122,7 @@ data_src_id <- function(alias,
 #' Get NocoDB data source
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the specified data source in the specified base on a NocoDB server from its
-#' [`GET /api/v2/meta/bases/{id_base}/sources/{id_data_src}`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-read) API endpoint.
+#' [`GET /api/v2/meta/bases/{id_base}/sources/{id_data_src}`](https://meta-apis-v2.nocodb.com/#tag/Sources/operation/source-read) API endpoint.
 #'
 #' @inheritParams base
 #' @param id_data_src `r pkgsnip::type("chr", 1L)`
@@ -1156,7 +1156,7 @@ data_src <- function(id_data_src,
 #' Test NocoDB data source
 #'
 #' Tests a data source's connection details via a NocoDB server's
-#' [`POST /api/v2/meta/connection/test`](https://meta-apis-v2.nocodb.com/#tag/Utils/operation/utils-test-connection) API endpoint.
+#' `POST /api/v2/meta/connection/test` API endpoint.
 #'
 #' Note that the PostgreSQL `connection` parameters `sslmode` and `database` have no effect, i.e. are simply ignored by the API endpoint.
 #'
@@ -1212,7 +1212,7 @@ test_data_src <- function(connection,
 #' List NocoDB data source schema changes
 #'
 #' Returns a [tibble][tibble::tbl_df] listing detected differences between the specified data source's external and its NocoDB-internal state via the
-#' [`GET /api/v2/meta/bases/{id_base}/meta-diff/{id_data_src}`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-meta-diff-get) API endpoint.
+#' `GET /api/v2/meta/bases/{id_base}/meta-diff/{id_data_src}` API endpoint.
 #'
 #' @inheritParams data_src
 #'
@@ -1281,7 +1281,7 @@ has_data_src_diff <- function(id_data_src,
 #' Synchronize NocoDB data source schema
 #'
 #' Synchronizes the specified data source's schema between its external and its NocoDB-internal state via the
-#' [`POST /api/v2/meta/bases/{id_base}/meta-diff/{id_data_src}`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-meta-diff-sync) API endpoint.
+#' `POST /api/v2/meta/bases/{id_base}/meta-diff/{id_data_src}` API endpoint.
 #'
 #' @inheritParams data_src
 #'
@@ -1387,7 +1387,7 @@ sync_data_src_eagerly <- function(id_data_src,
 #' Create NocoDB data source
 #'
 #' Adds a data source to the specified base on a NocoDB server via its
-#' [`POST /api/v2/meta/bases/{id_base}/sources`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-create) API endpoint.
+#' [`POST /api/v2/meta/bases/{id_base}/sources`](https://meta-apis-v2.nocodb.com/#tag/Sources/operation/source-create) API endpoint.
 #'
 #' @inheritParams data_src_id
 #' @param connection `r pkgsnip::type("list")`
@@ -1484,7 +1484,7 @@ create_data_src <- function(connection,
 #' Update NocoDB data source
 #'
 #' Updates the specified data source of the specified base on a NocoDB server via its
-#' [`PATCH /api/v2/meta/bases/{id_base}/sources/{id_data_src}`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-update) API endpoint.
+#' `PATCH /api/v2/meta/bases/{id_base}/sources/{id_data_src}` API endpoint.
 #'
 #' @inheritParams data_src
 #' @inheritParams create_data_src
@@ -1558,7 +1558,7 @@ update_data_src <- function(id_data_src,
 #' Delete NocoDB data source
 #'
 #' Deletes the specified data source from the specified base on a NocoDB server via its
-#' [`DELETE /api/v2/meta/bases/{id_base}/sources/{id_data_src}`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-delete) API endpoint.
+#' `DELETE /api/v2/meta/bases/{id_base}/sources/{id_data_src}` API endpoint.
 #'
 #' @inheritParams data_src
 #'
@@ -1591,7 +1591,7 @@ delete_data_src <- function(id_data_src,
 #' List tables in NocoDB data source
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about all tables in the specified data source of the specified base on a NocoDB server from its
-#' [`GET /api/v2/meta/bases/{id_base}/{id_data_src}/tables`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/table-list) API endpoint.
+#' [`GET /api/v2/meta/bases/{id_base}/{id_data_src}/tables`](https://meta-apis-v2.nocodb.com/#tag/Sources/operation/table-list) API endpoint.
 #'
 #' @inheritParams data_src
 #'
@@ -1626,7 +1626,7 @@ data_src_tbls <- function(id_data_src,
 #' Create table in NocoDB data source
 #'
 #' Adds a new table in the specified data source of the specified base on a NocoDB server via its
-#' [`POST /api/v2/meta/bases/{id_base}/{id_data_src}/tables`](https://meta-apis-v2.nocodb.com/#tag/Source/operation/table-create) API endpoint.
+#' [`POST /api/v2/meta/bases/{id_base}/{id_data_src}/tables`](https://meta-apis-v2.nocodb.com/#tag/Sources/operation/table-create) API endpoint.
 #'
 #' @inheritParams data_src
 #' @inheritParams reorder_tbl
@@ -1707,7 +1707,7 @@ create_data_src_tbl <- function(id_data_src,
 #' List NocoDB tables
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about tables in the specified base on a NocoDB server from its
-#' [`GET /api/v2/meta/bases/{id_base}/tables`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-list) API endpoint.
+#' [`GET /api/v2/meta/bases/{id_base}/tables`](https://meta-apis-v2.nocodb.com/#tag/Tables/operation/db-table-list) API endpoint.
 #'
 #' @inheritParams base
 #' @param include_m2m `r pkgsnip::type("lgl", 1L)`
@@ -1789,7 +1789,7 @@ tbl_id <- function(name,
 #' Get NocoDB table
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the specified table on a NocoDB server from its
-#' [`GET /api/v2/meta/tables/{id_tbl}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
+#' [`GET /api/v2/meta/tables/{id_tbl}`](https://meta-apis-v2.nocodb.com/#tag/Tables/operation/db-table-read) API endpoint.
 #'
 #' @inheritParams api
 #' @param id_tbl `r pkgsnip::type("chr", 1L)`
@@ -1822,7 +1822,7 @@ tbl <- function(id_tbl,
 #'
 #' @description
 #' Adds a new table to the specified base's *default* data source on a NocoDB server via its
-#' [`POST /api/v2/meta/bases/{id_base}/tables`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-create) API endpoint.
+#' [`POST /api/v2/meta/bases/{id_base}/tables`](https://meta-apis-v2.nocodb.com/#tag/Tables/operation/db-table-create) API endpoint.
 #'
 #' To add a new table to a *specific* (external) data source, use [create_data_src_tbl()] instead.
 #'
@@ -1899,7 +1899,7 @@ create_tbl <- function(name,
 #' Update NocoDB table
 #'
 #' Updates the metadata of the specified table on a NocoDB server via its
-#' [`PATCH /api/v2/meta/tables/{id_tbl}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-update) API endpoint.
+#' [`PATCH /api/v2/meta/tables/{id_tbl}`](https://meta-apis-v2.nocodb.com/#tag/Tables/operation/db-table-update) API endpoint.
 #'
 #' @inheritParams create_data_src_tbl
 #' @inheritParams tbl
@@ -1953,7 +1953,7 @@ update_tbl <- function(id_tbl,
 #' Delete NocoDB table
 #'
 #' Deletes the specified table on a NocoDB server via its
-#' [`DELETE /api/v2/meta/tables/{id_tbl}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-delete) API endpoint.
+#' [`DELETE /api/v2/meta/tables/{id_tbl}`](https://meta-apis-v2.nocodb.com/#tag/Tables/operation/db-table-delete) API endpoint.
 #'
 #' @inheritParams tbl
 #'
@@ -1981,7 +1981,7 @@ delete_tbl <- function(id_tbl,
 #' Re-order NocoDB table
 #'
 #' Sets the numeric order of the specified table on a NocoDB server via its
-#' [`POST /api/v2/meta/tables/{id_tbl}/reorder`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-reorder) API endpoint.
+#' `POST /api/v2/meta/tables/{id_tbl}/reorder` API endpoint.
 #'
 #' Lower numbers place the table higher up in the UI and vice versa. The current order of all the tables in a base can be determined via [tbls()].
 #'
@@ -2089,7 +2089,7 @@ set_tbl_metadata <- function(data,
 #' List NocoDB table views
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the views of the specified table on a NocoDB server from its
-#' [`GET /api/v2/meta/tables/{id_tbl}/views`](https://meta-apis-v2.nocodb.com/#tag/DB-View/operation/db-view-list) API endpoint.
+#' [`GET /api/v2/meta/tables/{id_tbl}/views`](https://meta-apis-v2.nocodb.com/#tag/Views/operation/db-view-list) API endpoint.
 #'
 #' @inheritParams tbl
 #'
@@ -2188,7 +2188,7 @@ tbl_view_id <- function(id_tbl,
 #' List NocoDB table columns
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the columns of the specified table on a NocoDB server from its
-#' [`GET /api/v2/meta/tables/{id_tbl}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-read) API endpoint.
+#' [`GET /api/v2/meta/tables/{id_tbl}`](https://meta-apis-v2.nocodb.com/#tag/Tables/operation/db-table-read) API endpoint.
 #'
 #' @inheritParams tbl
 #'
@@ -2279,7 +2279,7 @@ tbl_col_id <- function(id_tbl,
 #' Get NocoDB table column
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the specified column on a NocoDB server from its
-#' [`GET /api/v2/meta/columns/{id_col}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-get) API endpoint.
+#' [`GET /api/v2/meta/columns/{id_col}`](https://meta-apis-v2.nocodb.com/#tag/Fields/operation/db-table-column-get) API endpoint.
 #'
 #' @inheritParams api
 #' @param id_col `r pkgsnip::type("chr", 1L)`
@@ -2308,7 +2308,7 @@ tbl_col <- function(id_col,
 #' Create NocoDB table column
 #'
 #' Creates the specified table column on a NocoDB server via its
-#' [`POST /api/v2/meta/tables/{id_tbl}/columns`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-create) API endpoint.
+#' [`POST /api/v2/meta/tables/{id_tbl}/columns`](https://meta-apis-v2.nocodb.com/#tag/Fields/operation/db-table-column-create) API endpoint.
 #'
 #' @inheritParams tbl
 #' @inheritParams update_tbl_col
@@ -2362,7 +2362,7 @@ create_tbl_col <- function(id_tbl,
 #'
 #' @description
 #' Updates the metadata of the specified table column on a NocoDB server via its
-#' [`PATCH /api/v2/meta/columns/{id_col}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-update) API endpoint.
+#' [`PATCH /api/v2/meta/columns/{id_col}`](https://meta-apis-v2.nocodb.com/#tag/Fields/operation/db-table-column-update) API endpoint.
 #'
 #' Beware that this API endpoint alters the schema of the underlying table, which might be undesirable, especially if the table is from an external [data
 #' source](https://docs.nocodb.com/category/data-sources).
@@ -2468,7 +2468,7 @@ update_tbl_col <- function(id_col,
 #' Delete NocoDB table column
 #'
 #' Deletes the specified table column on a NocoDB server via its
-#' [`DELETE /api/v2/meta/columns/{id_col}`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-delete) API endpoint.
+#' [`DELETE /api/v2/meta/columns/{id_col}`](https://meta-apis-v2.nocodb.com/#tag/Fields/operation/db-table-column-delete) API endpoint.
 #'
 #' @inheritParams tbl_col
 #'
@@ -2496,7 +2496,7 @@ delete_tbl_col <- function(id_col,
 #' Set display value column for NocoDB table
 #'
 #' Sets the specified column as the corresponding table's [display value](https://docs.nocodb.com/fields/display-value/) on a NocoDB server via its
-#' [`POST /api/v2/meta/columns/{id_col}/primary`](https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-primary-column-set) API
+#' [`POST /api/v2/meta/columns/{id_col}/primary`](https://meta-apis-v2.nocodb.com/#tag/Fields/operation/db-table-column-primary-column-set) API
 #' endpoint.
 #'
 #' @inheritParams tbl_col
@@ -2583,7 +2583,7 @@ set_display_vals <- function(data,
 #' Upload NocoDB attachments
 #'
 #' Uploads the specified files to a NocoDB server as [attachments](https://docs.nocodb.com/fields/field-types/custom-types/attachment/) via its
-#' [`POST /api/v2/storage/upload`](https://meta-apis-v2.nocodb.com/#tag/Storage) API endpoint. Uploaded files are stored under `/nc/uploads/` in the configured
+#' `POST /api/v2/storage/upload` API endpoint. Uploaded files are stored under `/nc/uploads/` in the configured
 #' object storage bucket (if one is set up) or directly on the server's filesystem.
 #'
 #' @inheritParams api
@@ -3086,7 +3086,7 @@ validate_user_email <- function(verification_token,
 #' List NocoDB base users
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about all users in regard to the specified base on a NocoDB server from its
-#' [`GET /api/v2/meta/bases/{id_base}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-list) API endpoint.
+#' [`GET /api/v2/meta/bases/{id_base}/users`](https://meta-apis-v2.nocodb.com/#tag/Users/operation/auth-base-user-list) API endpoint.
 #'
 #' @inheritParams base
 #'
@@ -3118,7 +3118,7 @@ base_users <- function(id_base = base_id(origin = origin,
 #' Update NocoDB base user
 #'
 #' Updates the specified user in regard to the specified base on a NocoDB server via its
-#' [`PATCH /api/v2/meta/bases/{id_base}/users/{id_user}`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-update) or
+#' [`PATCH /api/v2/meta/bases/{id_base}/users/{id_user}`](https://meta-apis-v2.nocodb.com/#tag/Users/operation/auth-base-user-update) or
 #' [`PATCH /api/v1/db/meta/projects/{id_base}/users/{id_user}`](https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis) API endpoint,
 #' depending on `api_version`.
 #'
@@ -3222,7 +3222,7 @@ update_base_user <- function(user_email,
 #' Delete NocoDB base user
 #'
 #' Revokes all privileges from a user in regard to the specified base on a NocoDB server via its
-#' [`DELETE /api/v2/meta/bases/{id_base}/users/{id_user}`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-remove) API endpoint.
+#' [`DELETE /api/v2/meta/bases/{id_base}/users/{id_user}`](https://meta-apis-v2.nocodb.com/#tag/Users/operation/auth-base-user-remove) API endpoint.
 #'
 #' Despite the endpoint name, the user is not actually deleted but is instead revoked any assigned role in regard to `id_base`, which has the same effect as
 #' assigning the `"no-access"` role.
@@ -3268,7 +3268,7 @@ delete_base_user <- function(id_user,
 #' Invite NocoDB base user
 #'
 #' Invites a new user to the specified base on a NocoDB server via its
-#' [`POST /api/v2/meta/bases/{id_base}/users`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-add) API endpoint.
+#' [`POST /api/v2/meta/bases/{id_base}/users`](https://meta-apis-v2.nocodb.com/#tag/Users/operation/auth-base-user-add) API endpoint.
 #'
 #' Note that an invitation e-mail is sent if the specified user does not yet exist on the NocoDB server.
 #'
@@ -3317,7 +3317,7 @@ invite_base_user <- function(user_email,
 #' Resend NocoDB base user invitation
 #'
 #' Resends the invitation e-mail message to the specified user in regard to the specified base on a NocoDB server via its
-#' [`POST /api/v2/meta/bases/{id_base}/users/{id_user/resend-invite}`](https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-resend-invite) API
+#' `POST /api/v2/meta/bases/{id_base}/users/{id_user/resend-invite}` API
 #' endpoint.
 #'
 #' @inheritParams update_base_user
@@ -3972,7 +3972,7 @@ is_plugin_active <- function(title,
 #' List NocoDB app settings
 #'
 #' Returns a [tibble][tibble::tbl_df] with (meta)data about the application settings of a NocoDB server via its
-#' [`GET /api/v2/meta/nocodb/info`](https://meta-apis-v2.nocodb.com/#tag/Utils/operation/utils-app-info) API endpoint.
+#' `GET /api/v2/meta/nocodb/info` API endpoint.
 #'
 #' @inheritParams api
 #'

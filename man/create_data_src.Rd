@@ -72,7 +72,7 @@ NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. T
 }
 \description{
 Adds a data source to the specified base on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-create}{\code{POST /api/v2/meta/bases/{id_base}/sources}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/Sources/operation/source-create}{\code{POST /api/v2/meta/bases/{id_base}/sources}} API endpoint.
 }
 \examples{
 \dontrun{

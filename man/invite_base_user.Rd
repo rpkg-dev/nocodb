@@ -46,7 +46,7 @@ Whether or not to suppress printing status output from internal processing.}
 }
 \description{
 Invites a new user to the specified base on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-add}{\code{POST /api/v2/meta/bases/{id_base}/users}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/Users/operation/auth-base-user-add}{\code{POST /api/v2/meta/bases/{id_base}/users}} API endpoint.
 }
 \details{
 Note that an invitation e-mail is sent if the specified user does not yet exist on the NocoDB server.

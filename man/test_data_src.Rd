@@ -41,7 +41,7 @@ A logical scalar indicating whether the connection test was successful or not.
 }
 \description{
 Tests a data source's connection details via a NocoDB server's
-\href{https://meta-apis-v2.nocodb.com/#tag/Utils/operation/utils-test-connection}{\code{POST /api/v2/meta/connection/test}} API endpoint.
+\code{POST /api/v2/meta/connection/test} API endpoint.
 }
 \details{
 Note that the PostgreSQL \code{connection} parameters \code{sslmode} and \code{database} have no effect, i.e. are simply ignored by the API endpoint.

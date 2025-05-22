@@ -58,7 +58,7 @@ A \link[tibble:tbl_df-class]{tibble} with metadata about the newly created NocoD
 }
 \description{
 Adds a new table in the specified data source of the specified base on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/Source/operation/table-create}{\code{POST /api/v2/meta/bases/{id_base}/{id_data_src}/tables}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/Sources/operation/table-create}{\code{POST /api/v2/meta/bases/{id_base}/{id_data_src}/tables}} API endpoint.
 }
 \examples{
 \dontrun{

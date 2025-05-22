@@ -60,7 +60,7 @@ Whether or not to suppress printing status output from internal processing.}
 }
 \description{
 Updates the specified user in regard to the specified base on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-update}{\code{PATCH /api/v2/meta/bases/{id_base}/users/{id_user}}} or
+\href{https://meta-apis-v2.nocodb.com/#tag/Users/operation/auth-base-user-update}{\code{PATCH /api/v2/meta/bases/{id_base}/users/{id_user}}} or
 \href{https://docs.nocodb.com/0.109.7/developer-resources/rest-apis/#meta-apis}{\code{PATCH /api/v1/db/meta/projects/{id_base}/users/{id_user}}} API endpoint,
 depending on \code{api_version}.
 }

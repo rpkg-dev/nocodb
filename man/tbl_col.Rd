@@ -33,7 +33,7 @@ A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
 Returns a \link[tibble:tbl_df-class]{tibble} with metadata about the specified column on a NocoDB server from its
-\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-get}{\code{GET /api/v2/meta/columns/{id_col}}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/Fields/operation/db-table-column-get}{\code{GET /api/v2/meta/columns/{id_col}}} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB table columns:

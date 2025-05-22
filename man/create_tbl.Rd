@@ -54,7 +54,7 @@ A \link[tibble:tbl_df-class]{tibble} with metadata about the newly created NocoD
 }
 \description{
 Adds a new table to the specified base's \emph{default} data source on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-create}{\code{POST /api/v2/meta/bases/{id_base}/tables}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/Tables/operation/db-table-create}{\code{POST /api/v2/meta/bases/{id_base}/tables}} API endpoint.
 
 To add a new table to a \emph{specific} (external) data source, use \code{\link[=create_data_src_tbl]{create_data_src_tbl()}} instead.
 }

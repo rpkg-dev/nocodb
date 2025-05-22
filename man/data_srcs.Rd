@@ -34,7 +34,7 @@ A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
 Returns a \link[tibble:tbl_df-class]{tibble} with metadata about all data sources of the specified base on a NocoDB server from its
-\href{https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-list}{\code{GET /api/v2/meta/bases/{id_base}/sources}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/Sources/operation/source-list}{\code{GET /api/v2/meta/bases/{id_base}/sources}} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB base data sources:

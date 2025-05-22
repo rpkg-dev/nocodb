@@ -72,7 +72,7 @@ A \link[tibble:tbl_df-class]{tibble} with metadata about the updated NocoDB data
 }
 \description{
 Updates the specified data source of the specified base on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-update}{\code{PATCH /api/v2/meta/bases/{id_base}/sources/{id_data_src}}} API endpoint.
+\code{PATCH /api/v2/meta/bases/{id_base}/sources/{id_data_src}} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB base data sources:

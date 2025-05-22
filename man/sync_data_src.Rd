@@ -38,7 +38,7 @@ NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. T
 }
 \description{
 Synchronizes the specified data source's schema between its external and its NocoDB-internal state via the
-\href{https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-meta-diff-sync}{\code{POST /api/v2/meta/bases/{id_base}/meta-diff/{id_data_src}}} API endpoint.
+\code{POST /api/v2/meta/bases/{id_base}/meta-diff/{id_data_src}} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB base data sources:

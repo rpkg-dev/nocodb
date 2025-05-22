@@ -67,7 +67,7 @@ Whether or not to suppress printing status output from internal processing.}
 \description{
 Updates the \href{https://docs.nocodb.com/data-sources/actions-on-data-sources#ui-access-control}{visibility rules (UI ACL) for the different views} of the
 specified table view on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-model-visibility-set}{\code{POST /api/v2/meta/bases/{id_base}/visibility-rules}} API endpoint.
+\code{POST /api/v2/meta/bases/{id_base}/visibility-rules} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB base visibility rules (UI ACL):

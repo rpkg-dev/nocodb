@@ -29,7 +29,7 @@ The application settings of the specified NocoDB server as a \link[tibble:tbl_df
 }
 \description{
 Returns a \link[tibble:tbl_df-class]{tibble} with (meta)data about the application settings of a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/Utils/operation/utils-app-info}{\code{GET /api/v2/meta/nocodb/info}} API endpoint.
+\code{GET /api/v2/meta/nocodb/info} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB's application settings:

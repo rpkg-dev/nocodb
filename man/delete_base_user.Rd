@@ -42,7 +42,7 @@ Whether or not to suppress printing status output from internal processing.}
 }
 \description{
 Revokes all privileges from a user in regard to the specified base on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/Auth/operation/auth-base-user-remove}{\code{DELETE /api/v2/meta/bases/{id_base}/users/{id_user}}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/Users/operation/auth-base-user-remove}{\code{DELETE /api/v2/meta/bases/{id_base}/users/{id_user}}} API endpoint.
 }
 \details{
 Despite the endpoint name, the user is not actually deleted but is instead revoked any assigned role in regard to \code{id_base}, which has the same effect as

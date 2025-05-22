@@ -33,7 +33,7 @@ NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. T
 }
 \description{
 Deletes the specified table on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-delete}{\code{DELETE /api/v2/meta/tables/{id_tbl}}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/Tables/operation/db-table-delete}{\code{DELETE /api/v2/meta/tables/{id_tbl}}} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB tables:

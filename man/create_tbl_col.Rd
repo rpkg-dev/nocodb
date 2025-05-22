@@ -96,7 +96,7 @@ A \link[tibble:tbl_df-class]{tibble} with metadata about the newly created NocoD
 }
 \description{
 Creates the specified table column on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-create}{\code{POST /api/v2/meta/tables/{id_tbl}/columns}} API endpoint.
+\href{https://meta-apis-v2.nocodb.com/#tag/Fields/operation/db-table-column-create}{\code{POST /api/v2/meta/tables/{id_tbl}/columns}} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB table columns:

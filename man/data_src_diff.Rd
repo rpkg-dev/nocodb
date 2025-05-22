@@ -38,7 +38,7 @@ A \link[tibble:tbl_df-class]{tibble} with metadata about detected schema changes
 }
 \description{
 Returns a \link[tibble:tbl_df-class]{tibble} listing detected differences between the specified data source's external and its NocoDB-internal state via the
-\href{https://meta-apis-v2.nocodb.com/#tag/Source/operation/source-meta-diff-get}{\code{GET /api/v2/meta/bases/{id_base}/meta-diff/{id_data_src}}} API endpoint.
+\code{GET /api/v2/meta/bases/{id_base}/meta-diff/{id_data_src}} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB base data sources:

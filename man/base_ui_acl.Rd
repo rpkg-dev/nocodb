@@ -34,7 +34,7 @@ A \link[tibble:tbl_df-class]{tibble}.
 }
 \description{
 Returns a \link[tibble:tbl_df-class]{tibble} with metadata about \href{https://docs.nocodb.com/data-sources/actions-on-data-sources#ui-access-control}{visibility rules (UI ACL) for the different views} in the specified base on a NocoDB server from its
-\href{https://meta-apis-v2.nocodb.com/#tag/Base/operation/base-model-visibility-list}{\code{GET /api/v2/meta/bases/{id_base}/visibility-rules}} API endpoint.
+\code{GET /api/v2/meta/bases/{id_base}/visibility-rules} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB base visibility rules (UI ACL):

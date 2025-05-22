@@ -66,7 +66,7 @@ A \link[tibble:tbl_df-class]{tibble} containing metadata about the uploaded atta
 }
 \description{
 Uploads the specified files to a NocoDB server as \href{https://docs.nocodb.com/fields/field-types/custom-types/attachment/}{attachments} via its
-\href{https://meta-apis-v2.nocodb.com/#tag/Storage}{\code{POST /api/v2/storage/upload}} API endpoint. Uploaded files are stored under \verb{/nc/uploads/} in the configured
+\code{POST /api/v2/storage/upload} API endpoint. Uploaded files are stored under \verb{/nc/uploads/} in the configured
 object storage bucket (if one is set up) or directly on the server's filesystem.
 }
 \concept{attachments}

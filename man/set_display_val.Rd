@@ -33,7 +33,7 @@ NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. T
 }
 \description{
 Sets the specified column as the corresponding table's \href{https://docs.nocodb.com/fields/display-value/}{display value} on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table-Column/operation/db-table-column-primary-column-set}{\code{POST /api/v2/meta/columns/{id_col}/primary}} API
+\href{https://meta-apis-v2.nocodb.com/#tag/Fields/operation/db-table-column-primary-column-set}{\code{POST /api/v2/meta/columns/{id_col}/primary}} API
 endpoint.
 }
 \seealso{

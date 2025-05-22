@@ -37,7 +37,7 @@ NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. T
 }
 \description{
 Sets the numeric order of the specified table on a NocoDB server via its
-\href{https://meta-apis-v2.nocodb.com/#tag/DB-Table/operation/db-table-reorder}{\code{POST /api/v2/meta/tables/{id_tbl}/reorder}} API endpoint.
+\code{POST /api/v2/meta/tables/{id_tbl}/reorder} API endpoint.
 }
 \details{
 Lower numbers place the table higher up in the UI and vice versa. The current order of all the tables in a base can be determined via \code{\link[=tbls]{tbls()}}.
