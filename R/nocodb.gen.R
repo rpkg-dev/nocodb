@@ -1364,7 +1364,7 @@ sync_data_src_eagerly <- function(id_data_src,
                     password = password)
     }
     
-    Sys.sleep(1L)
+    Sys.sleep(1.0)
     
     # continue if sync has finished
     if (!has_data_src_diff(id_data_src = id_data_src,
