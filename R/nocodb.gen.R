@@ -2836,7 +2836,8 @@ add_user <- function(user_email,
                         origin = origin,
                         email = user_email,
                         password = user_password,
-                        api_token = NULL)
+                        api_token = NULL,
+                        quiet = quiet)
   
   # validate user's e-mail address
   validate_user_email(verification_token = result$email_verification_token,
@@ -2867,6 +2868,8 @@ add_user <- function(user_email,
 #' @inheritParams api
 #' @param display_name `r pkgsnip::type("chr", 1L)`
 #'   Name to be displayed for the user in NocoDB. Omitted if `NULL`.
+#' @param quiet `r pkgsnip::type("lgl", 1L)`
+#'   `r pkgsnip::param_lbl("quiet")`
 #'
 #' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the updated NocoDB user, invisibly")`
 #' @family users
@@ -2875,10 +2878,13 @@ update_user <- function(display_name = NULL,
                         origin = funky::config_val("origin"),
                         email = funky::config_val("email"),
                         password = funky::config_val("password"),
-                        api_token = NULL) {
+                        api_token = NULL,
+                        quiet = TRUE) {
   
   checkmate::assert_string(display_name,
                            null.ok = TRUE)
+  checkmate::assert_flag(quiet)
+  
   result <-
     api(path = "api/v1/user/profile",
         method = "PATCH",
@@ -2897,7 +2903,7 @@ update_user <- function(display_name = NULL,
       users(origin = origin,
             email = email,
             password = password)
-    } else {
+    } else if (!quiet) {
       cli::cli_alert_info(paste0("In order for other API endpoints to reflect the updated metadata, NocoDB's internal state must yet update, which can be ",
                                  "triggered by invoking {.run nocodb::users()}."))
     }

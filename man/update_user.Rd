@@ -9,7 +9,8 @@ update_user(
   origin = funky::config_val("origin"),
   email = funky::config_val("email"),
   password = funky::config_val("password"),
-  api_token = NULL
+  api_token = NULL,
+  quiet = TRUE
 )
 }
 \arguments{
@@ -27,6 +28,9 @@ Password of the NocoDB user to authenticate with.}
 
 \item{api_token}{\code{\link[base:character]{character(1)}}\cr
 NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
+
+\item{quiet}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to suppress printing status output from internal processing.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble} with metadata about the updated NocoDB user, invisibly.
