@@ -2057,7 +2057,8 @@ set_tbl_metadata <- function(data,
   
   # add optional cols if missing
   cols_missing <-
-    c("description", "meta.icon") %>%
+    c("description", "meta.icon") |>
+    setdiff(colnames(data)) %>%
     magrittr::set_names(x = rep(NA_character_, length(.)),
                         value = .) |>
     as.list()
