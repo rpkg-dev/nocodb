@@ -1904,6 +1904,9 @@ create_tbl <- function(name,
 #' @inheritParams create_data_src_tbl
 #' @inheritParams tbl
 #' @inheritParams api
+#' @param description `r pkgsnip::type("chr", 1L)`
+#'   NocoDB [table description](https://docs.nocodb.com/tables/actions-on-table/#add--edit-table-description) displayed as a tooltip in the user interface.
+#'   Omitted if `NULL`.
 #' @param quiet `r pkgsnip::type("lgl", 1L)`
 #'   `r pkgsnip::param_lbl("quiet")`
 #'
@@ -1914,6 +1917,7 @@ update_tbl <- function(id_tbl,
                        id_base = NULL,
                        name = NULL,
                        title = NULL,
+                       description = NULL,
                        meta = NULL,
                        origin = funky::config_val("origin"),
                        email = funky::config_val("email"),
@@ -1928,6 +1932,8 @@ update_tbl <- function(id_tbl,
                            null.ok = TRUE)
   checkmate::assert_string(title,
                            null.ok = TRUE)
+  checkmate::assert_string(description,
+                           null.ok = TRUE)
   checkmate::assert_list(meta,
                          min.len = 1L,
                          null.ok = TRUE)
@@ -1941,6 +1947,7 @@ update_tbl <- function(id_tbl,
                 api_token = api_token,
                 body_json = purrr::compact(list(table_name = name,
                                                 title = title,
+                                                description = description,
                                                 base_id = id_base,
                                                 meta = meta)))
   if (!quiet) {

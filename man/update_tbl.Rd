@@ -9,6 +9,7 @@ update_tbl(
   id_base = NULL,
   name = NULL,
   title = NULL,
+  description = NULL,
   meta = NULL,
   origin = funky::config_val("origin"),
   email = funky::config_val("email"),
@@ -29,6 +30,10 @@ Table name.}
 
 \item{title}{\code{\link[base:character]{character(1)}}\cr
 NocoDB-specific table title.}
+
+\item{description}{\code{\link[base:character]{character(1)}}\cr
+NocoDB \href{https://docs.nocodb.com/tables/actions-on-table/#add--edit-table-description}{table description} displayed as a tooltip in the user interface.
+Omitted if \code{NULL}.}
 
 \item{meta}{\code{\link[base:list]{list()}}\cr
 NocoDB-specific table metadata as a list or something coercible to like a data frame.}
