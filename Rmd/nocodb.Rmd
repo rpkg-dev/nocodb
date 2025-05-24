@@ -2414,12 +2414,14 @@ reorder_tbl <- function(id_tbl,
 #' Sets the provided table metadata on a NocoDB server. Currently, this includes:
 #' 
 #' - Setting the order of the tables in the base using [reorder_tbl()] according to the row order of `data`.
-#' - Setting the [table icons](https://docs.nocodb.com/tables/actions-on-table/#change-table-icon) (emojis) using [update_tbl()] according to `data$meta.icon`.
+#' - Setting [table icons](https://docs.nocodb.com/tables/actions-on-table/#change-table-icon) (emojis) and
+#'   [descriptions](https://docs.nocodb.com/tables/actions-on-table/#add--edit-table-description) using [update_tbl()] according to `data$meta.icon` and
+#'   `data$description` (`NA`s are ignored).
 #'
 #' @inheritParams base
 #' @param data `r pkgsnip::type("df")`
-#'   Data frame with the columns `name`, `meta.icon` that defines the table-name-and-metadata-value mapping to be applied. Additional columns are
-#'   ignored.
+#'   Data frame with the columns `name`, `description` and `meta.icon` that defines the table-name-and-metadata-value mapping to be applied. Additional columns
+#'   are ignored.
 #' @param quiet `r pkgsnip::type("lgl", 1L)`
 #'   `r pkgsnip::param_lbl("quiet")`
 #'
@@ -2438,12 +2440,20 @@ set_tbl_metadata <- function(data,
                              quiet = FALSE) {
   
   pal::assert_cols(data = data,
-                   cols = c("name", "meta.icon"))
+                   cols = c("name"))
   checkmate::assert_flag(quiet)
   
+  # add optional cols if missing
+  cols_missing <-
+    c("description", "meta.icon") %>%
+    magrittr::set_names(x = rep(NA_character_, length(.)),
+                        value = .) |>
+    as.list()
+  
   data |>
+    tibble::add_column(!!!cols_missing) |>
     tibble::rowid_to_column() |>
-    purrr::pwalk(\(name, meta.icon, rowid, ...) { # nolint: object_name_linter
+    purrr::pwalk(\(name, description, meta.icon, rowid, ...) { # nolint: object_name_linter
       
       id <- tbl_id(name = name,
                    id_base = id_base,
@@ -2469,7 +2479,8 @@ set_tbl_metadata <- function(data,
       
       if (!is.na(meta.icon)) {
         update_tbl(id_tbl = id,
-                   meta = list(icon = meta.icon),
+                   description = if (!is.na(description)) description,
+                   meta = if (!is.na(meta.icon)) list(icon = meta.icon),
                    origin = origin,
                    email = email,
                    password = password,

@@ -17,8 +17,8 @@ set_tbl_metadata(
 }
 \arguments{
 \item{data}{\code{\link[base:data.frame]{data.frame}}\cr
-Data frame with the columns \code{name}, \code{meta.icon} that defines the table-name-and-metadata-value mapping to be applied. Additional columns are
-ignored.}
+Data frame with the columns \code{name}, \code{description} and \code{meta.icon} that defines the table-name-and-metadata-value mapping to be applied. Additional columns
+are ignored.}
 
 \item{id_base}{\code{\link[base:character]{character(1)}}\cr
 NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}.}
@@ -45,7 +45,9 @@ Whether or not to suppress printing status output from internal processing.}
 Sets the provided table metadata on a NocoDB server. Currently, this includes:
 \itemize{
 \item Setting the order of the tables in the base using \code{\link[=reorder_tbl]{reorder_tbl()}} according to the row order of \code{data}.
-\item Setting the \href{https://docs.nocodb.com/tables/actions-on-table/#change-table-icon}{table icons} (emojis) using \code{\link[=update_tbl]{update_tbl()}} according to \code{data$meta.icon}.
+\item Setting \href{https://docs.nocodb.com/tables/actions-on-table/#change-table-icon}{table icons} (emojis) and
+\href{https://docs.nocodb.com/tables/actions-on-table/#add--edit-table-description}{descriptions} using \code{\link[=update_tbl]{update_tbl()}} according to \code{data$meta.icon} and
+\code{data$description} (\code{NA}s are ignored).
 }
 }
 \seealso{
