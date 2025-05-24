@@ -2086,8 +2086,15 @@ set_tbl_metadata <- function(data,
                   password = password,
                   api_token = api_token)
       
-      if (!quiet) {
-        pal::cli_progress_step_quick(msg = "Setting icon for NocoDB table {.field {name}} to {.val {meta.icon}}")
+      if (!quiet && !anyNA(c(description, meta.icon))) {
+        pal::cli_progress_step_quick(msg = paste0("Setting ",
+                                                  ifelse(is.na(meta.icon),
+                                                         "",
+                                                         "icon ({meta.icon}) "),
+                                                  ifelse(is.na(description),
+                                                         "",
+                                                         "and description "),
+                                                  "for NocoDB table {.field {name}}"))
       }
       
       if (!is.na(meta.icon)) {
