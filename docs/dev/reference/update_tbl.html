@@ -52,6 +52,7 @@ PATCH /api/v2/meta/tables/{id_tbl} API endpoint."><meta name="twitter:card" cont
 <span>  id_base <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  description <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  meta <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  origin <span class="op">=</span> <span class="fu">funky</span><span class="fu">::</span><span class="fu"><a href="https://funky.rpkg.dev/reference/config_val.html" class="external-link">config_val</a></span><span class="op">(</span><span class="st">"origin"</span><span class="op">)</span>,</span>
 <span>  email <span class="op">=</span> <span class="fu">funky</span><span class="fu">::</span><span class="fu"><a href="https://funky.rpkg.dev/reference/config_val.html" class="external-link">config_val</a></span><span class="op">(</span><span class="st">"email"</span><span class="op">)</span>,</span>
@@ -83,6 +84,12 @@ Table name.</p></dd>
 <dt id="arg-title">title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>
 <dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
 NocoDB-specific table title.</p></dd>
+
+
+<dt id="arg-description">description<a class="anchor" aria-label="anchor" href="#arg-description"></a></dt>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
+NocoDB <a href="https://docs.nocodb.com/tables/actions-on-table/#add--edit-table-description" class="external-link">table description</a> displayed as a tooltip in the user interface.
+Omitted if <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-meta">meta<a class="anchor" aria-label="anchor" href="#arg-meta"></a></dt>

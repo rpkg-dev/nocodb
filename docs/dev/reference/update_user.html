@@ -49,7 +49,8 @@
 <span>  origin <span class="op">=</span> <span class="fu">funky</span><span class="fu">::</span><span class="fu"><a href="https://funky.rpkg.dev/reference/config_val.html" class="external-link">config_val</a></span><span class="op">(</span><span class="st">"origin"</span><span class="op">)</span>,</span>
 <span>  email <span class="op">=</span> <span class="fu">funky</span><span class="fu">::</span><span class="fu"><a href="https://funky.rpkg.dev/reference/config_val.html" class="external-link">config_val</a></span><span class="op">(</span><span class="st">"email"</span><span class="op">)</span>,</span>
 <span>  password <span class="op">=</span> <span class="fu">funky</span><span class="fu">::</span><span class="fu"><a href="https://funky.rpkg.dev/reference/config_val.html" class="external-link">config_val</a></span><span class="op">(</span><span class="st">"password"</span><span class="op">)</span>,</span>
-<span>  api_token <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  api_token <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -80,6 +81,11 @@ Password of the NocoDB user to authenticate with.</p></dd>
 <dt id="arg-api-token">api_token<a class="anchor" aria-label="anchor" href="#arg-api-token"></a></dt>
 <dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
 NocoDB <a href="https://docs.nocodb.com/account-settings/api-tokens/" class="external-link">API token</a>. Takes precedence over <code>email</code> and <code>password</code> if provided.</p></dd>
+
+
+<dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br>
+Whether or not to suppress printing status output from internal processing.</p></dd>
 
 </dl></div>
     <div class="section level2">
