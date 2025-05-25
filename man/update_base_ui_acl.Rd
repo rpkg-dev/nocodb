@@ -75,8 +75,11 @@ Other functions to manage NocoDB base visibility rules (UI ACL):
 
 Other functions to manage NocoDB table views:
 \code{\link{base_ui_acl}()},
+\code{\link{tbl_view_col_id}()},
+\code{\link{tbl_view_cols}()},
 \code{\link{tbl_view_id}()},
-\code{\link{tbl_views}()}
+\code{\link{tbl_views}()},
+\code{\link{update_tbl_view_col}()}
 
 Other functions to manage NocoDB bases:
 \code{\link{base}()},

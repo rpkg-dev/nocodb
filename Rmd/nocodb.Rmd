@@ -2614,6 +2614,146 @@ tbl_view_id <- function(id_tbl,
 }
 ```
 
+#### `tbl_view_cols`
+
+```{r}
+#' List NocoDB table view columns
+#'
+#' Returns a [tibble][tibble::tbl_df] with metadata about the columns of the specified table view on a NocoDB server from its
+#' [`GET /api/v2/meta/views/{id_view}/columns`](https://meta-apis-v2.nocodb.com/#tag/Views/operation/db-view-column-list) API endpoint.
+#'
+#' @inheritParams api
+#' @param id_view `r pkgsnip::type("chr", 1L)`
+#'   NocoDB table view identifier as returned by [tbl_view_id()].
+#'
+#' @return `r pkgsnip::return_lbl("tibble")`
+#' @family views
+#' @export
+tbl_view_cols <- function(id_view,
+                          origin = funky::config_val("origin"),
+                          email = funky::config_val("email"),
+                          password = funky::config_val("password"),
+                          api_token = funky::config_val("api_token")) {
+  
+  checkmate::assert_string(id_view)
+  
+  api(path = glue::glue("api/v2/meta/views/{id_view}/columns"),
+      method = "GET",
+      origin = origin,
+      email = email,
+      password = password,
+      api_token = api_token) |>
+    purrr::chuck("list") |>
+    tibble::as_tibble() |>
+    tidy_date_time_cols()
+}
+```
+
+#### `tbl_view_col_id`
+
+```{r}
+#' Get NocoDB table view column ID
+#'
+#' Returns the identifier of the view column with the specified `name` or `title` in the table with the specified `id_tbl` on a NocoDB server.
+#'
+#' @inheritParams tbl_col_id
+#' @param view_type `r pkgsnip::type("chr", 1L)`
+#'   NocoDB view type. One of `r c("default", view_types$type) |> pal::as_md_vals() |> pal::enum_str(sep2 = ", ")`, or `NULL` for any type.
+#' @param view_name `r pkgsnip::type("chr", 1L)`
+#'   NocoDB view name. `NULL` means any name.
+#' @param view_title `r pkgsnip::type("chr", 1L)`
+#'   NocoDB view title. `NULL` means any title.
+#'
+#' @returns A character scalar.
+#' @family views
+#' @export
+tbl_view_col_id <- function(id_tbl,
+                            name = NULL,
+                            title = NULL,
+                            view_type = "default",
+                            view_name = NULL,
+                            view_title = NULL,
+                            origin = funky::config_val("origin"),
+                            email = funky::config_val("email"),
+                            password = funky::config_val("password"),
+                            api_token = funky::config_val("api_token")) {
+  
+  id_view <- tbl_view_id(id_tbl = id_tbl,
+                         type = view_type,
+                         name = view_name,
+                         title = view_title,
+                         origin = origin,
+                         email = email,
+                         password = password,
+                         api_token = api_token)
+  
+  id_tbl_col <- tbl_col_id(id_tbl = id_tbl,
+                           name = name,
+                           title = title,
+                           origin = origin,
+                           email = email,
+                           password = password,
+                           api_token = api_token)
+  result <-
+    tbl_view_cols(id_view = id_view,
+                  origin = origin,
+                  email = email,
+                  password = password,
+                  api_token = api_token) |>
+    dplyr::filter(fk_column_id == !!id_tbl_col) |>
+    dplyr::pull("id") |>
+    checkmate::assert_string()
+  
+  # return result *visibly*
+  result
+}
+```
+
+#### `update_tbl_view_col`
+
+NOTES:
+
+-   [Undocumented](https://github.com/nocodb/nocodb/issues/11458) API endpoint.
+
+```{r}
+#' Update NocoDB table view column
+#'
+#' Updates the metadata of the specified table view column on a NocoDB server via its
+#' `PATCH /api/v2/meta/views/{id_view}/columns/{id_col}` API endpoint.
+#'
+#' @inheritParams tbl_view_cols
+#' @param id_col `r pkgsnip::type("chr", 1L)`
+#'   NocoDB table view column identifier as returned by [tbl_view_col_id()].
+#' @param show `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to show the column in the specified view. Omitted if `NULL`.
+#'
+#' @return `id_col`, invisibly.
+#' @family views
+#' @export
+update_tbl_view_col <- function(id_col,
+                                id_view,
+                                show = NULL,
+                                origin = funky::config_val("origin"),
+                                email = funky::config_val("email"),
+                                password = funky::config_val("password"),
+                                api_token = funky::config_val("api_token")) {
+  
+  checkmate::assert_string(id_view)
+  checkmate::assert_flag(show,
+                         null.ok = TRUE)
+  
+  api(path = glue::glue("api/v2/meta/views/{id_view}/columns/{id_col}"),
+      method = "PATCH",
+      origin = origin,
+      email = email,
+      password = password,
+      api_token = api_token,
+      body_json = purrr::compact(list(show = show)))
+  
+  invisible(id_col)
+}
+```
+
 ### Table columns
 
 #### DESCRIPTION
@@ -4813,6 +4953,7 @@ utils::globalVariables(names = c(".",
                                  "where",
                                  # other
                                  "display_col",
+                                 "fk_column_id",
                                  "id",
                                  "inviteOnlySignup",
                                  "name",

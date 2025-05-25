@@ -49,7 +49,10 @@ Returns the identifier of the view with the specified \code{type}, \code{name} a
 \seealso{
 Other functions to manage NocoDB table views:
 \code{\link{base_ui_acl}()},
+\code{\link{tbl_view_col_id}()},
+\code{\link{tbl_view_cols}()},
 \code{\link{tbl_views}()},
-\code{\link{update_base_ui_acl}()}
+\code{\link{update_base_ui_acl}()},
+\code{\link{update_tbl_view_col}()}
 }
 \concept{views}
