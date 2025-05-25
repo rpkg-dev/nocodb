@@ -626,7 +626,7 @@ api_tokens <- function(origin = funky::config_val("origin"),
       email = email,
       password = password,
       api_token = NULL) |>
-    _$list |>
+    purrr::chuck("list") |>
     tibble::as_tibble() |>
     tidy_date_time_cols()
 }
@@ -717,7 +717,7 @@ bases <- function(origin = funky::config_val("origin"),
       email = email,
       password = password,
       api_token = api_token) |>
-    _$list |>
+    purrr::chuck("list") |>
     tibble::as_tibble() |>
     tidy_date_time_cols()
 }
@@ -1070,7 +1070,7 @@ data_srcs <- function(id_base = base_id(origin = origin,
       email = email,
       password = password,
       api_token = api_token) |>
-    _$list |>
+    purrr::chuck("list") |>
     tibble::as_tibble() |>
     tidy_date_time_cols()
 }
@@ -1618,7 +1618,7 @@ data_src_tbls <- function(id_data_src,
       email = email,
       password = password,
       api_token = api_token) |>
-    _$list |>
+    purrr::chuck("list") |>
     tibble::as_tibble() |>
     tidy_date_time_cols()
 }
@@ -1737,7 +1737,7 @@ tbls <- function(id_base = base_id(origin = origin,
       api_token = api_token,
       url_params = list(includeM2M = jsonlite::toJSON(include_m2m,
                                                       auto_unbox = TRUE))) |>
-    _$list |>
+    purrr::chuck("list") |>
     tibble::as_tibble() |>
     tidy_date_time_cols()
 }
@@ -2136,7 +2136,7 @@ tbl_views <- function(id_tbl,
       email = email,
       password = password,
       api_token = api_token) |>
-    _$list |>
+    purrr::chuck("list") |>
     tibble::as_tibble()
 }
 
@@ -2235,7 +2235,7 @@ tbl_cols <- function(id_tbl,
       email = email,
       password = password,
       api_token = api_token) |>
-    _$columns |>
+    purrr::chuck("columns") |>
     tibble::as_tibble() |>
     tidy_date_time_cols()
 }
@@ -2749,7 +2749,7 @@ users <- function(origin = funky::config_val("origin"),
       email = email,
       password = password,
       api_token = NULL) |>
-    _$list |>
+    purrr::chuck("list") |>
     tibble::as_tibble() |>
     tidy_date_time_cols() |>
     tidy_na_cols()
@@ -3143,7 +3143,7 @@ base_users <- function(id_base = base_id(origin = origin,
       email = email,
       password = password,
       api_token = api_token) |>
-    _$users$list |>
+    purrr::chuck("users", "list") |>
     tibble::as_tibble()
 }
 
@@ -3434,7 +3434,7 @@ integrations <- function(type = NULL,
       url_params = purrr::compact(list(type = type,
                                        baseId = id_base,
                                        includeDatabaseInfo = decode_config[incl_config]))) |>
-    _$list |>
+    purrr::chuck("list") |>
     tibble::as_tibble() |>
     tidy_date_time_cols()
 }
@@ -3741,7 +3741,7 @@ plugins <- function(origin = funky::config_val("origin"),
       email = email,
       password = password,
       api_token = api_token) |>
-    _$list |>
+    purrr::chuck("list") |>
     tibble::as_tibble() |>
     tidy_date_time_cols()
 }
