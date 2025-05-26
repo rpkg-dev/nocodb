@@ -2916,6 +2916,8 @@ create_tbl_col <- function(id_tbl,
                            uidt = NULL,
                            dt = NULL,
                            cdf = NULL,
+                           rqd = NULL,
+                           enable_rich_text = NULL,
                            origin = funky::config_val("origin"),
                            email = funky::config_val("email"),
                            password = funky::config_val("password"),
@@ -2932,6 +2934,10 @@ create_tbl_col <- function(id_tbl,
                            null.ok = TRUE)
   checkmate::assert_string(cdf,
                            null.ok = TRUE)
+  checkmate::assert_flag(rqd,
+                         null.ok = TRUE)
+  checkmate::assert_flag(enable_rich_text,
+                         null.ok = TRUE)
   
   api(path = glue::glue("api/v2/meta/tables/{id_tbl}/columns"),
       method = "POST",
@@ -2943,7 +2949,9 @@ create_tbl_col <- function(id_tbl,
                                       title = title,
                                       uidt = uidt,
                                       dt = dt,
-                                      cdf = cdf))) |>
+                                      cdf = cdf,
+                                      rqd = rqd,
+                                      meta = purrr::compact(list(richMode = enable_rich_text))))) |>
     tidy_resp_data() |>
     invisible()
 }
