@@ -2477,6 +2477,10 @@ create_tbl_col <- function(id_tbl,
                            dt = NULL,
                            cdf = NULL,
                            rqd = NULL,
+                           pk = NULL,
+                           ai = NULL,
+                           au = NULL,
+                           un = NULL,
                            enable_rich_text = NULL,
                            origin = funky::config_val("origin"),
                            email = funky::config_val("email"),
@@ -2496,6 +2500,14 @@ create_tbl_col <- function(id_tbl,
                            null.ok = TRUE)
   checkmate::assert_flag(rqd,
                          null.ok = TRUE)
+  checkmate::assert_flag(pk,
+                         null.ok = TRUE)
+  checkmate::assert_flag(ai,
+                         null.ok = TRUE)
+  checkmate::assert_flag(au,
+                         null.ok = TRUE)
+  checkmate::assert_flag(un,
+                         null.ok = TRUE)
   checkmate::assert_flag(enable_rich_text,
                          null.ok = TRUE)
   
@@ -2511,6 +2523,10 @@ create_tbl_col <- function(id_tbl,
                                       dt = dt,
                                       cdf = cdf,
                                       rqd = rqd,
+                                      pk = pk,
+                                      ai = ai,
+                                      au = au,
+                                      un = un,
                                       meta = purrr::compact(list(richMode = enable_rich_text))))) |>
     tidy_resp_data() |>
     invisible()
@@ -2540,8 +2556,25 @@ create_tbl_col <- function(id_tbl,
 #' @param cdf `r pkgsnip::type("chr", 1L)`
 #'   **C**olumn **d**efault **v**alue. Defaults to the column's current `cdf` value if `NULL`. Set `cdf = NA` to remove an existing `cdf` value.
 #' @param rqd `r pkgsnip::type("lgl", 1L)`
-#'   Whether or not the column is **r**e**q**uire**d** to be filled, i.e. should have a `NOT NULL` constraint. Defaults to the column's current `rqd` value if
-#'   `NULL`. Set `rqd = NA` to remove an existing `rqd` value.
+#'   Whether or not the column is **r**e**q**uire**d** to be filled, i.e. should have a `NOT NULL` constraint. Corresponds to the `NN` [advanced field
+#'   attribute](https://docs.nocodb.com/fields/field-types/custom-types/specific-db-type/#advanced-field-attributes). Defaults to the column's current `rqd`
+#'   value if `NULL`.
+#' @param pk `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not the column is a **p**rimary **k**ey, should have a `PRIMARY KEY` constraint. Corresponds to the `PK` [advanced field
+#'   attribute](https://docs.nocodb.com/fields/field-types/custom-types/specific-db-type/#advanced-field-attributes). Defaults to the column's current `pk`
+#'   value if `NULL`.
+#' @param ai `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to **a**uto-**i**ncrement the column value on new record insertion. Corresponds to the `AI` [advanced field
+#'   attribute](https://docs.nocodb.com/fields/field-types/custom-types/specific-db-type/#advanced-field-attributes). Defaults to the column's current `ai`
+#'   value if `NULL`.
+#' @param au `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to **a**uto-**u**pdate the column value to the current timestamp on record creation/insertion. Corresponds to the `AU` [advanced field
+#'   attribute](https://docs.nocodb.com/fields/field-types/custom-types/specific-db-type/#advanced-field-attributes). Defaults to the column's current `au`
+#'   value if `NULL`.
+#' @param un `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not the column is an **un**signed number, i.e. can only store non-negative numbers. Corresponds to the `UN` [advanced field
+#'   attribute](https://docs.nocodb.com/fields/field-types/custom-types/specific-db-type/#advanced-field-attributes). Defaults to the column's current `un`
+#'   value if `NULL`.
 #' @param enable_rich_text `r pkgsnip::type("lgl", 1L)`
 #'   Whether or not to enable [rich text](https://docs.nocodb.com/fields/field-types/text-based/rich-text/) support for the column in NocoDB. Only applicable
 #'   if `uidt = "LongText"`. Omitted if `NULL`.
@@ -2557,6 +2590,10 @@ update_tbl_col <- function(id_col,
                            dt = NULL,
                            cdf = NULL,
                            rqd = NULL,
+                           pk = NULL,
+                           ai = NULL,
+                           au = NULL,
+                           un = NULL,
                            enable_rich_text = NULL,
                            origin = funky::config_val("origin"),
                            email = funky::config_val("email"),
@@ -2576,7 +2613,14 @@ update_tbl_col <- function(id_col,
                            na.ok = TRUE,
                            null.ok = TRUE)
   checkmate::assert_flag(rqd,
-                         na.ok = TRUE,
+                         null.ok = TRUE)
+  checkmate::assert_flag(pk,
+                         null.ok = TRUE)
+  checkmate::assert_flag(ai,
+                         null.ok = TRUE)
+  checkmate::assert_flag(au,
+                         null.ok = TRUE)
+  checkmate::assert_flag(un,
                          null.ok = TRUE)
   checkmate::assert_flag(enable_rich_text,
                          null.ok = TRUE)
@@ -2617,6 +2661,10 @@ update_tbl_col <- function(id_col,
                                    dt = null_if_na(dt %||% cur_data$dt),
                                    cdf = null_if_na(cdf %||% cur_data$cdf),
                                    rqd = null_if_na(rqd %||% cur_data$rqd),
+                                   pk = null_if_na(pk %||% cur_data$pk),
+                                   ai = null_if_na(ai %||% cur_data$ai),
+                                   au = null_if_na(au %||% cur_data$au),
+                                   un = null_if_na(un %||% cur_data$un),
                                    meta = if (!is.null(enable_rich_text) && identical(uidt %||% cur_data$uidt, "LongText")) list(richMode = enable_rich_text)))
   
   # complement required fields for virtual UIDTs

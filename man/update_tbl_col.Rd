@@ -13,6 +13,10 @@ update_tbl_col(
   dt = NULL,
   cdf = NULL,
   rqd = NULL,
+  pk = NULL,
+  ai = NULL,
+  au = NULL,
+  un = NULL,
   enable_rich_text = NULL,
   origin = funky::config_val("origin"),
   email = funky::config_val("email"),
@@ -86,8 +90,24 @@ Column \strong{d}ata \strong{t}ype. Omitted if \code{NULL}.}
 \strong{C}olumn \strong{d}efault \strong{v}alue. Defaults to the column's current \code{cdf} value if \code{NULL}. Set \code{cdf = NA} to remove an existing \code{cdf} value.}
 
 \item{rqd}{\code{\link[base:logical]{logical(1)}}\cr
-Whether or not the column is \strong{r}e\strong{q}uire\strong{d} to be filled, i.e. should have a \verb{NOT NULL} constraint. Defaults to the column's current \code{rqd} value if
-\code{NULL}. Set \code{rqd = NA} to remove an existing \code{rqd} value.}
+Whether or not the column is \strong{r}e\strong{q}uire\strong{d} to be filled, i.e. should have a \verb{NOT NULL} constraint. Corresponds to the \code{NN} \href{https://docs.nocodb.com/fields/field-types/custom-types/specific-db-type/#advanced-field-attributes}{advanced field attribute}. Defaults to the column's current \code{rqd}
+value if \code{NULL}.}
+
+\item{pk}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not the column is a \strong{p}rimary \strong{k}ey, should have a \verb{PRIMARY KEY} constraint. Corresponds to the \code{PK} \href{https://docs.nocodb.com/fields/field-types/custom-types/specific-db-type/#advanced-field-attributes}{advanced field attribute}. Defaults to the column's current \code{pk}
+value if \code{NULL}.}
+
+\item{ai}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to \strong{a}uto-\strong{i}ncrement the column value on new record insertion. Corresponds to the \code{AI} \href{https://docs.nocodb.com/fields/field-types/custom-types/specific-db-type/#advanced-field-attributes}{advanced field attribute}. Defaults to the column's current \code{ai}
+value if \code{NULL}.}
+
+\item{au}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to \strong{a}uto-\strong{u}pdate the column value to the current timestamp on record creation/insertion. Corresponds to the \code{AU} \href{https://docs.nocodb.com/fields/field-types/custom-types/specific-db-type/#advanced-field-attributes}{advanced field attribute}. Defaults to the column's current \code{au}
+value if \code{NULL}.}
+
+\item{un}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not the column is an \strong{un}signed number, i.e. can only store non-negative numbers. Corresponds to the \code{UN} \href{https://docs.nocodb.com/fields/field-types/custom-types/specific-db-type/#advanced-field-attributes}{advanced field attribute}. Defaults to the column's current \code{un}
+value if \code{NULL}.}
 
 \item{enable_rich_text}{\code{\link[base:logical]{logical(1)}}\cr
 Whether or not to enable \href{https://docs.nocodb.com/fields/field-types/text-based/rich-text/}{rich text} support for the column in NocoDB. Only applicable
