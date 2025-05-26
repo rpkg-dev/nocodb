@@ -12,6 +12,8 @@ update_tbl_col(
   uidt = NULL,
   dt = NULL,
   cdf = NULL,
+  rqd = NULL,
+  enable_rich_text = NULL,
   origin = funky::config_val("origin"),
   email = funky::config_val("email"),
   password = funky::config_val("password"),
@@ -29,7 +31,7 @@ Column name. Omitted if \code{NULL}.}
 NocoDB column title. Omitted if \code{NULL}.}
 
 \item{description}{\code{\link[base:character]{character(1)}}\cr
-NocoDB column description displayed as a tooltip in the column header. Omitted if \code{NULL}.}
+NocoDB column description displayed as a tooltip in the column header. Omitted if \code{NULL}. Set \code{description = ""} to remove an existing \code{description} value.}
 
 \item{uidt}{\code{\link[base:character]{character(1)}}\cr
 NocoDB \strong{u}ser \strong{i}nterface \strong{d}ata \strong{t}ype. Either \code{NULL} to omit or one of
@@ -78,10 +80,18 @@ NocoDB \strong{u}ser \strong{i}nterface \strong{d}ata \strong{t}ype. Either \cod
 }}
 
 \item{dt}{\code{\link[base:character]{character(1)}}\cr
-Column data type. Omitted if \code{NULL}.}
+Column \strong{d}ata \strong{t}ype. Omitted if \code{NULL}.}
 
 \item{cdf}{\code{\link[base:character]{character(1)}}\cr
-Column default value. Omitted if \code{NULL}.}
+\strong{C}olumn \strong{d}efault \strong{v}alue. Defaults to the column's current \code{cdf} value if \code{NULL}. Set \code{cdf = NA} to remove an existing \code{cdf} value.}
+
+\item{rqd}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not the column is \strong{r}e\strong{q}uire\strong{d} to be filled, i.e. should have a \verb{NOT NULL} constraint. Defaults to the column's current \code{rqd} value if
+\code{NULL}. Set \code{rqd = NA} to remove an existing \code{rqd} value.}
+
+\item{enable_rich_text}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to enable \href{https://docs.nocodb.com/fields/field-types/text-based/rich-text/}{rich text} support for the column in NocoDB. Only applicable
+if \code{uidt = "LongText"}. Omitted if \code{NULL}.}
 
 \item{origin}{\code{\link[base:character]{character(1)}}\cr
 NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}
@@ -102,7 +112,8 @@ A \link[tibble:tbl_df-class]{tibble} with metadata about the NocoDB table to whi
 Updates the metadata of the specified table column on a NocoDB server via its
 \href{https://meta-apis-v2.nocodb.com/#tag/Fields/operation/db-table-column-update}{\code{PATCH /api/v2/meta/columns/{id_col}}} API endpoint.
 
-Beware that this API endpoint alters the schema of the underlying table, which might be undesirable, especially if the table is from an external \href{https://docs.nocodb.com/category/data-sources}{data source}.
+Beware that this API endpoint \emph{always} alters the schema of the underlying table, which might be undesirable, especially if the table belongs to an external
+\href{https://docs.nocodb.com/category/data-sources}{data source}.
 }
 \seealso{
 Other functions to manage NocoDB table columns:

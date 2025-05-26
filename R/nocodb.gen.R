@@ -2514,8 +2514,8 @@ create_tbl_col <- function(id_tbl,
 #' Updates the metadata of the specified table column on a NocoDB server via its
 #' [`PATCH /api/v2/meta/columns/{id_col}`](https://meta-apis-v2.nocodb.com/#tag/Fields/operation/db-table-column-update) API endpoint.
 #'
-#' Beware that this API endpoint alters the schema of the underlying table, which might be undesirable, especially if the table is from an external [data
-#' source](https://docs.nocodb.com/category/data-sources).
+#' Beware that this API endpoint *always* alters the schema of the underlying table, which might be undesirable, especially if the table belongs to an external
+#' [data source](https://docs.nocodb.com/category/data-sources).
 #'
 #' @inheritParams tbl_col
 #' @param column_name `r pkgsnip::type("chr", 1L)`
@@ -2523,14 +2523,20 @@ create_tbl_col <- function(id_tbl,
 #' @param title `r pkgsnip::type("chr", 1L)`
 #'   NocoDB column title. Omitted if `NULL`.
 #' @param description `r pkgsnip::type("chr", 1L)`
-#'   NocoDB column description displayed as a tooltip in the column header. Omitted if `NULL`.
+#'   NocoDB column description displayed as a tooltip in the column header. Omitted if `NULL`. Set `description = ""` to remove an existing `description` value.
 #' @param uidt `r pkgsnip::type("chr", 1L)`
 #'   NocoDB **u**ser **i**nterface **d**ata **t**ype. Either `NULL` to omit or one of
 #'   `r pal::as_md_val_list(uidts$uidt)`.
 #' @param dt `r pkgsnip::type("chr", 1L)`
-#'   Column data type. Omitted if `NULL`.
+#'   Column **d**ata **t**ype. Omitted if `NULL`.
 #' @param cdf `r pkgsnip::type("chr", 1L)`
-#'   Column default value. Omitted if `NULL`.
+#'   **C**olumn **d**efault **v**alue. Defaults to the column's current `cdf` value if `NULL`. Set `cdf = NA` to remove an existing `cdf` value.
+#' @param rqd `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not the column is **r**e**q**uire**d** to be filled, i.e. should have a `NOT NULL` constraint. Defaults to the column's current `rqd` value if
+#'   `NULL`. Set `rqd = NA` to remove an existing `rqd` value.
+#' @param enable_rich_text `r pkgsnip::type("lgl", 1L)`
+#'   Whether or not to enable [rich text](https://docs.nocodb.com/fields/field-types/text-based/rich-text/) support for the column in NocoDB. Only applicable
+#'   if `uidt = "LongText"`. Omitted if `NULL`.
 #'
 #' @return `r pkgsnip::return_lbl("tibble_custom", custom = "metadata about the NocoDB table to which the updated column belongs, invisibly")`
 #' @family cols
@@ -2542,6 +2548,8 @@ update_tbl_col <- function(id_col,
                            uidt = NULL,
                            dt = NULL,
                            cdf = NULL,
+                           rqd = NULL,
+                           enable_rich_text = NULL,
                            origin = funky::config_val("origin"),
                            email = funky::config_val("email"),
                            password = funky::config_val("password"),
@@ -2557,7 +2565,13 @@ update_tbl_col <- function(id_col,
   checkmate::assert_string(dt,
                            null.ok = TRUE)
   checkmate::assert_string(cdf,
+                           na.ok = TRUE,
                            null.ok = TRUE)
+  checkmate::assert_flag(rqd,
+                         na.ok = TRUE,
+                         null.ok = TRUE)
+  checkmate::assert_flag(enable_rich_text,
+                         null.ok = TRUE)
   
   cur_data <- tbl_col(id_col = id_col,
                       origin = origin,
@@ -2591,18 +2605,26 @@ update_tbl_col <- function(id_col,
   body_json <- purrr::compact(list(column_name = column_name,
                                    title = title,
                                    description = description,
-                                   uidt = uidt))
+                                   uidt = uidt,
+                                   dt = null_if_na(dt %||% cur_data$dt),
+                                   cdf = null_if_na(cdf %||% cur_data$cdf),
+                                   rqd = null_if_na(rqd %||% cur_data$rqd),
+                                   meta = if (!is.null(enable_rich_text) && identical(uidt %||% cur_data$uidt, "LongText")) list(richMode = enable_rich_text)))
   
   # complement required fields for virtual UIDTs
-  body_json %<>% c(switch(EXPR = cur_data$uidt,
-                          Formula = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
-                          Links = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
-                          LinkToAnotherRecord = list(uidt = cur_data$uidt,
-                                                     # NOTE: it's unclear whether this mapping is really correct
-                                                     childViewId = cur_data$colOptions$fk_target_view_id),
-                          Lookup = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
-                          Rollup = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
-                          NULL))
+  body_json <- switch(EXPR = cur_data$uidt,
+                      Formula = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
+                      Links = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
+                      LinkToAnotherRecord =
+                        body_json |>
+                        purrr::assign_in(where = "uidt",
+                                         value = cur_data$uidt) |>
+                        # NOTE: it's unclear whether this mapping is really correct
+                        purrr::assign_in(where = "childViewId",
+                                         value = cur_data$colOptions$fk_target_view_id),
+                      Lookup = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
+                      Rollup = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
+                      body_json)
   
   api(path = glue::glue("api/v2/meta/columns/{id_col}"),
       method = "PATCH",
@@ -4226,6 +4248,15 @@ cli_alert_status <- function(msg,
   } else {
     cli::cli_alert_info(msg)
   }
+}
+
+null_if_na <- function(x) {
+  
+  if (is.null(x) || is.na(x)) {
+    return(NULL)
+  }
+  
+  x
 }
 
 path_cookie <- function(origin,
