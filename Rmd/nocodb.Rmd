@@ -3024,7 +3024,7 @@ NOTES:
     | Rollup        | `"Rollup"`                          |
     | Normal        | *any*                               |
 
-    We implement it very cautiously/restrictive for now and don't allow stuff we're uncertain about. For example, we don't allow switching the `uidt` between
+    We implement it rather cautiously/restrictive for now and don't allow stuff we're uncertain about. For example, we don't allow switching the `uidt` between
     the above column types.
 
 -   As of NocoDB v0.255.0, altering a column label via the UI changes both `column_name` and `title`. Using the API OTOH, it's possible to only change one of
