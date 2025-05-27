@@ -2914,6 +2914,7 @@ create_tbl_col <- function(id_tbl,
                            column_name,
                            title = column_name,
                            uidt = NULL,
+                           colOptions = NULL,
                            dt = NULL,
                            cdf = NULL,
                            rqd = NULL,
@@ -2934,6 +2935,9 @@ create_tbl_col <- function(id_tbl,
     uidt <- rlang::arg_match(arg = uidt,
                              values = uidts$uidt)
   }
+  checkmate::assert_list(colOptions,
+                         min.len = 1L,
+                         null.ok = TRUE)
   checkmate::assert_string(dt,
                            null.ok = TRUE)
   checkmate::assert_string(cdf,
@@ -2967,6 +2971,7 @@ create_tbl_col <- function(id_tbl,
                                       ai = ai,
                                       au = au,
                                       un = un,
+                                      colOptions = colOptions,
                                       meta = purrr::compact(list(richMode = enable_rich_text))))) |>
     tidy_resp_data() |>
     invisible()
@@ -3045,6 +3050,9 @@ NOTES:
 #' @param uidt `r pkgsnip::type("chr", 1L)`
 #'   NocoDB **u**ser **i**nterface **d**ata **t**ype. Either `NULL` to omit or one of
 #'   `r pal::as_md_val_list(uidts$uidt)`.
+#' @param colOptions `r pkgsnip::type("list")`
+#'   NocoDB column options. To specify the values for a single-select field (`uidt = "SingleSelect"`), supply a data frame with the columns `title`, `color`
+#'   (HEX color code) and `index` (counted from 0 upwards) as a list element named `options`. Omitted if `NULL`.
 #' @param dt `r pkgsnip::type("chr", 1L)`
 #'   Column **d**ata **t**ype. Omitted if `NULL`.
 #' @param cdf `r pkgsnip::type("chr", 1L)`
@@ -3081,6 +3089,7 @@ update_tbl_col <- function(id_col,
                            title = NULL,
                            description = NULL,
                            uidt = NULL,
+                           colOptions = NULL,
                            dt = NULL,
                            cdf = NULL,
                            rqd = NULL,
@@ -3101,6 +3110,9 @@ update_tbl_col <- function(id_col,
                            null.ok = TRUE)
   checkmate::assert_string(title,
                            null.ok = TRUE)
+  checkmate::assert_list(colOptions,
+                         min.len = 1L,
+                         null.ok = TRUE)
   checkmate::assert_string(dt,
                            null.ok = TRUE)
   checkmate::assert_string(cdf,
@@ -3159,6 +3171,7 @@ update_tbl_col <- function(id_col,
                                    ai = null_if_na(ai %||% cur_data$ai),
                                    au = null_if_na(au %||% cur_data$au),
                                    un = null_if_na(un %||% cur_data$un),
+                                   colOptions = colOptions,
                                    meta = if (!is.null(enable_rich_text) && identical(uidt %||% cur_data$uidt, "LongText")) list(richMode = enable_rich_text)))
   
   # complement required fields for virtual UIDTs

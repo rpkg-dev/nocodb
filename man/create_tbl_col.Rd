@@ -9,6 +9,7 @@ create_tbl_col(
   column_name,
   title = column_name,
   uidt = NULL,
+  colOptions = NULL,
   dt = NULL,
   cdf = NULL,
   rqd = NULL,
@@ -78,6 +79,10 @@ NocoDB \strong{u}ser \strong{i}nterface \strong{d}ata \strong{t}ype. Either \cod
 \item \code{"User"}
 \item \code{"Year"} .
 }}
+
+\item{colOptions}{\code{\link[base:list]{list()}}\cr
+NocoDB column options. To specify the values for a single-select field (\code{uidt = "SingleSelect"}), supply a data frame with the columns \code{title}, \code{color}
+(HEX color code) and \code{index} (counted from 0 upwards) as a list element named \code{options}. Omitted if \code{NULL}.}
 
 \item{dt}{\code{\link[base:character]{character(1)}}\cr
 Column \strong{d}ata \strong{t}ype. Omitted if \code{NULL}.}
