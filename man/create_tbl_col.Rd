@@ -35,7 +35,7 @@ Column name.}
 NocoDB column title.}
 
 \item{uidt}{\code{\link[base:character]{character(1)}}\cr
-NocoDB \strong{u}ser \strong{i}nterface \strong{d}ata \strong{t}ype. Either \code{NULL} to omit or one of
+NocoDB \strong{u}ser \strong{i}nterface \strong{d}ata \strong{t}ype. Either \code{NULL} for the column's current \code{uidt} value or one of
 \itemize{
 \item \code{"Attachment"}
 \item \code{"AutoNumber"}
@@ -82,7 +82,7 @@ NocoDB \strong{u}ser \strong{i}nterface \strong{d}ata \strong{t}ype. Either \cod
 
 \item{colOptions}{\code{\link[base:list]{list()}}\cr
 NocoDB column options. To specify the values for a single-select field (\code{uidt = "SingleSelect"}), supply a data frame with the columns \code{title}, \code{color}
-(HEX color code) and \code{index} (counted from 0 upwards) as a list element named \code{options}. Omitted if \code{NULL}.}
+(HEX color code) and \code{index} (counted from 0 upwards) as a list element named \code{options}. Defaults to the column's current \code{colOptions} value if \code{NULL}.}
 
 \item{dt}{\code{\link[base:character]{character(1)}}\cr
 Column \strong{d}ata \strong{t}ype. Omitted if \code{NULL}.}

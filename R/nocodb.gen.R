@@ -2547,6 +2547,7 @@ create_tbl_col <- function(id_tbl,
 #' [data source](https://docs.nocodb.com/category/data-sources).
 #'
 #' @inheritParams tbl_col
+#' @inheritParams update_user
 #' @param column_name `r pkgsnip::type("chr", 1L)`
 #'   Column name. Omitted if `NULL`.
 #' @param title `r pkgsnip::type("chr", 1L)`
@@ -2554,11 +2555,11 @@ create_tbl_col <- function(id_tbl,
 #' @param description `r pkgsnip::type("chr", 1L)`
 #'   NocoDB column description displayed as a tooltip in the column header. Omitted if `NULL`. Set `description = ""` to remove an existing `description` value.
 #' @param uidt `r pkgsnip::type("chr", 1L)`
-#'   NocoDB **u**ser **i**nterface **d**ata **t**ype. Either `NULL` to omit or one of
+#'   NocoDB **u**ser **i**nterface **d**ata **t**ype. Either `NULL` for the column's current `uidt` value or one of
 #'   `r pal::as_md_val_list(uidts$uidt)`.
 #' @param colOptions `r pkgsnip::type("list")`
 #'   NocoDB column options. To specify the values for a single-select field (`uidt = "SingleSelect"`), supply a data frame with the columns `title`, `color`
-#'   (HEX color code) and `index` (counted from 0 upwards) as a list element named `options`. Omitted if `NULL`.
+#'   (HEX color code) and `index` (counted from 0 upwards) as a list element named `options`. Defaults to the column's current `colOptions` value if `NULL`.
 #' @param dt `r pkgsnip::type("chr", 1L)`
 #'   Column **d**ata **t**ype. Omitted if `NULL`.
 #' @param cdf `r pkgsnip::type("chr", 1L)`
@@ -2607,7 +2608,8 @@ update_tbl_col <- function(id_col,
                            origin = funky::config_val("origin"),
                            email = funky::config_val("email"),
                            password = funky::config_val("password"),
-                           api_token = funky::config_val("api_token")) {
+                           api_token = funky::config_val("api_token"),
+                           quiet = FALSE) {
   
   checkmate::assert_string(id_col)
   checkmate::assert_string(column_name,
@@ -2636,6 +2638,7 @@ update_tbl_col <- function(id_col,
                          null.ok = TRUE)
   checkmate::assert_flag(enable_rich_text,
                          null.ok = TRUE)
+  checkmate::assert_flag(quiet)
   
   cur_data <- tbl_col(id_col = id_col,
                       origin = origin,
@@ -2645,10 +2648,10 @@ update_tbl_col <- function(id_col,
   
   # complement mandatory fields if necessary
   if (is.null(title)) {
-    title <- cur_data$title
+    title <- cur_data[["title"]]
   }
-  if (is.null(column_name) && cur_data$uidt %in% uidts$uidt[!uidts$is_virtual]) {
-    column_name <- cur_data$column_name
+  if (is.null(column_name) && cur_data[["uidt"]] %in% uidts$uidt[!uidts$is_virtual]) {
+    column_name <- cur_data[["column_name"]]
   }
   
   # dissallow cross-column-type UIDT changes
@@ -2656,7 +2659,7 @@ update_tbl_col <- function(id_col,
     
     uidt <- rlang::arg_match(arg = uidt,
                              values = uidts$uidt)
-    uidt_current <- cur_data$uidt
+    uidt_current <- cur_data[["uidt"]]
     uidt_allowed <- ifelse(uidt_current %in% uidts$uidt[uidts$is_virtual],
                            uidt_current,
                            uidt)
@@ -2666,34 +2669,32 @@ update_tbl_col <- function(id_col,
     }
   }
   
+  # assemble `meta`
+  uidt_new <- null_if_na(uidt %||% cur_data[["uidt"]])
+  meta <- NULL
+  
+  if (!is.null(enable_rich_text)) {
+    if (identical(uidt_new, "LongText")) {
+      meta %<>% purrr::assign_in(where = "richMode",
+                                 value = enable_rich_text)
+    } else if (!quiet) {
+      cli::cli_alert_warning("Ignored {.arg enable_rich_text}. Only applicable to columns of {.arg uidt} {.val LongText}.")
+    }
+  }
+  
   body_json <- purrr::compact(list(column_name = column_name,
                                    title = title,
                                    description = description,
-                                   uidt = uidt,
-                                   dt = null_if_na(dt %||% cur_data$dt),
-                                   cdf = null_if_na(cdf %||% cur_data$cdf),
-                                   rqd = null_if_na(rqd %||% cur_data$rqd),
-                                   pk = null_if_na(pk %||% cur_data$pk),
-                                   ai = null_if_na(ai %||% cur_data$ai),
-                                   au = null_if_na(au %||% cur_data$au),
-                                   un = null_if_na(un %||% cur_data$un),
-                                   colOptions = colOptions,
-                                   meta = if (!is.null(enable_rich_text) && identical(uidt %||% cur_data$uidt, "LongText")) list(richMode = enable_rich_text)))
-  
-  # complement required fields for virtual UIDTs
-  body_json <- switch(EXPR = cur_data$uidt,
-                      Formula = cli::cli_abort("Updating columns of uidt type {.val {cur_data$uidt}} is not yet implemented."),
-                      Links = cli::cli_abort("Updating columns of uidt type {.val {cur_data$uidt}} is not yet implemented."),
-                      LinkToAnotherRecord =
-                        body_json |>
-                        purrr::assign_in(where = "uidt",
-                                         value = cur_data$uidt) |>
-                        # NOTE: it's unclear whether this mapping is really correct
-                        purrr::assign_in(where = "childViewId",
-                                         value = cur_data$colOptions$fk_target_view_id),
-                      Lookup = cli::cli_abort("Updating columns of uidt type {.val {cur_data$uidt}} is not yet implemented."),
-                      Rollup = cli::cli_abort("Updating columns of uidt type {.val {cur_data$uidt}} is not yet implemented."),
-                      body_json)
+                                   uidt = uidt_new,
+                                   dt = null_if_na(dt %||% cur_data[["dt"]]),
+                                   cdf = null_if_na(cdf %||% cur_data[["cdf"]]),
+                                   rqd = null_if_na(rqd %||% cur_data[["rqd"]]),
+                                   pk = null_if_na(pk %||% cur_data[["pk"]]),
+                                   ai = null_if_na(ai %||% cur_data[["ai"]]),
+                                   au = null_if_na(au %||% cur_data[["au"]]),
+                                   un = null_if_na(un %||% cur_data[["un"]]),
+                                   colOptions = null_if_na(colOptions %||% cur_data[["colOptions"]]),
+                                   meta = meta))
   
   api(path = glue::glue("api/v2/meta/columns/{id_col}"),
       method = "PATCH",

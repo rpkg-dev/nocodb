@@ -22,7 +22,8 @@ update_tbl_col(
   origin = funky::config_val("origin"),
   email = funky::config_val("email"),
   password = funky::config_val("password"),
-  api_token = funky::config_val("api_token")
+  api_token = funky::config_val("api_token"),
+  quiet = FALSE
 )
 }
 \arguments{
@@ -39,7 +40,7 @@ NocoDB column title. Omitted if \code{NULL}.}
 NocoDB column description displayed as a tooltip in the column header. Omitted if \code{NULL}. Set \code{description = ""} to remove an existing \code{description} value.}
 
 \item{uidt}{\code{\link[base:character]{character(1)}}\cr
-NocoDB \strong{u}ser \strong{i}nterface \strong{d}ata \strong{t}ype. Either \code{NULL} to omit or one of
+NocoDB \strong{u}ser \strong{i}nterface \strong{d}ata \strong{t}ype. Either \code{NULL} for the column's current \code{uidt} value or one of
 \itemize{
 \item \code{"Attachment"}
 \item \code{"AutoNumber"}
@@ -86,7 +87,7 @@ NocoDB \strong{u}ser \strong{i}nterface \strong{d}ata \strong{t}ype. Either \cod
 
 \item{colOptions}{\code{\link[base:list]{list()}}\cr
 NocoDB column options. To specify the values for a single-select field (\code{uidt = "SingleSelect"}), supply a data frame with the columns \code{title}, \code{color}
-(HEX color code) and \code{index} (counted from 0 upwards) as a list element named \code{options}. Omitted if \code{NULL}.}
+(HEX color code) and \code{index} (counted from 0 upwards) as a list element named \code{options}. Defaults to the column's current \code{colOptions} value if \code{NULL}.}
 
 \item{dt}{\code{\link[base:character]{character(1)}}\cr
 Column \strong{d}ata \strong{t}ype. Omitted if \code{NULL}.}
@@ -129,6 +130,9 @@ Password of the NocoDB user to authenticate with.}
 
 \item{api_token}{\code{\link[base:character]{character(1)}}\cr
 NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
+
+\item{quiet}{\code{\link[base:logical]{logical(1)}}\cr
+Whether or not to suppress printing status output from internal processing.}
 }
 \value{
 A \link[tibble:tbl_df-class]{tibble} with metadata about the NocoDB table to which the updated column belongs, invisibly.
