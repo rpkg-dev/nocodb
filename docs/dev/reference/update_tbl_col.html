@@ -71,7 +71,8 @@ data source."><meta name="twitter:card" content="summary"><meta name="twitter:cr
 <span>  origin <span class="op">=</span> <span class="fu">funky</span><span class="fu">::</span><span class="fu"><a href="https://funky.rpkg.dev/reference/config_val.html" class="external-link">config_val</a></span><span class="op">(</span><span class="st">"origin"</span><span class="op">)</span>,</span>
 <span>  email <span class="op">=</span> <span class="fu">funky</span><span class="fu">::</span><span class="fu"><a href="https://funky.rpkg.dev/reference/config_val.html" class="external-link">config_val</a></span><span class="op">(</span><span class="st">"email"</span><span class="op">)</span>,</span>
 <span>  password <span class="op">=</span> <span class="fu">funky</span><span class="fu">::</span><span class="fu"><a href="https://funky.rpkg.dev/reference/config_val.html" class="external-link">config_val</a></span><span class="op">(</span><span class="st">"password"</span><span class="op">)</span>,</span>
-<span>  api_token <span class="op">=</span> <span class="fu">funky</span><span class="fu">::</span><span class="fu"><a href="https://funky.rpkg.dev/reference/config_val.html" class="external-link">config_val</a></span><span class="op">(</span><span class="st">"api_token"</span><span class="op">)</span></span>
+<span>  api_token <span class="op">=</span> <span class="fu">funky</span><span class="fu">::</span><span class="fu"><a href="https://funky.rpkg.dev/reference/config_val.html" class="external-link">config_val</a></span><span class="op">(</span><span class="st">"api_token"</span><span class="op">)</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -101,7 +102,7 @@ NocoDB column description displayed as a tooltip in the column header. Omitted i
 
 <dt id="arg-uidt">uidt<a class="anchor" aria-label="anchor" href="#arg-uidt"></a></dt>
 <dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
-NocoDB <strong>u</strong>ser <strong>i</strong>nterface <strong>d</strong>ata <strong>t</strong>ype. Either <code>NULL</code> to omit or one of</p><ul><li><p><code>"Attachment"</code></p></li>
+NocoDB <strong>u</strong>ser <strong>i</strong>nterface <strong>d</strong>ata <strong>t</strong>ype. Either <code>NULL</code> for the column's current <code>uidt</code> value or one of</p><ul><li><p><code>"Attachment"</code></p></li>
 <li><p><code>"AutoNumber"</code></p></li>
 <li><p><code>"Barcode"</code></p></li>
 <li><p><code>"Button"</code></p></li>
@@ -148,7 +149,7 @@ NocoDB <strong>u</strong>ser <strong>i</strong>nterface <strong>d</strong>ata <s
 <dt id="arg-coloptions">colOptions<a class="anchor" aria-label="anchor" href="#arg-coloptions"></a></dt>
 <dd><p><code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code><br>
 NocoDB column options. To specify the values for a single-select field (<code>uidt = "SingleSelect"</code>), supply a data frame with the columns <code>title</code>, <code>color</code>
-(HEX color code) and <code>index</code> (counted from 0 upwards) as a list element named <code>options</code>. Omitted if <code>NULL</code>.</p></dd>
+(HEX color code) and <code>index</code> (counted from 0 upwards) as a list element named <code>options</code>. Defaults to the column's current <code>colOptions</code> value if <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-dt">dt<a class="anchor" aria-label="anchor" href="#arg-dt"></a></dt>
@@ -214,6 +215,11 @@ Password of the NocoDB user to authenticate with.</p></dd>
 <dt id="arg-api-token">api_token<a class="anchor" aria-label="anchor" href="#arg-api-token"></a></dt>
 <dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
 NocoDB <a href="https://docs.nocodb.com/account-settings/api-tokens/" class="external-link">API token</a>. Takes precedence over <code>email</code> and <code>password</code> if provided.</p></dd>
+
+
+<dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br>
+Whether or not to suppress printing status output from internal processing.</p></dd>
 
 </dl></div>
     <div class="section level2">
