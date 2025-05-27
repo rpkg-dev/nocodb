@@ -52,6 +52,7 @@ POST /api/v2/meta/tables/{id_tbl}/columns API endpoint."><meta name="twitter:car
 <span>  <span class="va">column_name</span>,</span>
 <span>  title <span class="op">=</span> <span class="va">column_name</span>,</span>
 <span>  uidt <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colOptions <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dt <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cdf <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  rqd <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -130,6 +131,12 @@ NocoDB <strong>u</strong>ser <strong>i</strong>nterface <strong>d</strong>ata <s
 <li><p><code>"User"</code></p></li>
 <li><p><code>"Year"</code> .</p></li>
 </ul></dd>
+
+
+<dt id="arg-coloptions">colOptions<a class="anchor" aria-label="anchor" href="#arg-coloptions"></a></dt>
+<dd><p><code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code><br>
+NocoDB column options. To specify the values for a single-select field (<code>uidt = "SingleSelect"</code>), supply a data frame with the columns <code>title</code>, <code>color</code>
+(HEX color code) and <code>index</code> (counted from 0 upwards) as a list element named <code>options</code>. Omitted if <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-dt">dt<a class="anchor" aria-label="anchor" href="#arg-dt"></a></dt>
