@@ -2682,8 +2682,8 @@ update_tbl_col <- function(id_col,
   
   # complement required fields for virtual UIDTs
   body_json <- switch(EXPR = cur_data$uidt,
-                      Formula = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
-                      Links = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
+                      Formula = cli::cli_abort("Updating columns of uidt type {.val {cur_data$uidt}} is not yet implemented."),
+                      Links = cli::cli_abort("Updating columns of uidt type {.val {cur_data$uidt}} is not yet implemented."),
                       LinkToAnotherRecord =
                         body_json |>
                         purrr::assign_in(where = "uidt",
@@ -2691,8 +2691,8 @@ update_tbl_col <- function(id_col,
                         # NOTE: it's unclear whether this mapping is really correct
                         purrr::assign_in(where = "childViewId",
                                          value = cur_data$colOptions$fk_target_view_id),
-                      Lookup = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
-                      Rollup = cli::cli_abort("Updating columns of uidt type {.val {uidt}} is not yet implemented."),
+                      Lookup = cli::cli_abort("Updating columns of uidt type {.val {cur_data$uidt}} is not yet implemented."),
+                      Rollup = cli::cli_abort("Updating columns of uidt type {.val {cur_data$uidt}} is not yet implemented."),
                       body_json)
   
   api(path = glue::glue("api/v2/meta/columns/{id_col}"),
