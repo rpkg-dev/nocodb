@@ -42,6 +42,7 @@ Other functions to manage NocoDB table views:
 \code{\link{tbl_view_id}()},
 \code{\link{tbl_views}()},
 \code{\link{update_base_ui_acl}()},
+\code{\link{update_grid_view_col}()},
 \code{\link{update_tbl_view_col}()}
 }
 \concept{views}

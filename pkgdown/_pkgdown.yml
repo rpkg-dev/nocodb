@@ -64,6 +64,8 @@ reference:
   - tbl_view_cols
   - tbl_view_col_id
   - update_tbl_view_col
+- subtitle: Grid views
+- contents: update_grid_view_col
 - subtitle: Table columns
   desc: Functions to manage NocoDB table [columns](https://docs.nocodb.com/category/fields)
     (aka "fields").

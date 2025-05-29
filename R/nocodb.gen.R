@@ -2335,6 +2335,39 @@ update_tbl_view_col <- function(id_view_col,
   invisible(id_view_col)
 }
 
+#' Update NocoDB grid view column
+#'
+#' Updates the metadata of the specified grid view column on a NocoDB server via its
+#' [`PATCH /api/v2/meta/grid-columns/{id_view_col}`](https://meta-apis-v2.nocodb.com/#tag/Views/operation/db-view-grid-column-update) API endpoint.
+#'
+#' @inheritParams update_tbl_view_col
+#' @param order `r pkgsnip::type("int", 1L)`
+#'   A number to assign as the grid view columns's UI order "weight".
+#'
+#' @returns `id_view_col`, invisibly.
+#' @family views
+#' @export
+update_grid_view_col <- function(id_view_col,
+                                 order = NULL,
+                                 origin = funky::config_val("origin"),
+                                 email = funky::config_val("email"),
+                                 password = funky::config_val("password"),
+                                 api_token = funky::config_val("api_token")) {
+  
+  checkmate::assert_number(order,
+                           null.ok = TRUE)
+  
+  api(path = glue::glue("api/v2/meta/grid-columns/{id_view_col}"),
+      method = "PATCH",
+      origin = origin,
+      email = email,
+      password = password,
+      api_token = api_token,
+      body_json = purrr::compact(list(order = order)))
+  
+  invisible(id_view_col)
+}
+
 #' List NocoDB table columns
 #'
 #' Returns a [tibble][tibble::tbl_df] with metadata about the columns of the specified table on a NocoDB server from its
