@@ -1994,7 +1994,7 @@ delete_tbl <- function(id_tbl,
 #'
 #' @inheritParams tbl
 #' @param order `r pkgsnip::type("int", 1L)`
-#'   A number to assign as the table's NocoDB-specific order "weight".
+#'   A number to assign as the table's UI order "weight".
 #'
 #' @return `id_tbl`, invisibly.
 #' @family tbls
@@ -2301,18 +2301,18 @@ tbl_view_col_id <- function(id_tbl,
 #' Update NocoDB table view column
 #'
 #' Updates the metadata of the specified table view column on a NocoDB server via its
-#' `PATCH /api/v2/meta/views/{id_view}/columns/{id_col}` API endpoint.
+#' `PATCH /api/v2/meta/views/{id_view}/columns/{id_view_col}` API endpoint.
 #'
 #' @inheritParams tbl_view_cols
-#' @param id_col `r pkgsnip::type("chr", 1L)`
+#' @param id_view_col `r pkgsnip::type("chr", 1L)`
 #'   NocoDB table view column identifier as returned by [tbl_view_col_id()].
 #' @param show `r pkgsnip::type("lgl", 1L)`
 #'   Whether or not to show the column in the specified view. Omitted if `NULL`.
 #'
-#' @return `id_col`, invisibly.
+#' @return `id_view_col`, invisibly.
 #' @family views
 #' @export
-update_tbl_view_col <- function(id_col,
+update_tbl_view_col <- function(id_view_col,
                                 id_view,
                                 show = NULL,
                                 origin = funky::config_val("origin"),
@@ -2324,7 +2324,7 @@ update_tbl_view_col <- function(id_col,
   checkmate::assert_flag(show,
                          null.ok = TRUE)
   
-  api(path = glue::glue("api/v2/meta/views/{id_view}/columns/{id_col}"),
+  api(path = glue::glue("api/v2/meta/views/{id_view}/columns/{id_view_col}"),
       method = "PATCH",
       origin = origin,
       email = email,
@@ -2332,7 +2332,7 @@ update_tbl_view_col <- function(id_col,
       api_token = api_token,
       body_json = purrr::compact(list(show = show)))
   
-  invisible(id_col)
+  invisible(id_view_col)
 }
 
 #' List NocoDB table columns

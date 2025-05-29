@@ -36,7 +36,7 @@ NocoDB-specific table title.}
 NocoDB-specific table metadata as a list or something coercible to like a data frame.}
 
 \item{order}{\code{\link[base:integer]{integer(1)}}\cr
-A number to assign as the table's NocoDB-specific order "weight".}
+A number to assign as the table's UI order "weight".}
 
 \item{id_base}{\code{\link[base:character]{character(1)}}\cr
 NocoDB base identifier as returned by \code{\link[=base_id]{base_id()}}.}

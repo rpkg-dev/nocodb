@@ -18,7 +18,7 @@ reorder_tbl(
 NocoDB table identifier as returned by \code{\link[=tbl_id]{tbl_id()}}.}
 
 \item{order}{\code{\link[base:integer]{integer(1)}}\cr
-A number to assign as the table's NocoDB-specific order "weight".}
+A number to assign as the table's UI order "weight".}
 
 \item{origin}{\code{\link[base:character]{character(1)}}\cr
 NocoDB server \href{https://developer.mozilla.org/docs/Glossary/Origin}{origin}.}

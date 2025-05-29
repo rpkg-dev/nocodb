@@ -5,7 +5,7 @@
 \title{Update NocoDB table view column}
 \usage{
 update_tbl_view_col(
-  id_col,
+  id_view_col,
   id_view,
   show = NULL,
   origin = funky::config_val("origin"),
@@ -15,7 +15,7 @@ update_tbl_view_col(
 )
 }
 \arguments{
-\item{id_col}{\code{\link[base:character]{character(1)}}\cr
+\item{id_view_col}{\code{\link[base:character]{character(1)}}\cr
 NocoDB table view column identifier as returned by \code{\link[=tbl_view_col_id]{tbl_view_col_id()}}.}
 
 \item{id_view}{\code{\link[base:character]{character(1)}}\cr
@@ -37,11 +37,11 @@ Password of the NocoDB user to authenticate with.}
 NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 }
 \value{
-\code{id_col}, invisibly.
+\code{id_view_col}, invisibly.
 }
 \description{
 Updates the metadata of the specified table view column on a NocoDB server via its
-\code{PATCH /api/v2/meta/views/{id_view}/columns/{id_col}} API endpoint.
+\code{PATCH /api/v2/meta/views/{id_view}/columns/{id_view_col}} API endpoint.
 }
 \seealso{
 Other functions to manage NocoDB table views:
