@@ -527,7 +527,7 @@ assert_super_admin <- function(origin = funky::config_val("origin"),
 #' @keywords internal
 access_token <- function(origin = funky::config_val("origin"),
                          email = funky::config_val("email",
-                                                     require = TRUE)) {
+                                                   require = TRUE)) {
   checkmate::assert_string(origin)
   checkmate::assert_string(email)
   
@@ -548,7 +548,7 @@ access_token <- function(origin = funky::config_val("origin"),
 store_access_token <- function(x,
                                origin = funky::config_val("origin"),
                                email = funky::config_val("email",
-                                                           require = TRUE)) {
+                                                         require = TRUE)) {
   stateful$access_token[[origin]][[email]] <- x
   
   invisible(x)
