@@ -154,7 +154,10 @@ req_basic <- function(path,
   httr2::request(base_url = paste0(origin, path)) |>
     httr2::req_method(method = method) |>
     httr2::req_user_agent(string = "nocodb R package (https://nocodb.rpkg.dev)") |>
-    httr2::req_retry(max_tries = max_tries) |>
+    httr2::req_retry(max_tries = max_tries,
+                     # set `failure_realm` explicitly to avoid `httr2::url_parse(base_url)` which fails if scheme is missing
+                     # cf. https://github.com/r-lib/httr2/issues/730
+                     failure_realm = parse_url(origin)$hostname) |>
     httr2::req_error(body = \(resp) httr2::resp_body_json(resp)$msg)
 }
 
@@ -220,7 +223,7 @@ req_auth <- function(req,
   
   # 2. priority: re-use last access token
   origin <- stringr::str_extract(string = req$url,
-                                 pattern = "^https?://[^/]+")
+                                 pattern = "^(https?://)?[^/]+")
   
   if (!is.null(email) && is_signed_in(origin = origin,
                                       email = email)) {
@@ -4365,7 +4368,7 @@ null_if_na <- function(x) {
 path_cookie <- function(origin,
                         email) {
   
-  hostname <- httr2::url_parse(origin)$hostname
+  hostname <- parse_url(origin)$hostname
   checkmate::assert_string(hostname)
   
   tools::R_user_dir(package = this_pkg,
@@ -4419,6 +4422,18 @@ tidy_na_cols <- function(data) {
                                 .fns = as.integer)) |>
     dplyr::mutate(dplyr::across(.cols = where(is_na_lgl) & !one_of(col_types$lgl),
                                 .fns = as.character))
+}
+
+parse_url <- function(url) {
+  
+  if (stringr::str_detect(string = url,
+                          pattern = "^(\\w+://)",
+                          negate = TRUE)) {
+    
+    url %<>% paste0("http://", .)
+  }
+  
+  httr2::url_parse(url = url)
 }
 
 this_pkg <- utils::packageName()
