@@ -5283,9 +5283,15 @@ md_text_user_from_auth <- "The user is determined based on `api_token` or `email
 
 ### `uidts`
 
+NOTES:
+
+-   All possible `uidt`s are listed
+    [here](https://github.com/nocodb/nocodb/blob/6e52f3206cc0f7f7d8900b55fafc735bff01f8e5/packages/nocodb-sdk/src/lib/Api.ts#L1738-L1781).
+
 ```{r}
 uidts <- tibble::tribble(
   ~uidt,                 ~is_virtual,
+  "AI",                  FALSE,
   "Attachment",          FALSE,
   "AutoNumber",          FALSE,
   "Barcode",             FALSE,
@@ -5315,6 +5321,7 @@ uidts <- tibble::tribble(
   "Lookup",              TRUE,
   "MultiSelect",         FALSE,
   "Number",              FALSE,
+  "Order",               FALSE,
   "Percent",             FALSE,
   "PhoneNumber",         FALSE,
   "QrCode",              FALSE,

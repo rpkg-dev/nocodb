@@ -4465,6 +4465,7 @@ md_text_user_from_auth <- "The user is determined based on `api_token` or `email
 
 uidts <- tibble::tribble(
   ~uidt,                 ~is_virtual,
+  "AI",                  FALSE,
   "Attachment",          FALSE,
   "AutoNumber",          FALSE,
   "Barcode",             FALSE,
@@ -4494,6 +4495,7 @@ uidts <- tibble::tribble(
   "Lookup",              TRUE,
   "MultiSelect",         FALSE,
   "Number",              FALSE,
+  "Order",               FALSE,
   "Percent",             FALSE,
   "PhoneNumber",         FALSE,
   "QrCode",              FALSE,

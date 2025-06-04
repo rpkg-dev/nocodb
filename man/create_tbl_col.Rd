@@ -37,6 +37,7 @@ NocoDB column title.}
 \item{uidt}{\code{\link[base:character]{character(1)}}\cr
 NocoDB \strong{u}ser \strong{i}nterface \strong{d}ata \strong{t}ype. Either \code{NULL} for the column's current \code{uidt} value or one of
 \itemize{
+\item \code{"AI"}
 \item \code{"Attachment"}
 \item \code{"AutoNumber"}
 \item \code{"Barcode"}
@@ -66,6 +67,7 @@ NocoDB \strong{u}ser \strong{i}nterface \strong{d}ata \strong{t}ype. Either \cod
 \item \code{"Lookup"}
 \item \code{"MultiSelect"}
 \item \code{"Number"}
+\item \code{"Order"}
 \item \code{"Percent"}
 \item \code{"PhoneNumber"}
 \item \code{"QrCode"}
