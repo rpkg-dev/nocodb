@@ -3247,8 +3247,8 @@ update_tbl_col <- function(id_col,
                                    au = null_if_na(au %||% cur_data[["au"]]),
                                    un = null_if_na(un %||% cur_data[["un"]]),
                                    dtx = null_if_na(dtx %||% cur_data[["dtx"]]),
-                                   dtxp = null_if_na(dtxp %||% cur_data[["dtxp"]]),
-                                   dtxs = null_if_na(dtxs %||% cur_data[["dtxs"]]),
+                                   dtxp = dtxp,
+                                   dtxs = dtxs,
                                    colOptions = null_if_na(colOptions %||% cur_data[["colOptions"]]),
                                    meta = meta))
   
