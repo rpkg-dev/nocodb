@@ -2620,9 +2620,9 @@ create_tbl_col <- function(id_tbl,
 #'   Whether or not the column is an **un**signed number, i.e. can only store non-negative numbers. Corresponds to the `UN` [advanced field
 #'   attribute](https://docs.nocodb.com/fields/field-types/custom-types/specific-db-type/#advanced-field-attributes). Defaults to the column's current `un`
 #'   value if `NULL`.
-#' @param dtx Unknown purpose. Defaults to the column's current `dtx` value if `NULL`.
-#' @param dtxp Unknown purpose. Defaults to the column's current `dtxp` value if `NULL`.
-#' @param dtxs Unknown purpose. Defaults to the column's current `dtxs` value if `NULL`.
+#' @param dtx **D**ata **t**ype **x**. Defaults to the column's current `dtx` value if `NULL`.
+#' @param dtxp **D**ata **t**ype **x** **p**recision. Omitted if `NULL`.
+#' @param dtxs **D**ata **t**ype **x** **s**cale. Omitted if `NULL`.
 #' @param enable_rich_text `r pkgsnip::type("lgl", 1L)`
 #'   Whether or not to enable [rich text](https://docs.nocodb.com/fields/field-types/text-based/rich-text/) support for the column in NocoDB. Only applicable
 #'   if `uidt = "LongText"`. Omitted if `NULL`.

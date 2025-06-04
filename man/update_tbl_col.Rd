@@ -118,11 +118,11 @@ value if \code{NULL}.}
 Whether or not the column is an \strong{un}signed number, i.e. can only store non-negative numbers. Corresponds to the \code{UN} \href{https://docs.nocodb.com/fields/field-types/custom-types/specific-db-type/#advanced-field-attributes}{advanced field attribute}. Defaults to the column's current \code{un}
 value if \code{NULL}.}
 
-\item{dtx}{Unknown purpose. Defaults to the column's current \code{dtx} value if \code{NULL}.}
+\item{dtx}{\strong{D}ata \strong{t}ype \strong{x}. Defaults to the column's current \code{dtx} value if \code{NULL}.}
 
-\item{dtxp}{Unknown purpose. Defaults to the column's current \code{dtxp} value if \code{NULL}.}
+\item{dtxp}{\strong{D}ata \strong{t}ype \strong{x} \strong{p}recision. Omitted if \code{NULL}.}
 
-\item{dtxs}{Unknown purpose. Defaults to the column's current \code{dtxs} value if \code{NULL}.}
+\item{dtxs}{\strong{D}ata \strong{t}ype \strong{x} \strong{s}cale. Omitted if \code{NULL}.}
 
 \item{enable_rich_text}{\code{\link[base:logical]{logical(1)}}\cr
 Whether or not to enable \href{https://docs.nocodb.com/fields/field-types/text-based/rich-text/}{rich text} support for the column in NocoDB. Only applicable
