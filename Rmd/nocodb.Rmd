@@ -3122,6 +3122,9 @@ NOTES:
 #'   Whether or not the column is an **un**signed number, i.e. can only store non-negative numbers. Corresponds to the `UN` [advanced field
 #'   attribute](https://docs.nocodb.com/fields/field-types/custom-types/specific-db-type/#advanced-field-attributes). Defaults to the column's current `un`
 #'   value if `NULL`.
+#' @param dtx Unknown purpose. Defaults to the column's current `dtx` value if `NULL`.
+#' @param dtxp Unknown purpose. Defaults to the column's current `dtxp` value if `NULL`.
+#' @param dtxs Unknown purpose. Defaults to the column's current `dtxs` value if `NULL`.
 #' @param enable_rich_text `r pkgsnip::type("lgl", 1L)`
 #'   Whether or not to enable [rich text](https://docs.nocodb.com/fields/field-types/text-based/rich-text/) support for the column in NocoDB. Only applicable
 #'   if `uidt = "LongText"`. Omitted if `NULL`.
@@ -3142,6 +3145,9 @@ update_tbl_col <- function(id_col,
                            ai = NULL,
                            au = NULL,
                            un = NULL,
+                           dtx = NULL,
+                           dtxp = NULL,
+                           dtxs = NULL,
                            enable_rich_text = NULL,
                            origin = funky::config_val("origin"),
                            email = funky::config_val("email"),
@@ -3174,6 +3180,12 @@ update_tbl_col <- function(id_col,
                          null.ok = TRUE)
   checkmate::assert_flag(un,
                          null.ok = TRUE)
+  checkmate::assert_string(dtx,
+                           null.ok = TRUE)
+  checkmate::assert_number(dtxp,
+                           null.ok = TRUE)
+  checkmate::assert_number(dtxs,
+                           null.ok = TRUE)
   checkmate::assert_flag(enable_rich_text,
                          null.ok = TRUE)
   checkmate::assert_flag(quiet)
@@ -3231,6 +3243,9 @@ update_tbl_col <- function(id_col,
                                    ai = null_if_na(ai %||% cur_data[["ai"]]),
                                    au = null_if_na(au %||% cur_data[["au"]]),
                                    un = null_if_na(un %||% cur_data[["un"]]),
+                                   dtx = null_if_na(dtx %||% cur_data[["dtx"]]),
+                                   dtxp = null_if_na(dtxp %||% cur_data[["dtxp"]]),
+                                   dtxs = null_if_na(dtxs %||% cur_data[["dtxs"]]),
                                    colOptions = null_if_na(colOptions %||% cur_data[["colOptions"]]),
                                    meta = meta))
   
