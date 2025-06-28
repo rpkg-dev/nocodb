@@ -6,12 +6,10 @@
 \usage{
 sync_data_src_eagerly(
   id_data_src,
-  id_base = base_id(origin = origin, email = email, password = password, api_token =
-    api_token),
+  id_base = base_id(origin = origin, email = email, password = password),
   origin = funky::config_val("origin"),
   email = funky::config_val("email"),
   password = funky::config_val("password"),
-  api_token = funky::config_val("api_token"),
   wait_max = 30L,
   wait_resync = 7
 )
@@ -31,9 +29,6 @@ E-mail address of the NocoDB user to authenticate with.}
 
 \item{password}{\code{\link[base:character]{character(1)}}\cr
 Password of the NocoDB user to authenticate with.}
-
-\item{api_token}{\code{\link[base:character]{character(1)}}\cr
-NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 
 \item{wait_max}{\code{\link[base:integer]{integer(1)}}\cr
 Maximum time in seconds to wait for schema synchronization to finish. An error is thrown if there are still schema changes pending when the

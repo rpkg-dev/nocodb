@@ -1286,6 +1286,8 @@ has_data_src_diff <- function(id_data_src,
 #' Synchronizes the specified data source's schema between its external and its NocoDB-internal state via the
 #' `POST /api/v2/meta/bases/{id_base}/meta-diff/{id_data_src}` API endpoint.
 #'
+#' `r md_text_no_api_token_support`
+#'
 #' @inheritParams data_src
 #'
 #' @return `id_data_src`, invisibly.
@@ -1294,12 +1296,10 @@ has_data_src_diff <- function(id_data_src,
 sync_data_src <- function(id_data_src,
                           id_base = base_id(origin = origin,
                                             email = email,
-                                            password = password,
-                                            api_token = api_token),
+                                            password = password),
                           origin = funky::config_val("origin"),
                           email = funky::config_val("email"),
-                          password = funky::config_val("password"),
-                          api_token = funky::config_val("api_token")) {
+                          password = funky::config_val("password")) {
   
   checkmate::assert_string(id_data_src)
   checkmate::assert_string(id_base)
@@ -1309,7 +1309,7 @@ sync_data_src <- function(id_data_src,
       origin = origin,
       email = email,
       password = password,
-      api_token = api_token)
+      api_token = NULL)
   
   invisible(id_data_src)
 }
@@ -1333,12 +1333,10 @@ sync_data_src <- function(id_data_src,
 sync_data_src_eagerly <- function(id_data_src,
                                   id_base = base_id(origin = origin,
                                                     email = email,
-                                                    password = password,
-                                                    api_token = api_token),
+                                                    password = password),
                                   origin = funky::config_val("origin"),
                                   email = funky::config_val("email"),
                                   password = funky::config_val("password"),
-                                  api_token = funky::config_val("api_token"),
                                   wait_max = 30L,
                                   wait_resync = 7.0) {
   

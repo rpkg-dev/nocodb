@@ -6,12 +6,10 @@
 \usage{
 sync_data_src(
   id_data_src,
-  id_base = base_id(origin = origin, email = email, password = password, api_token =
-    api_token),
+  id_base = base_id(origin = origin, email = email, password = password),
   origin = funky::config_val("origin"),
   email = funky::config_val("email"),
-  password = funky::config_val("password"),
-  api_token = funky::config_val("api_token")
+  password = funky::config_val("password")
 )
 }
 \arguments{
@@ -29,9 +27,6 @@ E-mail address of the NocoDB user to authenticate with.}
 
 \item{password}{\code{\link[base:character]{character(1)}}\cr
 Password of the NocoDB user to authenticate with.}
-
-\item{api_token}{\code{\link[base:character]{character(1)}}\cr
-NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. Takes precedence over \code{email} and \code{password} if provided.}
 }
 \value{
 \code{id_data_src}, invisibly.
@@ -39,6 +34,9 @@ NocoDB \href{https://docs.nocodb.com/account-settings/api-tokens/}{API token}. T
 \description{
 Synchronizes the specified data source's schema between its external and its NocoDB-internal state via the
 \code{POST /api/v2/meta/bases/{id_base}/meta-diff/{id_data_src}} API endpoint.
+}
+\details{
+This API endpoint does not support authentication via \href{https://docs.nocodb.com/account-settings/api-tokens/}{API tokens}.
 }
 \seealso{
 Other functions to manage NocoDB base data sources:
