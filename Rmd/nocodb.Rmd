@@ -341,8 +341,8 @@ NOTES:
 #' Sign in NocoDB user
 #'
 #' Authenticates a NocoDB user by `email` and `password` via the
-#' [`POST /api/v1/auth/user/signin`](https://data-apis-v1.nocodb.com/#tag/Auth/operation/auth-signin) API endpoint. An access token
-#' ([JWT](https://de.wikipedia.org/wiki/JSON_Web_Token)) is generated in the process and stored in the package environment to be used in subsequent API calls.
+#' `POST /api/v2/auth/user/signin` API endpoint. An access token ([JWT](https://de.wikipedia.org/wiki/JSON_Web_Token)) is generated in the process and stored in the package environment to be
+#' used in subsequent API calls.
 #' 
 #' The generated access token expires after a certain amount of time, configured by the NocoDB server via
 #' [`NC_JWT_EXPIRES_IN`](https://docs.nocodb.com/getting-started/self-hosted/environment-variables/) (defaults to 10 hours). To allow for a frictionless user
@@ -372,7 +372,7 @@ sign_in <- function(origin = funky::config_val("origin"),
   checkmate::assert_flag(cache_refresh_token)
   
   req <-
-    req_basic(path = "api/v1/auth/user/signin",
+    req_basic(path = "api/v2/auth/user/signin",
               method = "POST",
               origin = origin) |>
     httr2::req_body_json(data = list(email = email,

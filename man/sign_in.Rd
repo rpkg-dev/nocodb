@@ -30,8 +30,8 @@ The generated access token as a character scalar, invisibly.
 }
 \description{
 Authenticates a NocoDB user by \code{email} and \code{password} via the
-\href{https://data-apis-v1.nocodb.com/#tag/Auth/operation/auth-signin}{\code{POST /api/v1/auth/user/signin}} API endpoint. An access token
-(\href{https://de.wikipedia.org/wiki/JSON_Web_Token}{JWT}) is generated in the process and stored in the package environment to be used in subsequent API calls.
+\code{POST /api/v2/auth/user/signin} API endpoint. An access token (\href{https://de.wikipedia.org/wiki/JSON_Web_Token}{JWT}) is generated in the process and stored in the package environment to be
+used in subsequent API calls.
 }
 \details{
 The generated access token expires after a certain amount of time, configured by the NocoDB server via
