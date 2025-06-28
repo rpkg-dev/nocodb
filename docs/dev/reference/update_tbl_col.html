@@ -105,7 +105,8 @@ NocoDB column description displayed as a tooltip in the column header. Omitted i
 
 <dt id="arg-uidt">uidt<a class="anchor" aria-label="anchor" href="#arg-uidt"></a></dt>
 <dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br>
-NocoDB <strong>u</strong>ser <strong>i</strong>nterface <strong>d</strong>ata <strong>t</strong>ype. Either <code>NULL</code> for the column's current <code>uidt</code> value or one of</p><ul><li><p><code>"Attachment"</code></p></li>
+NocoDB <strong>u</strong>ser <strong>i</strong>nterface <strong>d</strong>ata <strong>t</strong>ype. Either <code>NULL</code> for the column's current <code>uidt</code> value or one of</p><ul><li><p><code>"AI"</code></p></li>
+<li><p><code>"Attachment"</code></p></li>
 <li><p><code>"AutoNumber"</code></p></li>
 <li><p><code>"Barcode"</code></p></li>
 <li><p><code>"Button"</code></p></li>
@@ -134,6 +135,7 @@ NocoDB <strong>u</strong>ser <strong>i</strong>nterface <strong>d</strong>ata <s
 <li><p><code>"Lookup"</code></p></li>
 <li><p><code>"MultiSelect"</code></p></li>
 <li><p><code>"Number"</code></p></li>
+<li><p><code>"Order"</code></p></li>
 <li><p><code>"Percent"</code></p></li>
 <li><p><code>"PhoneNumber"</code></p></li>
 <li><p><code>"QrCode"</code></p></li>
@@ -195,15 +197,15 @@ value if <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-dtx">dtx<a class="anchor" aria-label="anchor" href="#arg-dtx"></a></dt>
-<dd><p>Unknown purpose. Defaults to the column's current <code>dtx</code> value if <code>NULL</code>.</p></dd>
+<dd><p><strong>D</strong>ata <strong>t</strong>ype <strong>x</strong>. Defaults to the column's current <code>dtx</code> value if <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-dtxp">dtxp<a class="anchor" aria-label="anchor" href="#arg-dtxp"></a></dt>
-<dd><p>Unknown purpose. Defaults to the column's current <code>dtxp</code> value if <code>NULL</code>.</p></dd>
+<dd><p><strong>D</strong>ata <strong>t</strong>ype <strong>x</strong> <strong>p</strong>recision. Omitted if <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-dtxs">dtxs<a class="anchor" aria-label="anchor" href="#arg-dtxs"></a></dt>
-<dd><p>Unknown purpose. Defaults to the column's current <code>dtxs</code> value if <code>NULL</code>.</p></dd>
+<dd><p><strong>D</strong>ata <strong>t</strong>ype <strong>x</strong> <strong>s</strong>cale. Omitted if <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-enable-rich-text">enable_rich_text<a class="anchor" aria-label="anchor" href="#arg-enable-rich-text"></a></dt>
