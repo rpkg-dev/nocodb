@@ -19,7 +19,7 @@ editor_options:
         -   [data](https://nocodb.com/apis/v3/data)
 
     Not all of the v1 API functionality has successor endpoints in the v2/v3 APIs and several v1 endpoints continue to be in use by the web front-end in the
-    latest NocoDB release (e.g. authentication).
+    latest NocoDB release as of August 2025 (e.g. authentication).
 
 -   We [haven't yet](https://github.com/nocodb/nocodb/discussions/7878) been able to locate the OpenAPI description ("swagger.json") for the across-base v2 meta
     APIs (which i.a. includes the [List Bases](https://meta-apis-v2.nocodb.com/#tag/Bases/operation/workspace-base-list) endpoint).
